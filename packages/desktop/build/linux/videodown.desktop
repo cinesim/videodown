@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=videodown
+Comment=Next generation markdown editor
+Exec=videodown %F
+Terminal=false
+Type=Application
+Icon=videodown
+Categories=Office;TextEditor;Utility;
+MimeType=text/markdown;
+Keywords=videodown;
+StartupWMClass=videodown
+Actions=NewWindow;
+
+[Desktop Action NewWindow]
+Name=New Window
+Exec=videodown --new-window %F
+Icon=videodown

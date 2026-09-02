@@ -1,0 +1,27 @@
+name: Validate Licenses
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'package.json'
+      - 'bun.lock'
+  push:
+    branches:
+      - develop
+    paths:
+      - 'package.json'
+      - 'bun.lock'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Validate dependency licenses
+        run: bun run validate-licenses

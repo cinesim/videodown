@@ -1,0 +1,12 @@
+videodown includes software derived from MarkText.
+
+MarkText is Copyright (c) 2017-present Luo Ran and
+Copyright (c) 2018-present MarkText Contributors.
+
+MarkText is licensed under the MIT License. Its copyright notice and license
+are preserved in LICENSE, licenses/MarkText-LICENSE.txt, and in
+packages/desktop/build/THIRD-PARTY-LICENSES.txt.
+
+The published @marktext/file-icons package is also used under the MIT License.
+Its copyright notice and license are preserved in
+licenses/MarkText-file-icons-LICENSE.txt and in the Third-Party Notices.
