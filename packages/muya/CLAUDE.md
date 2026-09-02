@@ -105,7 +105,7 @@ through `muya.setOptions({...})`.
 - **Madge** circular-dep check (`bun run --cwd packages/muya check-circular`) runs in CI — adding a circular import will fail the build.
 - Test files (`*.test.ts`, `*.spec.ts`) and `vite.config.ts` are excluded from the strict TS lint rules above.
 
-Upstream muya had Conventional Commits + husky + lint-staged + release-it wired up. Those are **not** migrated into videodown — videodown does not use husky/commitlint, and `@muyajs/core` is not published from this repo. Commit style follows videodown's root contributing guide.
+Upstream muya had Conventional Commits + commitlint + release-it wired up. Those are **not** migrated into videodown — videodown does not use commitlint, and `@muyajs/core` is not published from this repo. The repository-level Lefthook pre-commit hook runs lint-staged, and commit style follows videodown's root contributing guide.
 
 ## Build pipeline notes
 

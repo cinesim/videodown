@@ -211,7 +211,7 @@ Useful local commands (Turbo fans these out across packages):
 | `bun run --cwd packages/muya lint:css`                                            | Stylelint over all CSS.                                         |
 | `bun run --cwd packages/muya check-circular`                                      | `madge --circular` against the public entry — CI enforces this. |
 
-Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/) (`build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test`); husky and commitlint enforce this. Pre-commit, lint-staged auto-fixes Oxlint and Oxfmt findings on touched files.
+Commit messages should follow [Conventional Commits](https://www.conventionalcommits.org/) (`build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test`). Before each commit, Lefthook runs lint-staged to auto-fix Oxlint and Oxfmt findings on touched files.
 
 ## Build
 

@@ -58,7 +58,7 @@
     "check": "bun run format:check && bun run lint && bun run typecheck",
     "gen-third-party": "tsx scripts/generateThirdPartyLicense.ts",
     "validate-licenses": "tsx scripts/validateLicenses.ts",
-    "prepare": "husky"
+    "prepare": "lefthook install --reset-hooks-path"
   },
   "lint-staged": {
     "**/*.{js,mjs,cjs,ts,tsx,vue}": [
@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "electron": "~42.1.0",
-    "husky": "^9.1.7",
+    "lefthook": "^2.1.12",
     "license-checker": "^25.0.1",
     "lint-staged": "^17.2.0",
     "oxfmt": "^0.66.0",

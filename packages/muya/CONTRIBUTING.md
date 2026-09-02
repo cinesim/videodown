@@ -45,7 +45,7 @@ cd muya
 # 2. Add the upstream remote so you can keep master in sync.
 git remote add upstream git@github.com:videodown/muya.git
 
-# 3. Install dependencies (also wires up husky git hooks).
+# 3. Install dependencies (also wires up Lefthook git hooks).
 bun install
 
 # 4. Boot the examples app to try your changes in a real editor.
@@ -122,7 +122,7 @@ CSS lives next to its consumer (`*.css` co-located with the `.ts`) and is linted
 
 ## Commits and pull requests
 
-**Conventional Commits are required.** The husky `commit-msg` hook runs commitlint and rejects subjects that don't match. Allowed types:
+**Conventional Commits are required.** Use one of these allowed types:
 
 ```
 build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test
