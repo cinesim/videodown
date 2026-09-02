@@ -10,9 +10,6 @@
     ".context/**",
     "**/out/**",
     "**/dist/**",
-    "**/.next/**",
-    "**/.open-next/**",
-    "**/.wrangler/**",
     "packages/desktop/src/renderer/src/assets/themes/**",
     "packages/muyajs/**"
   ]
