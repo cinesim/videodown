@@ -82,7 +82,7 @@ Run TypeScript type checking:
 bun run type-check
 ```
 
-Run ESLint to check code quality:
+Run Oxlint to check code quality:
 
 ```bash
 bun run lint
@@ -172,8 +172,8 @@ website/
 
 ### Development Tools
 
-- **ESLint** - Code linting
-- **TypeScript ESLint** - TypeScript-specific linting rules
+- **Oxlint** - JavaScript and TypeScript linting
+- **Oxfmt** - Code formatting
 - **Vite Plugin SVGR** - SVG to React component conversion
 
 ## 🎨 Themes

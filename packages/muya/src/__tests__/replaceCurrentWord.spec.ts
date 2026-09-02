@@ -30,10 +30,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -102,7 +100,7 @@ describe('muya.replaceCurrentWordInlineUnsafe()', () => {
         const ok = muya.replaceCurrentWordInlineUnsafe('different', 'the');
         expect(ok).toBe(false);
 
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(muya.getMarkdown()).toContain('teh quick');
     });
 

@@ -40,8 +40,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
 });
 
 function bootMuya(markdown: string): Muya {
@@ -57,8 +56,7 @@ function bootMuya(markdown: string): Muya {
 // (the block that owns the `lang` setter and the `meta.type` field).
 function findCodeBlock(muya: Muya): CodeBlock {
     let node: Nullable<TreeNode> = muya.editor.scrollPage!.firstContentInDescendant();
-    while (node && node.blockName !== 'code-block')
-        node = node.parent;
+    while (node && node.blockName !== 'code-block') node = node.parent;
     return node as CodeBlock;
 }
 
@@ -218,8 +216,7 @@ describe('markdownToState — indented code block', () => {
         const state = states[0];
         expect(state.name).toBe('code-block');
         // `meta` only exists on the code-block state; narrow before reading it.
-        if (state.name !== 'code-block')
-            throw new Error('expected a code-block state');
+        if (state.name !== 'code-block') throw new Error('expected a code-block state');
         expect(state.meta.type).toBe('indented');
         // Indented blocks carry no info string, so the language is empty.
         expect(state.meta.lang).toBe('');
@@ -258,8 +255,7 @@ describe('codeBlock — setting lang promotes an indented block to fenced', () =
         await vi.waitFor(() => {
             const state = muya.getState()[0];
             expect(state.name).toBe('code-block');
-            if (state.name !== 'code-block')
-                throw new Error('expected a code-block state');
+            if (state.name !== 'code-block') throw new Error('expected a code-block state');
             expect(state.meta.type).toBe('fenced');
         });
     });
@@ -303,8 +299,7 @@ describe('codeBlock — setting lang promotes an indented block to fenced', () =
         // The JSON state confirms the language was dropped while the live
         // block still holds it.
         const state = muya.getState()[0];
-        if (state.name !== 'code-block')
-            throw new Error('expected a code-block state');
+        if (state.name !== 'code-block') throw new Error('expected a code-block state');
         expect(state.meta.lang).toBe('');
         expect(codeBlock.meta.lang).toBe('js');
     });

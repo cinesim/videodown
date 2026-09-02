@@ -7,10 +7,15 @@ export const MARKER_HASH = {
     '<': `%${getLongUniqueId()}%`,
     '>': `%${getLongUniqueId()}%`,
     '"': `%${getLongUniqueId()}%`,
-    '\'': `%${getLongUniqueId()}%`,
+    "'": `%${getLongUniqueId()}%`,
 };
 
-export function getHighlightHtml(text: string, highlights: IHighlight[], escape = false, handleLineEnding = false) {
+export function getHighlightHtml(
+    text: string,
+    highlights: IHighlight[],
+    escape = false,
+    handleLineEnding = false,
+) {
     let code = '';
     let pos = 0;
 
@@ -24,11 +29,11 @@ export function getHighlightHtml(text: string, highlights: IHighlight[], escape 
         const className = active ? CLASS_NAMES.MU_HIGHLIGHT : CLASS_NAMES.MU_SELECTION;
         let highlightContent = text.substring(start, end);
         if (handleLineEnding && text.endsWith('\n') && end === text.length) {
-            highlightContent
-                = highlightContent.substring(start, end - 1)
-                    + (escape
-                        ? getEscapeHTML(CLASS_NAMES.MU_LINE_END, '\n')
-                        : `<span class="${CLASS_NAMES.MU_LINE_END}">\n</span>`);
+            highlightContent =
+                highlightContent.substring(start, end - 1) +
+                (escape
+                    ? getEscapeHTML(CLASS_NAMES.MU_LINE_END, '\n')
+                    : `<span class="${CLASS_NAMES.MU_LINE_END}">\n</span>`);
         }
         code += escape
             ? getEscapeHTML(className, highlightContent)
@@ -38,13 +43,12 @@ export function getHighlightHtml(text: string, highlights: IHighlight[], escape 
 
     if (pos !== text.length) {
         if (handleLineEnding && text.endsWith('\n')) {
-            code
-                += text.substring(pos, text.length - 1)
-                    + (escape
-                        ? getEscapeHTML(CLASS_NAMES.MU_LINE_END, '\n')
-                        : `<span class="${CLASS_NAMES.MU_LINE_END}">\n</span>`);
-        }
-        else {
+            code +=
+                text.substring(pos, text.length - 1) +
+                (escape
+                    ? getEscapeHTML(CLASS_NAMES.MU_LINE_END, '\n')
+                    : `<span class="${CLASS_NAMES.MU_LINE_END}">\n</span>`);
+        } else {
             code += text.substring(pos);
         }
     }

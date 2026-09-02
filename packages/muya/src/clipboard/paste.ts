@@ -13,7 +13,12 @@ import { tokenizer } from '../inlineRenderer/lexer';
 import HtmlToMarkdown from '../state/htmlToMarkdown';
 import { MarkdownToState } from '../state/markdownToState';
 import { isAnyListState, isParagraphState } from '../state/types';
-import { getClipboardImageFile, getCopyTextType, isStandaloneTableHtml, normalizePastedHTML } from '../utils/paste';
+import {
+    getClipboardImageFile,
+    getCopyTextType,
+    isStandaloneTableHtml,
+    normalizePastedHTML,
+} from '../utils/paste';
 import { mergePasteIntoHeading } from './mergePasteIntoHeading';
 import { tryPasteImage, tryReplaceSelectedImage } from './pasteImage';
 import { PasteType } from './types';
@@ -38,8 +43,7 @@ interface IPasteContext {
  */
 function isSingleCellSelected(clipboard: Clipboard): boolean {
     const state = clipboard.selection.table.getStateForCopy();
-    if (state == null)
-        return false;
+    if (state == null) return false;
 
     return state.children.length === 1 && state.children[0].children.length === 1;
 }
@@ -58,12 +62,10 @@ function lastLeafState(state: TState): Nullable<{ text: string }> {
 // offset (the length before the sewn tail) inside that leaf.
 function sewTail(states: TState[], tail: string): number {
     const leaf = lastLeafState(states[states.length - 1]);
-    if (leaf == null)
-        return 0;
+    if (leaf == null) return 0;
 
     const offset = leaf.text.length;
-    if (tail.length > 0)
-        leaf.text += tail;
+    if (tail.length > 0) leaf.text += tail;
 
     return offset;
 }
@@ -89,16 +91,15 @@ function insertStatesAfter(
 function removeEmptyOriginWrapper(originWrapperBlock: Nullable<Parent>): void {
     const blockName = originWrapperBlock?.blockName;
     if (
-        blockName !== 'paragraph'
-        && blockName !== 'atx-heading'
-        && blockName !== 'setext-heading'
+        blockName !== 'paragraph' &&
+        blockName !== 'atx-heading' &&
+        blockName !== 'setext-heading'
     ) {
         return;
     }
 
     const originState = originWrapperBlock!.getState() as { text?: string };
-    if (originState.text === '')
-        originWrapperBlock!.remove();
+    if (originState.text === '') originWrapperBlock!.remove();
 }
 
 function isSinglePlainUrl(text: string): boolean {
@@ -111,16 +112,14 @@ function canPlainUrlFallbackAutoLink(
     start: { offset: number },
     end: { offset: number },
 ): boolean {
-    const candidate
-        = content.substring(0, start.offset)
-            + text
-            + content.substring(end.offset);
+    const candidate = content.substring(0, start.offset) + text + content.substring(end.offset);
 
-    return tokenizer(candidate, { hasBeginRules: false }).some(token =>
-        token.type === 'auto_link_extension'
-        && token.linkType === 'url'
-        && token.range.start === start.offset
-        && token.range.end === start.offset + text.length,
+    return tokenizer(candidate, { hasBeginRules: false }).some(
+        (token) =>
+            token.type === 'auto_link_extension' &&
+            token.linkType === 'url' &&
+            token.range.start === start.offset &&
+            token.range.end === start.offset + text.length,
     );
 }
 
@@ -158,7 +157,12 @@ function inlineMergeText(state: TState, anchorHasText: boolean): Nullable<string
 // as blocks below. The anchor's tail is sewn onto the last pasted block so it
 // trails the whole paste (muyajs `pasteCtrl`); only when nothing follows does
 // it stay in the heading.
-function pasteAfterHeading(muya: Muya, ctx: IPasteContext, remaining: TState[], tail: string): void {
+function pasteAfterHeading(
+    muya: Muya,
+    ctx: IPasteContext,
+    remaining: TState[],
+    tail: string,
+): void {
     const { anchorBlock } = ctx;
 
     if (remaining.length === 0) {
@@ -224,8 +228,7 @@ function pasteNewline(
 
     const offset = sewTail(states, tail);
     const last = insertStatesAfter(muya, ctx.wrapperBlock, states);
-    if (head.length === 0)
-        removeEmptyOriginWrapper(ctx.originWrapperBlock);
+    if (head.length === 0) removeEmptyOriginWrapper(ctx.originWrapperBlock);
 
     seatCursorAtSeam(last, offset);
 }
@@ -254,7 +257,16 @@ interface IListMergeSeam {
 // paragraph, on trailing non-list content, or on the last pasted item (which is
 // spliced in after the anchor, so it is no longer the list's last descendant).
 function seatListMergeCursor(muya: Muya, newList: Parent, seam: IListMergeSeam): void {
-    const { foldedOnly, itemIndex, paraIndex, head, sewOffset, canFold, pastedCount, trailingStates } = seam;
+    const {
+        foldedOnly,
+        itemIndex,
+        paraIndex,
+        head,
+        sewOffset,
+        canFold,
+        pastedCount,
+        trailingStates,
+    } = seam;
     if (foldedOnly) {
         const cursor = itemParaContent(newList, itemIndex, paraIndex);
         const offset = head.length + sewOffset;
@@ -278,8 +290,7 @@ function listMarkersMatch(a: TState, b: TState): boolean {
         return a.meta.delimiter === b.meta.delimiter;
     if (a.name === 'bullet-list' && b.name === 'bullet-list')
         return a.meta.marker === b.meta.marker;
-    if (a.name === 'task-list' && b.name === 'task-list')
-        return a.meta.marker === b.meta.marker;
+    if (a.name === 'task-list' && b.name === 'task-list') return a.meta.marker === b.meta.marker;
 
     return false;
 }
@@ -297,8 +308,7 @@ function tryMergeListPaste(
     tail: string,
 ): boolean {
     const firstState = states[0];
-    if (!isAnyListState(firstState))
-        return false;
+    if (!isAnyListState(firstState)) return false;
 
     const listItemName = firstState.name === 'task-list' ? 'task-list-item' : 'list-item';
     const listItem = ctx.anchorBlock.closestBlock(listItemName);
@@ -307,8 +317,7 @@ function tryMergeListPaste(
         return false;
 
     const listState = listBlock.getState();
-    if (!isAnyListState(listState) || !listMarkersMatch(listState, firstState))
-        return false;
+    if (!isAnyListState(listState) || !listMarkersMatch(listState, firstState)) return false;
 
     const itemIndex = listBlock.offset(listItem);
     // The cursor lives in a specific paragraph of the item — not necessarily the
@@ -316,8 +325,7 @@ function tryMergeListPaste(
     const paraIndex = ctx.wrapperBlock ? (listItem as Parent).offset(ctx.wrapperBlock) : 0;
     const currentItem = listState.children[itemIndex];
     const anchorPara = currentItem?.children[paraIndex];
-    if (anchorPara == null || !isParagraphState(anchorPara))
-        return false;
+    if (anchorPara == null || !isParagraphState(anchorPara)) return false;
 
     // Sew the anchor's tail onto the last pasted leaf; the head stays here.
     const sewOffset = sewTail(states, tail);
@@ -337,12 +345,9 @@ function tryMergeListPaste(
         mergedChildren.splice(itemIndex + 1, 0, ...pastedItems.slice(1));
         // The whole paste folded into `anchorPara` (no extra blocks/items): the
         // caret stays in that paragraph at the seam.
-        foldedOnly
-            = pastedItems.length === 1
-                && pastedItems[0].children.length === 1
-                && states.length === 1;
-    }
-    else {
+        foldedOnly =
+            pastedItems.length === 1 && pastedItems[0].children.length === 1 && states.length === 1;
+    } else {
         anchorPara.text = head;
         mergedChildren.splice(itemIndex + 1, 0, ...pastedItems);
     }
@@ -378,18 +383,13 @@ function tryMergeListPaste(
 // same-kind list merges into the enclosing list; otherwise a non-heading anchor
 // merges the first paragraph/heading inline (head + pasted + tail) or, for
 // non-mergeable content, starts new blocks below.
-function applyParsedPaste(
-    clipboard: Clipboard,
-    ctx: IPasteContext,
-    markdown: string,
-): void {
+function applyParsedPaste(clipboard: Clipboard, ctx: IPasteContext, markdown: string): void {
     const { muya } = clipboard;
     const { anchorBlock, start, end, content } = ctx;
 
     // An empty / whitespace-only paste is a no-op while parsing; non-empty
     // inline whitespace from text/plain is routed through literal insertion.
-    if (markdown.trim().length === 0)
-        return;
+    if (markdown.trim().length === 0) return;
 
     const {
         footnote,
@@ -407,26 +407,22 @@ function applyParsedPaste(
         frontMatter,
     }).generate(markdown);
 
-    if (states.length === 0)
-        return;
+    if (states.length === 0) return;
 
     const head = content.substring(0, start.offset);
     const tail = content.substring(end.offset);
 
-    const remaining = mergePasteIntoHeading(
-        anchorBlock,
-        ctx.wrapperBlock,
-        states,
-        { startOffset: start.offset, endOffset: end.offset },
-    );
+    const remaining = mergePasteIntoHeading(anchorBlock, ctx.wrapperBlock, states, {
+        startOffset: start.offset,
+        endOffset: end.offset,
+    });
     if (remaining !== states) {
         pasteAfterHeading(muya, ctx, remaining, tail);
 
         return;
     }
 
-    if (tryMergeListPaste(clipboard, ctx, states, head, tail))
-        return;
+    if (tryMergeListPaste(clipboard, ctx, states, head, tail)) return;
 
     let mergeText = inlineMergeText(states[0], head.length > 0);
 
@@ -435,14 +431,11 @@ function applyParsedPaste(
     // contribute only its URL, otherwise it nests as `[text]([Title](url))`.
     if (mergeText != null && head.endsWith('](') && tail.startsWith(')')) {
         const linkMatch = mergeText.match(/^\[.*?\]\((.*)\)$/);
-        if (linkMatch)
-            mergeText = linkMatch[1];
+        if (linkMatch) mergeText = linkMatch[1];
     }
 
-    if (mergeText != null)
-        pasteInlineMerge(muya, ctx, states, mergeText, head, tail);
-    else
-        pasteNewline(muya, ctx, states, head, tail);
+    if (mergeText != null) pasteInlineMerge(muya, ctx, states, mergeText, head, tail);
+    else pasteNewline(muya, ctx, states, head, tail);
 }
 
 // `language-input`, `table.cell.content` and `codeblock.content` never parse a
@@ -458,12 +451,8 @@ function applyLiteralPaste(
     // A frozen table-cell selection scopes the paste: a single cell gets its
     // text replaced (with `\n` → `<br/>`); a multi-cell rectangle cancels the
     // paste.
-    if (
-        anchorBlock.blockName === 'table.cell.content'
-        && clipboard.selection.table.hasSelection
-    ) {
-        if (!isSingleCellSelected(clipboard))
-            return;
+    if (anchorBlock.blockName === 'table.cell.content' && clipboard.selection.table.hasSelection) {
+        if (!isSingleCellSelected(clipboard)) return;
 
         anchorBlock.text = markdown.trim().replace(/\n/g, '<br/>');
         const offset = anchorBlock.text.length;
@@ -477,15 +466,11 @@ function applyLiteralPaste(
     // code block (re-highlight + language selector) rather than splicing raw.
     if (anchorBlock.blockName === 'language-input') {
         const firstLine = initialMarkdown.split('\n')[0];
-        const newLang
-            = content.substring(0, start.offset)
-                + firstLine
-                + content.substring(end.offset);
+        const newLang =
+            content.substring(0, start.offset) + firstLine + content.substring(end.offset);
         const offset = start.offset + firstLine.length;
-        if (anchorBlock instanceof LangInputContent)
-            anchorBlock.updateLanguage(newLang);
-        else
-            anchorBlock.text = newLang;
+        if (anchorBlock instanceof LangInputContent) anchorBlock.updateLanguage(newLang);
+        else anchorBlock.text = newLang;
         anchorBlock.setCursor(offset, offset, true);
 
         return;
@@ -496,19 +481,15 @@ function applyLiteralPaste(
     if (anchorBlock.blockName === 'table.cell.content')
         markdown = markdown.trim().replace(/\n/g, '<br/>');
 
-    anchorBlock.text
-        = content.substring(0, start.offset)
-            + markdown
-            + content.substring(end.offset);
+    anchorBlock.text =
+        content.substring(0, start.offset) + markdown + content.substring(end.offset);
     const offset = start.offset + markdown.length;
     anchorBlock.setCursor(offset, offset, true);
     // Update html preview if the out container is `html-block`
     if (
-        anchorBlock instanceof CodeBlockContent
-        && anchorBlock.outContainer
-        && /html-block|math-block|diagram/.test(
-            anchorBlock.outContainer.blockName,
-        )
+        anchorBlock instanceof CodeBlockContent &&
+        anchorBlock.outContainer &&
+        /html-block|math-block|diagram/.test(anchorBlock.outContainer.blockName)
     ) {
         // The attachments list of html-block / math-block / diagram blocks
         // always opens with the render preview node, which exposes an
@@ -516,8 +497,7 @@ function applyLiteralPaste(
         // narrow via a structural shape check before calling.
         const head = anchorBlock.outContainer.attachments.head;
         const updater = head as TreeNode & { update?: (text: string) => void };
-        if (typeof updater.update === 'function')
-            updater.update(anchorBlock.text);
+        if (typeof updater.update === 'function') updater.update(anchorBlock.text);
     }
 }
 
@@ -537,8 +517,7 @@ function applyPlainTextBlockHtml(clipboard: Clipboard, ctx: IPasteContext, text:
     const offset = head.length + lines[0].length;
     anchorBlock.setCursor(offset, offset, true);
 
-    if (lines.length === 1)
-        return;
+    if (lines.length === 1) return;
 
     const htmlState = { name: 'html-block', text: lines.slice(1).join('\n') };
     const newBlock = ScrollPage.loadBlock(htmlState.name).create(clipboard.muya, htmlState);
@@ -548,11 +527,7 @@ function applyPlainTextBlockHtml(clipboard: Clipboard, ctx: IPasteContext, text:
 // Block-level HTML (`<ul>`/`<ol>`/`<pre>`/`<blockquote>` … — tags in
 // `PARAGRAPH_TYPES`) lands as a live html-block, not a fenced ```html code
 // block, so the markup renders in place.
-function applyHtmlBlockPaste(
-    clipboard: Clipboard,
-    ctx: IPasteContext,
-    text: string,
-): void {
+function applyHtmlBlockPaste(clipboard: Clipboard, ctx: IPasteContext, text: string): void {
     const { muya } = clipboard;
     const { wrapperBlock, originWrapperBlock } = ctx;
     const state = {
@@ -592,18 +567,16 @@ async function applyPaste(clipboard: Clipboard, data: IPasteData): Promise<void>
     // A selected inline image collapses the text selection, so handle the
     // "paste an image over a selected image" replace before reading the
     // (now absent) text selection.
-    if (clipboard.selection.image && await tryReplaceSelectedImage(clipboard, data.imageFile))
+    if (clipboard.selection.image && (await tryReplaceSelectedImage(clipboard, data.imageFile)))
         return;
 
     const selection = clipboard.selection.getSelection();
-    if (!selection)
-        return;
+    if (!selection) return;
 
     const { isSelectionInSameBlock, anchor } = selection;
     const anchorBlock = anchor.block;
 
-    if (!anchorBlock)
-        return;
+    if (!anchorBlock) return;
 
     const { imageFile, pasteType } = data;
     let { html } = data;
@@ -622,27 +595,25 @@ async function applyPaste(clipboard: Clipboard, data: IPasteData): Promise<void>
     // When the clipboard holds an image — either a file resolved to a path
     // or an in-memory bitmap — insert it as an inline image
     // routed through `imageAction`, short-circuiting the text/HTML paste.
-    if (await tryPasteImage(clipboard, anchorBlock, imageFile))
-        return;
+    if (await tryPasteImage(clipboard, anchorBlock, imageFile)) return;
 
     // Support pasted URLs from Firefox.
-    if (URL_REG.test(text) && !/\s/.test(text) && !html)
-        html = `<a href="${text}">${text}</a>`;
+    if (URL_REG.test(text) && !/\s/.test(text) && !html) html = `<a href="${text}">${text}</a>`;
 
     // Apple Numbers and a handful of other sources only put a raw
     // `<table>...</table>` blob in text/plain. Promote it to the HTML
     // slot so it goes through the HTML→Markdown converter rather than
     // being inserted verbatim.
-    if (!html && isStandaloneTableHtml(text))
-        html = text;
+    if (!html && isStandaloneTableHtml(text)) html = text;
 
     const cursorBeforeNormalize = anchorBlock.getCursor();
 
     // Remove crap from HTML such as meta data and styles.
     html = await normalizePastedHTML(html, {
-        preserveBareUrlLinks: hasClipboardHtml
-            && cursorBeforeNormalize != null
-            && shouldPreserveBareUrlLinkForPaste(
+        preserveBareUrlLinks:
+            hasClipboardHtml &&
+            cursorBeforeNormalize != null &&
+            shouldPreserveBareUrlLinkForPaste(
                 text,
                 anchorBlock.text,
                 cursorBeforeNormalize.start,
@@ -664,32 +635,29 @@ async function applyPaste(clipboard: Clipboard, data: IPasteData): Promise<void>
     };
 
     if (/html|text/.test(copyType)) {
-        const markdown
-            = copyType === 'html' && anchorBlock.blockName !== 'codeblock.content'
+        const markdown =
+            copyType === 'html' && anchorBlock.blockName !== 'codeblock.content'
                 ? new HtmlToMarkdown({ bulletListMarker }).generate(html)
                 : text;
 
         // Every non-literal anchor always parses through `MarkdownToState`,
         // regardless of line count, so a single line of `# heading` / `- list`
         // / a one-row table becomes real structure.
-        const isLiteralAnchor
-            = anchorBlock.blockName === 'language-input'
-                || anchorBlock.blockName === 'table.cell.content'
-                || anchorBlock.blockName === 'codeblock.content';
+        const isLiteralAnchor =
+            anchorBlock.blockName === 'language-input' ||
+            anchorBlock.blockName === 'table.cell.content' ||
+            anchorBlock.blockName === 'codeblock.content';
 
         const isPlainInlineSpaces = /^ +$/.test(text);
 
         if (isLiteralAnchor || isPlainInlineSpaces)
             applyLiteralPaste(clipboard, ctx, isPlainInlineSpaces ? text : markdown);
-        else
-            applyParsedPaste(clipboard, ctx, markdown);
-    }
-    else if (pasteType === PasteType.PASTE_AS_PLAIN_TEXT) {
+        else applyParsedPaste(clipboard, ctx, markdown);
+    } else if (pasteType === PasteType.PASTE_AS_PLAIN_TEXT) {
         // Paste as Plain Text inserts block-level HTML as literal text, not a
         // live html-block (muyajs `pasteAsPlainText` copyAsHtml branch).
         applyPlainTextBlockHtml(clipboard, ctx, text);
-    }
-    else {
+    } else {
         applyHtmlBlockPaste(clipboard, ctx, text);
     }
 }
@@ -710,8 +678,7 @@ export function pasteSelection(
     event.preventDefault();
     event.stopPropagation();
 
-    if (!event.clipboardData)
-        return Promise.resolve();
+    if (!event.clipboardData) return Promise.resolve();
 
     const text = rawText ?? event.clipboardData.getData('text/plain');
     const html = rawHtml ?? event.clipboardData.getData('text/html');

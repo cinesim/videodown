@@ -6,7 +6,7 @@ function codeMeta(md: string): { type: string; lang: string } {
         name: string;
         meta?: { type: string; lang: string };
     }>;
-    const block = states.find(s => s.name === 'code-block')!;
+    const block = states.find((s) => s.name === 'code-block')!;
     return block.meta!;
 }
 
@@ -16,7 +16,9 @@ describe('info string is stored whole on meta.lang', () => {
     });
 
     it('keeps a Pandoc attribute block verbatim', () => {
-        expect(codeMeta('```{example, listing1-name}\nx\n```\n').lang).toBe('{example, listing1-name}');
+        expect(codeMeta('```{example, listing1-name}\nx\n```\n').lang).toBe(
+            '{example, listing1-name}',
+        );
     });
 
     it('stores a plain language as-is', () => {

@@ -72,9 +72,7 @@ function roundTrip(markdown: string): string {
 // would mask a real round-trip instability. If the serializer ever emits
 // different trailing whitespace on a re-pass, the test should report it.
 function normalise(md: string): string {
-    return md
-        .replace(/\r\n?/g, '\n')
-        .replace(/\n+$/, '');
+    return md.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
 }
 
 function isStableUnderRoundTrip(markdown: string): boolean {
@@ -84,19 +82,16 @@ function isStableUnderRoundTrip(markdown: string): boolean {
 }
 
 describe('marktext markdown-basic round-trip', () => {
-    it.each(fixtures)(
-        `$label is stable under md → state → md`,
-        ({ file }) => {
-            const original = readFixture(file);
-            // The strict assertion is that the round trip converges: a
-            // second pass returns the same string the first pass produced.
-            // Strict byte-for-byte equality against the original is too
-            // strict (and was already non-deterministic in marktext for
-            // most of these fixtures — list indentation differs from
-            // ExportMarkdown's canonical choice).
-            expect(isStableUnderRoundTrip(original)).toBe(true);
-        },
-    );
+    it.each(fixtures)(`$label is stable under md → state → md`, ({ file }) => {
+        const original = readFixture(file);
+        // The strict assertion is that the round trip converges: a
+        // second pass returns the same string the first pass produced.
+        // Strict byte-for-byte equality against the original is too
+        // strict (and was already non-deterministic in marktext for
+        // most of these fixtures — list indentation differs from
+        // ExportMarkdown's canonical choice).
+        expect(isStableUnderRoundTrip(original)).toBe(true);
+    });
 
     // The 4 fixtures whose first-pass output equals the original verbatim
     // also satisfy the stricter "identity" round-trip. We assert this

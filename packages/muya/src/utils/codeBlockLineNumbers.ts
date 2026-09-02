@@ -10,8 +10,7 @@ const LF = 10;
 export function computeLineCount(text: string): number {
     let count = 1;
     for (let i = 0; i < text.length; i++) {
-        if (text.charCodeAt(i) === LF)
-            count++;
+        if (text.charCodeAt(i) === LF) count++;
     }
     return count;
 }
@@ -44,21 +43,16 @@ export function syncLineNumbersSpans(wrapper: HTMLElement, count: number): void 
 // a single logical line can span multiple visual rows).
 //
 // Must run after layout (call via requestAnimationFrame).
-export function repositionLineNumberSpans(
-    wrapper: HTMLElement,
-    codeEl: HTMLElement,
-): void {
+export function repositionLineNumberSpans(wrapper: HTMLElement, codeEl: HTMLElement): void {
     const spans = Array.from(wrapper.children) as HTMLElement[];
-    if (spans.length === 0)
-        return;
+    if (spans.length === 0) return;
 
     const text = codeEl.textContent ?? '';
 
     // Global character offsets where each logical line begins.
     const lineStarts: number[] = [0];
     for (let i = 0; i < text.length; i++) {
-        if (text.charCodeAt(i) === LF)
-            lineStarts.push(i + 1);
+        if (text.charCodeAt(i) === LF) lineStarts.push(i + 1);
     }
 
     // Walk all text nodes once, positioning each span when we cross a line start.
@@ -87,10 +81,8 @@ export function repositionLineNumberSpans(
             range.setStart(node, offsetInNode);
             range.collapse(true);
             const measured = range.getBoundingClientRect().top;
-            if (baseTop === null)
-                baseTop = measured;
-            if (lineIdx < spans.length)
-                spans[lineIdx].style.top = `${measured - baseTop}px`;
+            if (baseTop === null) baseTop = measured;
+            if (lineIdx < spans.length) spans[lineIdx].style.top = `${measured - baseTop}px`;
             lineIdx++;
         }
 

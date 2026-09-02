@@ -57,15 +57,19 @@ export class ImageToolBar extends BaseFloat {
                     this.show(reference);
                     this._render();
                 }, 0);
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
     }
 
     private _render() {
-        const { _icons: icons, _oldVNode: oldVNode, _toolbarContainer: toolbarContainer, _imageInfo: imageInfo } = this;
+        const {
+            _icons: icons,
+            _oldVNode: oldVNode,
+            _toolbarContainer: toolbarContainer,
+            _imageInfo: imageInfo,
+        } = this;
         const { i18n } = this.muya;
         const { attrs } = imageInfo!.token;
         const dataAlign = attrs['data-align'];
@@ -77,7 +81,7 @@ export class ImageToolBar extends BaseFloat {
                     'i.icon-inner',
                     {
                         style: {
-                            'background': `url(${i.icon}) no-repeat`,
+                            background: `url(${i.icon}) no-repeat`,
                             'background-size': '100%',
                         },
                     },
@@ -111,10 +115,8 @@ export class ImageToolBar extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(toolbarContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(toolbarContainer, vnode);
 
         this._oldVNode = vnode;
     }
@@ -136,7 +138,7 @@ export class ImageToolBar extends BaseFloat {
 
                 return this.hide();
 
-                // Edit image, for example: editor alt and title, replace image.
+            // Edit image, for example: editor alt and title, replace image.
             case 'edit': {
                 const rect = this._reference!.getBoundingClientRect();
                 const reference = {
@@ -161,11 +163,11 @@ export class ImageToolBar extends BaseFloat {
             }
 
             case 'inline':
-                // fall through
+            // fall through
             case 'left':
-                // fall through
+            // fall through
             case 'center':
-                // fall through
+            // fall through
             case 'right': {
                 this._block!.updateImage(this._imageInfo!, 'data-align', item.type);
 

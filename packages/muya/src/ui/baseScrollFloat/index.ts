@@ -36,15 +36,14 @@ abstract class BaseScrollFloat extends BaseFloat {
         super.listen();
         const { eventCenter, domNode } = this.muya;
         const handler = (event: Event) => {
-            if (!this.status || !isKeyboardEvent(event))
-                return;
+            if (!this.status || !isKeyboardEvent(event)) return;
             switch (event.key) {
                 case EVENT_KEYS.ArrowUp:
                     this.step('previous');
                     break;
 
                 case EVENT_KEYS.ArrowDown:
-                    // // falls through
+                // // falls through
 
                 case EVENT_KEYS.Tab:
                     this.step('next');
@@ -73,8 +72,7 @@ abstract class BaseScrollFloat extends BaseFloat {
         this.cb = cb as (...args: unknown[]) => void;
 
         if (reference instanceof HTMLElement) {
-            if (this._reference && this._reference === reference && this.status)
-                return;
+            if (this._reference && this._reference === reference && this.status) return;
         }
 
         this._reference = reference;
@@ -87,16 +85,13 @@ abstract class BaseScrollFloat extends BaseFloat {
         });
         index = direction === 'next' ? index + 1 : index - 1;
 
-        if (index < 0)
-            index = this.renderArray.length - 1;
-        else if (index >= this.renderArray.length)
-            index = 0;
+        if (index < 0) index = this.renderArray.length - 1;
+        else if (index >= this.renderArray.length) index = 0;
 
         this.activeItem = this.renderArray[index];
         this.render();
         const activeEle = this.getItemElement(this.activeItem);
-        if (activeEle)
-            this.activeEleScrollIntoView(activeEle);
+        if (activeEle) this.activeEleScrollIntoView(activeEle);
     }
 
     selectItem(item: unknown) {

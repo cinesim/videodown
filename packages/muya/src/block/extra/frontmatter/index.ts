@@ -37,8 +37,7 @@ class Frontmatter extends Parent {
 
         frontmatter.append(code);
 
-        if (lang)
-            frontmatter.lang = lang;
+        if (lang) frontmatter.lang = lang;
 
         return frontmatter;
     }
@@ -50,23 +49,21 @@ class Frontmatter extends Parent {
     set lang(value) {
         this.meta.lang = value;
 
-        !!value
-        && loadLanguage(value)
-            .then((infoList) => {
-                if (!Array.isArray(infoList))
-                    return;
-                // There are three status `loaded`, `noexist` and `cached`.
-                // if the status is `loaded`, indicated that it's a new loaded language
-                const needRender = infoList.some(
-                    ({ status }) => status === 'loaded' || status === 'cached',
-                );
-                if (needRender)
-                    this.lastContentInDescendant()?.update();
-            })
-            .catch((err) => {
-                // if no parameter provided, will cause error.
-                debug.warn(err);
-            });
+        !!value &&
+            loadLanguage(value)
+                .then((infoList) => {
+                    if (!Array.isArray(infoList)) return;
+                    // There are three status `loaded`, `noexist` and `cached`.
+                    // if the status is `loaded`, indicated that it's a new loaded language
+                    const needRender = infoList.some(
+                        ({ status }) => status === 'loaded' || status === 'cached',
+                    );
+                    if (needRender) this.lastContentInDescendant()?.update();
+                })
+                .catch((err) => {
+                    // if no parameter provided, will cause error.
+                    debug.warn(err);
+                });
     }
 
     override get path() {
@@ -90,16 +87,13 @@ class Frontmatter extends Parent {
     queryBlock(path: TBlockPath) {
         if (path.length === 0) {
             return this;
-        }
-        else {
+        } else {
             if (path[0] === 'meta' || path[0] === 'type') {
                 return this;
-            }
-            else if (path[0] === 'lang') {
+            } else if (path[0] === 'lang') {
                 // TODO is there right?
                 return this.firstContentInDescendant();
-            }
-            else {
+            } else {
                 return this.lastContentInDescendant();
             }
         }

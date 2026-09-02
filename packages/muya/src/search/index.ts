@@ -44,28 +44,24 @@ export class Search {
             if (matchesMap.has(block) && Array.isArray(highlights)) {
                 highlights.push(highlight);
                 matchesMap.set(block, highlights);
-            }
-            else {
+            } else {
                 matchesMap.set(block, [highlight]);
             }
         }
 
         for (const [block, highlights] of matchesMap.entries()) {
-            const isActive = highlights.some(h => h.active);
+            const isActive = highlights.some((h) => h.active);
 
             block.update(undefined, isClear ? [] : highlights);
 
-            if (block.parent?.active && !isActive)
-                block.blurHandler();
+            if (block.parent?.active && !isActive) block.blurHandler();
 
-            if (isActive && !isClear)
-                block.focusHandler();
+            if (isActive && !isClear) block.focusHandler();
         }
     }
 
     private _innerReplace(matches: IMatch[], value: string) {
-        if (!matches.length)
-            return;
+        if (!matches.length) return;
 
         let tempText = '';
         let lastBlock = matches[0].block;
@@ -74,8 +70,7 @@ export class Search {
         for (const match of matches) {
             const { start, end, block } = match;
             if (lastBlock !== block) {
-                if (lastBlock)
-                    lastBlock.text = tempText + lastBlock.text.substring(lastEnd);
+                if (lastBlock) lastBlock.text = tempText + lastBlock.text.substring(lastEnd);
 
                 tempText = '';
                 lastEnd = 0;
@@ -97,14 +92,12 @@ export class Search {
         const value = this._value;
 
         if (matches.length) {
-            if (isRegexp)
-                replaceValue = buildRegexValue(matches[index], replaceValue);
+            if (isRegexp) replaceValue = buildRegexValue(matches[index], replaceValue);
 
             if (isSingle) {
                 // replace one
                 this._innerReplace([matches[index]], replaceValue);
-            }
-            else {
+            } else {
                 // replace all
                 this._innerReplace(matches, replaceValue);
             }
@@ -128,16 +121,13 @@ export class Search {
         let { index } = this;
         const len = matches.length;
 
-        if (!len)
-            return this;
+        if (!len) return this;
 
         index = action === 'next' ? index + 1 : index - 1;
 
-        if (index < 0)
-            index = len - 1;
+        if (index < 0) index = len - 1;
 
-        if (index >= len)
-            index = 0;
+        if (index >= len) index = 0;
 
         this.index = index;
 
@@ -192,8 +182,7 @@ export class Search {
         if (highlightIndex !== -1) {
             // If set the highlight index, then highlight the highlighIndex
             index = highlightIndex;
-        }
-        else if (matches.length) {
+        } else if (matches.length) {
             // highlight the first word that matches.
             index = 0;
         }

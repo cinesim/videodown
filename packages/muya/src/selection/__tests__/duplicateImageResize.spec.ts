@@ -18,8 +18,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
     delete (window as Partial<Window>).MUYA_VERSION;
 });
 
@@ -39,9 +38,7 @@ function injectImages(muya: Muya, src: string): HTMLElement[] {
         muya.domNode.querySelectorAll<HTMLElement>(`span.${CLASS_NAMES.MU_INLINE_IMAGE}`),
     );
     return wrappers.map((wrapper) => {
-        const container = wrapper.querySelector<HTMLElement>(
-            `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-        )!;
+        const container = wrapper.querySelector<HTMLElement>(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)!;
         const img = document.createElement('img');
         img.setAttribute('src', src);
         container.appendChild(img);
@@ -50,7 +47,7 @@ function injectImages(muya: Muya, src: string): HTMLElement[] {
 }
 
 describe('duplicate same-src images: resize bar targets the clicked image', () => {
-    it('emits muya-transformer with the clicked image\'s own container', () => {
+    it("emits muya-transformer with the clicked image's own container", () => {
         const src = 'https://example.com/pic.png';
         const muya = boot(`![alt](${src})\n\n![alt](${src})`);
 
@@ -68,8 +65,7 @@ describe('duplicate same-src images: resize bar targets the clicked image', () =
 
         const handler = vi.fn();
         muya.eventCenter.on('muya-transformer', (payload: { reference?: unknown }) => {
-            if (payload && payload.reference)
-                handler(payload.reference);
+            if (payload && payload.reference) handler(payload.reference);
         });
 
         // Click the SECOND image.

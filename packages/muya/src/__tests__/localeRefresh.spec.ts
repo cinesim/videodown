@@ -26,10 +26,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -45,7 +43,7 @@ function bootMuya(markdown: string): Muya {
 }
 
 describe('muya.locale() refreshes rendered hints (Phase G — G8)', () => {
-    it('updates an empty paragraph\'s quick-insert hint attribute', () => {
+    it("updates an empty paragraph's quick-insert hint attribute", () => {
         const muya = bootMuya('\n');
         const para = muya.editor.scrollPage!.firstContentInDescendant()!;
         const before = para.domNode!.getAttribute('empty-hint');
@@ -54,18 +52,16 @@ describe('muya.locale() refreshes rendered hints (Phase G — G8)', () => {
         muya.locale(zhCN);
 
         // The block was re-rendered, so query the fresh DOM node.
-        const after = muya.editor.scrollPage!
-            .firstContentInDescendant()!
-            .domNode!
-            .getAttribute('empty-hint');
+        const after = muya.editor
+            .scrollPage!.firstContentInDescendant()!
+            .domNode!.getAttribute('empty-hint');
         expect(after).toBe(zhCN.resource['Type / to insert...']);
         expect(after).not.toBe(before);
     });
 
     it('updates the code-block language-input hint attribute', () => {
         const muya = bootMuya('```\n\n```\n');
-        const findLangInput = (): Element | null =>
-            muya.domNode.querySelector('[hint]');
+        const findLangInput = (): Element | null => muya.domNode.querySelector('[hint]');
         expect(findLangInput()?.getAttribute('hint')).toBe(
             en.resource['Input Language Identifier...'],
         );

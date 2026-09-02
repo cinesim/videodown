@@ -36,10 +36,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -82,7 +80,7 @@ describe('paragraphQuickInsertMenu search() — zh-CN localized matching', () =>
 
         menu._search('');
 
-        const sectionNames = menu.renderData.map(d => d.name);
+        const sectionNames = menu.renderData.map((d) => d.name);
         expect(sectionNames).toEqual([
             'basic blocks',
             'headings',
@@ -93,16 +91,16 @@ describe('paragraphQuickInsertMenu search() — zh-CN localized matching', () =>
 
         // An empty paragraph at the document start with frontMatter:true can host
         // front matter, so the basic-blocks section keeps its frontmatter entry.
-        const basic = menu.renderData.find(d => d.name === 'basic blocks')!;
-        expect(basic.children.map(c => c.label)).toEqual([
+        const basic = menu.renderData.find((d) => d.name === 'basic blocks')!;
+        expect(basic.children.map((c) => c.label)).toEqual([
             'paragraph',
             'thematic-break',
             'frontmatter',
         ]);
 
         // h1-h6 are "headings" in CommonMark, not "headers" (#3811).
-        const headings = menu.renderData.find(d => d.name === 'headings')!;
-        expect(headings.children.map(c => c.title)).toEqual([
+        const headings = menu.renderData.find((d) => d.name === 'headings')!;
+        expect(headings.children.map((c) => c.title)).toEqual([
             'Heading 1',
             'Heading 2',
             'Heading 3',
@@ -118,9 +116,9 @@ describe('paragraphQuickInsertMenu search() — zh-CN localized matching', () =>
         // '代码块' is the zh-CN translation of 'Code Block'.
         menu._search('代码');
 
-        expect(menu.renderData.map(d => d.name)).toEqual(['advanced blocks']);
+        expect(menu.renderData.map((d) => d.name)).toEqual(['advanced blocks']);
         const matched = menu.renderData[0].children;
-        expect(matched.map(c => c.label)).toEqual(['code-block']);
+        expect(matched.map((c) => c.label)).toEqual(['code-block']);
         // search() stamps the localized title onto the matched child.
         expect(matched[0].i18nTitle).toBe('代码块');
         // fuse.js attaches a score to every match.
@@ -154,7 +152,7 @@ describe('paragraphQuickInsertMenu search() — zh-CN localized matching', () =>
         expect(menu.renderData[0].children[0].label).toBe('table');
 
         // Sections are ordered by ascending best-child score.
-        const bestScores = menu.renderData.map(d => d.children[0].score!);
+        const bestScores = menu.renderData.map((d) => d.children[0].score!);
         const sorted = [...bestScores].sort((a, b) => a - b);
         expect(bestScores).toEqual(sorted);
     });
@@ -203,7 +201,7 @@ describe('paragraphQuickInsertMenu render() — DOM output', () => {
 
         menu._search('列表');
 
-        const flattened = menu.renderData.flatMap(d => d.children);
+        const flattened = menu.renderData.flatMap((d) => d.children);
         expect(menu.renderArray).toEqual(flattened);
         // activeItem defaults to the first flattened child.
         expect(menu.activeItem).toBe(menu.renderArray[0]);

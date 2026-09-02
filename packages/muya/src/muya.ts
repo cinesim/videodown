@@ -6,18 +6,24 @@ import type { ILocale } from './i18n/types';
 import type { IIndexCursor } from './selection/offsetCursor';
 import type { IHistorySelection, IPublicCursorInput } from './selection/types';
 import type { ITocItem } from './state/getTOC';
-import type { IBulletListState, IOrderListState, ITableState, ITaskListState, TState } from './state/types';
+import type {
+    IBulletListState,
+    IOrderListState,
+    ITableState,
+    ITaskListState,
+    TState,
+} from './state/types';
 import type { IMuyaOptions, Nullable } from './types';
 import Format from './block/base/format';
-import { canTurnInto, insertBlockBelowByLabel, insertFrontMatterAtStart, replaceBlockByLabel } from './block/blockTransforms';
+import {
+    canTurnInto,
+    insertBlockBelowByLabel,
+    insertFrontMatterAtStart,
+    replaceBlockByLabel,
+} from './block/blockTransforms';
 import { ScrollPage } from './block/scrollPage';
 import emptyStates from './config/emptyStates';
-import {
-    CLASS_NAMES,
-    DATA_URL_REG,
-    MUYA_DEFAULT_OPTIONS,
-    URL_REG,
-} from './config/index';
+import { CLASS_NAMES, DATA_URL_REG, MUYA_DEFAULT_OPTIONS, URL_REG } from './config/index';
 
 import { Editor } from './editor/index';
 import EventCenter from './event/index';
@@ -43,7 +49,7 @@ import './assets/styles/prismjs/light.theme.css';
 // arbitrary options object; `init()` instantiates each plugin.
 export interface IMuyaPluginConstructor {
     pluginName: string;
-    new(muya: Muya, options: Record<string, unknown>): unknown;
+    new (muya: Muya, options: Record<string, unknown>): unknown;
 }
 
 interface IPlugin {
@@ -65,14 +71,14 @@ interface ISelectionSnapshot {
 // Maps the paragraph-menu labels the desktop sends through `updateParagraph`
 // to muya's `replaceBlockByLabel` vocabulary.
 const PARAGRAPH_LABEL_MAP: Record<string, string> = {
-    'paragraph': 'paragraph',
-    'hr': 'thematic-break',
+    paragraph: 'paragraph',
+    hr: 'thematic-break',
     'front-matter': 'frontmatter',
-    'table': 'table',
-    'mathblock': 'math-block',
-    'html': 'html-block',
-    'pre': 'code-block',
-    'blockquote': 'block-quote',
+    table: 'table',
+    mathblock: 'math-block',
+    html: 'html-block',
+    pre: 'code-block',
+    blockquote: 'block-quote',
     'heading 1': 'atx-heading 1',
     'heading 2': 'atx-heading 2',
     'heading 3': 'atx-heading 3',
@@ -85,11 +91,11 @@ const PARAGRAPH_LABEL_MAP: Record<string, string> = {
     // command while the menu emits `ol-order`; accept both.
     'ol-bullet': 'order-list',
     'ul-task': 'task-list',
-    'mermaid': 'diagram mermaid',
-    'plantuml': 'diagram plantuml',
+    mermaid: 'diagram mermaid',
+    plantuml: 'diagram plantuml',
     'vega-lite': 'diagram vega-lite',
-    'flowchart': 'diagram flowchart',
-    'sequence': 'diagram sequence',
+    flowchart: 'diagram flowchart',
+    sequence: 'diagram sequence',
 };
 
 // The outmost-block labels that wrap a cross-block selection into a list.
@@ -136,7 +142,8 @@ export class Muya {
         });
     }
 
-    public readonly version = typeof window.MUYA_VERSION === 'undefined' ? 'dev' : window.MUYA_VERSION;
+    public readonly version =
+        typeof window.MUYA_VERSION === 'undefined' ? 'dev' : window.MUYA_VERSION;
     public options: IMuyaOptions = MUYA_DEFAULT_OPTIONS;
     public eventCenter: EventCenter;
     public domNode: HTMLElement;
@@ -178,8 +185,7 @@ export class Muya {
 
     locale(object: ILocale) {
         this.i18n.locale(object);
-        if (this.editor.scrollPage)
-            this._forceRender();
+        if (this.editor.scrollPage) this._forceRender();
     }
 
     /**
@@ -293,12 +299,14 @@ export class Muya {
      *
      * @returns `true` if a boundary was recorded, `false` if nothing changed.
      */
-    replaceContent(content: TState[] | string, recordSelection?: Nullable<IHistorySelection>): boolean {
+    replaceContent(
+        content: TState[] | string,
+        recordSelection?: Nullable<IHistorySelection>,
+    ): boolean {
         const { jsonState, history } = this.editor;
         const { op, prevState } = jsonState.buildReplaceOp(content);
 
-        if (op.length === 0)
-            return false;
+        if (op.length === 0) return false;
 
         const selection = this.editor.selection.getSelection();
         const boundarySelection = recordSelection !== undefined ? recordSelection : selection;
@@ -336,10 +344,13 @@ export class Muya {
 
         applyAppearance(this.domNode, options);
 
-        if (!forceRender)
-            return;
+        if (!forceRender) return;
 
-        if (Object.keys(options).some(key => PARSE_AFFECTING_OPTIONS.has(key as keyof IMuyaOptions))) {
+        if (
+            Object.keys(options).some((key) =>
+                PARSE_AFFECTING_OPTIONS.has(key as keyof IMuyaOptions),
+            )
+        ) {
             const { jsonState } = this.editor;
             jsonState.setContent(jsonState.markdownToState(this.getMarkdown()));
         }
@@ -355,8 +366,7 @@ export class Muya {
             const begin = Math.min(selection.anchor.offset, selection.focus.offset);
             const end = Math.max(selection.anchor.offset, selection.focus.offset);
             const cursorBlock = this.editor.scrollPage?.queryBlock(selection.anchor.path);
-            if (cursorBlock && cursorBlock.isContent())
-                cursorBlock.setCursor(begin, end, true);
+            if (cursorBlock && cursorBlock.isContent()) cursorBlock.setCursor(begin, end, true);
         }
     }
 
@@ -370,10 +380,8 @@ export class Muya {
     }
 
     setFocusMode(focusMode: boolean) {
-        if (focusMode)
-            this.domNode.classList.add(CLASS_NAMES.MU_FOCUS_MODE);
-        else
-            this.domNode.classList.remove(CLASS_NAMES.MU_FOCUS_MODE);
+        if (focusMode) this.domNode.classList.add(CLASS_NAMES.MU_FOCUS_MODE);
+        else this.domNode.classList.remove(CLASS_NAMES.MU_FOCUS_MODE);
 
         this.options.focusMode = focusMode;
     }
@@ -396,14 +404,12 @@ export class Muya {
         }
 
         const sel = selection.getSelection();
-        if (!sel)
-            return;
+        if (!sel) return;
 
         const { anchor, focus, isSelectionInSameBlock } = sel;
         const anchorBlock = anchor.block;
 
-        if (!isSelectionInSameBlock || !(anchorBlock instanceof Format))
-            return;
+        if (!isSelectionInSameBlock || !(anchorBlock instanceof Format)) return;
 
         // A heading's text includes its leading `# ` marker; never format the
         // marker itself, only the heading content. Clamp the start past it.
@@ -412,8 +418,7 @@ export class Muya {
         const hi = Math.max(anchor.offset, focus.offset);
         if (markerLen > 0) {
             lo = Math.max(lo, markerLen);
-            if (hi <= markerLen)
-                return; // the selection lies entirely within the marker
+            if (hi <= markerLen) return; // the selection lies entirely within the marker
         }
 
         // Restore the selection before applying the format — the menu/IPC
@@ -427,12 +432,10 @@ export class Muya {
     }
 
     private _formatAcrossBlocks(type: string) {
-        if (type === 'link' || type === 'image')
-            return;
+        if (type === 'link' || type === 'image') return;
 
         const range = this._orderedSelectionRange();
-        if (!range)
-            return;
+        if (!range) return;
 
         const { first, last, firstOffset, lastOffset } = range;
 
@@ -458,8 +461,7 @@ export class Muya {
                 focusLeaf = leaf;
                 focusOffset = adjusted.end;
             }
-            if (leaf === last)
-                break;
+            if (leaf === last) break;
             leaf = leaf.nextContentInContext() ?? null;
         }
 
@@ -476,8 +478,7 @@ export class Muya {
         const { selection } = this.editor;
         const anchorLeaf = selection.anchorBlock;
         const focusLeaf = selection.focusBlock;
-        if (!anchorLeaf || !focusLeaf)
-            return null;
+        if (!anchorLeaf || !focusLeaf) return null;
 
         const sp = this.editor.scrollPage!;
         const anchorOut = anchorLeaf.outMostBlock;
@@ -498,14 +499,17 @@ export class Muya {
      * range AFTER formatting (offsets shift past inserted markers), or null when
      * the leaf was skipped.
      */
-    private _formatLeafInRange(type: string, leaf: Content, start: number, end: number): { start: number; end: number } | null {
-        if (!(leaf instanceof Format))
-            return null;
+    private _formatLeafInRange(
+        type: string,
+        leaf: Content,
+        start: number,
+        end: number,
+    ): { start: number; end: number } | null {
+        if (!(leaf instanceof Format)) return null;
 
         // Never format a heading's leading `# ` marker, only its content.
         const from = Math.max(start, this._headingMarkerLen(leaf));
-        if (end <= from)
-            return null;
+        if (end <= from) return null;
 
         const { selection } = this.editor;
         selection.setSelection(
@@ -524,8 +528,7 @@ export class Muya {
 
     /** Length of a heading content's leading `#{1,6}` + space marker, else 0. */
     private _headingMarkerLen(leaf: Content): number {
-        if (leaf.parent?.blockName !== 'atx-heading')
-            return 0;
+        if (leaf.parent?.blockName !== 'atx-heading') return 0;
 
         return /^ {0,3}#{1,6}(?:\s+|$)/.exec(leaf.text)?.[0].length ?? 0;
     }
@@ -545,8 +548,7 @@ export class Muya {
      */
     replaceCurrentWordInlineUnsafe(word: string, replacement: string): boolean {
         const block = this.editor.activeContentBlock;
-        if (!block)
-            return false;
+        if (!block) return false;
 
         return block.replaceCurrentWordInlineUnsafe(word, replacement);
     }
@@ -575,11 +577,9 @@ export class Muya {
      * bar do not linger after the editor is blurred.
      */
     blur(isRemoveAllRange = false, unSelect = false) {
-        if (isRemoveAllRange)
-            document.getSelection()?.removeAllRanges();
+        if (isRemoveAllRange) document.getSelection()?.removeAllRanges();
 
-        if (unSelect)
-            this.editor.selection.clearImage();
+        if (unSelect) this.editor.selection.clearImage();
 
         this.editor.activeContentBlock = null;
         this.ui.hideAllFloatTools();
@@ -667,8 +667,7 @@ export class Muya {
      * other cross-block targets are gated by the menu layer and fall through.
      */
     private _handleCrossBlockParagraph(type: string): boolean {
-        if (this._selectionInSameBlock())
-            return false;
+        if (this._selectionInSameBlock()) return false;
 
         const label = PARAGRAPH_LABEL_MAP[type];
         if (CROSS_BLOCK_LIST_LABELS.has(label)) {
@@ -702,10 +701,8 @@ export class Muya {
             this.editor.selection.focusBlock?.outMostBlock,
         );
 
-        if (live && live.anchor !== live.focus)
-            return live;
-        if (cached && cached.anchor !== cached.focus)
-            return cached;
+        if (live && live.anchor !== live.focus) return live;
+        if (cached && cached.anchor !== cached.focus) return cached;
 
         return live ?? cached;
     }
@@ -713,8 +710,7 @@ export class Muya {
     /** Whether the current selection stays within a single outmost block. */
     private _selectionInSameBlock(): boolean {
         const endpoints = this._selectionEndpoints();
-        if (!endpoints)
-            return true;
+        if (!endpoints) return true;
 
         return endpoints.anchor === endpoints.focus;
     }
@@ -731,12 +727,10 @@ export class Muya {
         const liveSel = sel.getSelection();
         const liveAnchor = liveSel?.anchor.block;
         const liveFocus = liveSel?.focus.block;
-        if (liveAnchor && liveFocus && liveAnchor !== liveFocus)
-            return false;
+        if (liveAnchor && liveFocus && liveAnchor !== liveFocus) return false;
         const cachedAnchor = sel.anchorBlock;
         const cachedFocus = sel.focusBlock;
-        if (cachedAnchor && cachedFocus && cachedAnchor !== cachedFocus)
-            return false;
+        if (cachedAnchor && cachedFocus && cachedAnchor !== cachedFocus) return false;
 
         return true;
     }
@@ -747,14 +741,12 @@ export class Muya {
      */
     private _selectedOutmostBlocks(): Parent[] {
         const endpoints = this._selectionEndpoints();
-        if (!endpoints)
-            return [];
+        if (!endpoints) return [];
 
         const a = endpoints.anchor;
         const f = endpoints.focus;
 
-        if (a === f)
-            return [a];
+        if (a === f) return [a];
 
         const sp = this.editor.scrollPage!;
         const start = sp.offset(a) <= sp.offset(f) ? a : f;
@@ -763,8 +755,7 @@ export class Muya {
         let node: Parent | null = start;
         while (node) {
             blocks.push(node);
-            if (node === end)
-                break;
+            if (node === end) break;
             node = node.next as Parent | null;
         }
 
@@ -778,8 +769,7 @@ export class Muya {
     private _selectWrappedContent(container: Parent) {
         const head = container.firstContentInDescendant();
         const tail = container.lastContentInDescendant();
-        if (!head || !tail)
-            return;
+        if (!head || !tail) return;
 
         this.editor.activeContentBlock = tail;
         this.editor.selection.setSelection(
@@ -799,15 +789,13 @@ export class Muya {
         place: (container: Parent) => void,
     ) {
         const blocks = this._selectedOutmostBlocks();
-        if (!blocks.length)
-            return;
+        if (!blocks.length) return;
 
         const state = buildState(blocks);
         const container = ScrollPage.loadBlock(state.name).create(this, state as never);
         const parent = blocks[0].parent!;
         parent.insertBefore(container, blocks[0]);
-        for (const b of blocks)
-            b.remove();
+        for (const b of blocks) b.remove();
 
         place(container);
     }
@@ -816,41 +804,44 @@ export class Muya {
     private _wrapSelectedBlocksInList(label: 'bullet-list' | 'order-list' | 'task-list') {
         const { bulletListMarker, orderListDelimiter, preferLooseListItem } = this.options;
         const itemName = label === 'task-list' ? 'task-list-item' : 'list-item';
-        const meta: Record<string, unknown> = label === 'order-list'
-            ? { loose: preferLooseListItem, delimiter: orderListDelimiter, start: 1 }
-            : { loose: preferLooseListItem, marker: bulletListMarker };
+        const meta: Record<string, unknown> =
+            label === 'order-list'
+                ? { loose: preferLooseListItem, delimiter: orderListDelimiter, start: 1 }
+                : { loose: preferLooseListItem, marker: bulletListMarker };
 
         this._wrapSelectedBlocks(
-            blocks => ({
+            (blocks) => ({
                 name: label,
                 meta,
-                children: blocks.map(b => label === 'task-list'
-                    ? { name: itemName, meta: { checked: false }, children: [b.getState()] }
-                    : { name: itemName, children: [b.getState()] }),
+                children: blocks.map((b) =>
+                    label === 'task-list'
+                        ? { name: itemName, meta: { checked: false }, children: [b.getState()] }
+                        : { name: itemName, children: [b.getState()] },
+                ),
             }),
-            container => this._selectWrappedContent(container),
+            (container) => this._selectWrappedContent(container),
         );
     }
 
     /** Wrap the selected outmost blocks into a single block-quote. */
     private _wrapSelectedBlocksInQuote() {
         this._wrapSelectedBlocks(
-            blocks => ({ name: 'block-quote', children: blocks.map(b => b.getState()) }),
-            container => this._selectWrappedContent(container),
+            (blocks) => ({ name: 'block-quote', children: blocks.map((b) => b.getState()) }),
+            (container) => this._selectWrappedContent(container),
         );
     }
 
     /** Join the selected outmost blocks' text into a single fenced code block. */
     private _wrapSelectedBlocksInCodeBlock() {
         this._wrapSelectedBlocks(
-            blocks => ({
+            (blocks) => ({
                 name: 'code-block',
                 meta: { type: 'fenced', lang: '' },
                 text: this.editor.jsonState
-                    .getMarkdownFromState(blocks.map(b => b.getState()))
+                    .getMarkdownFromState(blocks.map((b) => b.getState()))
                     .replace(/\n+$/, ''),
             }),
-            container => container.firstContentInDescendant()?.setCursor(0, 0, true),
+            (container) => container.firstContentInDescendant()?.setCursor(0, 0, true),
         );
     }
 
@@ -860,8 +851,7 @@ export class Muya {
      */
     duplicate() {
         const block = this._outmostBlockAtCursor();
-        if (!block)
-            return;
+        if (!block) return;
 
         const state = deepClone(block.getState());
         const dupBlock = ScrollPage.loadBlock(state.name).create(this, state);
@@ -880,19 +870,14 @@ export class Muya {
      *   context-menu "Insert Paragraph Before/After" behaviour.
      */
     insertParagraph(location: 'before' | 'after' = 'after', text = '', outMost = false) {
-        const block = outMost
-            ? this._outmostBlockAtCursor()
-            : this._immediateBlockAtCursor();
-        if (!block)
-            return;
+        const block = outMost ? this._outmostBlockAtCursor() : this._immediateBlockAtCursor();
+        if (!block) return;
 
         const state = deepClone(emptyStates.paragraph);
         state.text = text;
         const newBlock = ScrollPage.loadBlock('paragraph').create(this, state);
-        if (location === 'before')
-            block.parent!.insertBefore(newBlock, block);
-        else
-            block.parent!.insertAfter(newBlock, block);
+        if (location === 'before') block.parent!.insertBefore(newBlock, block);
+        else block.parent!.insertAfter(newBlock, block);
 
         newBlock.lastContentInDescendant()?.setCursor(0, 0, true);
     }
@@ -903,17 +888,14 @@ export class Muya {
      */
     deleteParagraph() {
         const block = this._outmostBlockAtCursor();
-        if (!block)
-            return;
+        if (!block) return;
 
         let cursorBlock: Content | null = null;
         if (block.prev) {
             cursorBlock = block.prev.lastContentInDescendant();
-        }
-        else if (block.next) {
+        } else if (block.next) {
             cursorBlock = block.next.firstContentInDescendant();
-        }
-        else {
+        } else {
             const newBlock = ScrollPage.loadBlock('paragraph').create(
                 this,
                 deepClone(emptyStates.paragraph),
@@ -926,10 +908,12 @@ export class Muya {
         cursorBlock?.setCursor(0, 0, true);
     }
 
-    createTable({ rows, columns }: { rows: number; columns: number }, { replace = false }: { replace?: boolean } = {}) {
+    createTable(
+        { rows, columns }: { rows: number; columns: number },
+        { replace = false }: { replace?: boolean } = {},
+    ) {
         const block = this._immediateBlockAtCursor();
-        if (!block)
-            return;
+        if (!block) return;
 
         const safeRows = Math.max(2, Number.isFinite(rows) ? Math.floor(rows) : 0);
         const safeColumns = Math.max(1, Number.isFinite(columns) ? Math.floor(columns) : 0);
@@ -953,10 +937,8 @@ export class Muya {
         // An empty block is disposable, so replace it in place; a block with
         // real content is kept and the table goes directly below it. The picker
         // passes `replace` to always consume its trigger block.
-        if (replace || this._blockLeadingText(block).trim() === '')
-            block.replaceWith(newTable);
-        else
-            block.parent!.insertAfter(newTable, block);
+        if (replace || this._blockLeadingText(block).trim() === '') block.replaceWith(newTable);
+        else block.parent!.insertAfter(newTable, block);
 
         newTable.firstContentInDescendant()?.setCursor(0, 0, true);
     }
@@ -971,12 +953,10 @@ export class Muya {
      */
     insertImage({ src = '', alt = '' }: { src?: string; alt?: string }) {
         const block = this.editor.activeContentBlock ?? this.editor.selection.anchorBlock;
-        if (!(block instanceof Format))
-            return;
+        if (!(block instanceof Format)) return;
 
         const cursor = block.getCursor();
-        if (cursor == null)
-            return;
+        if (cursor == null) return;
 
         // Derive a sensible alt from the file name when none is provided.
         if (!alt) {
@@ -990,17 +970,15 @@ export class Muya {
         // `data:image/` prefix is not embedded verbatim and instead falls through
         // to the plain-path branch.
         let imgUrl: string;
-        if (URL_REG.test(src))
-            imgUrl = encodeURI(src);
-        else if (DATA_URL_REG.test(src))
-            imgUrl = src;
-        else
-            imgUrl = encodeImageSrc(src);
+        if (URL_REG.test(src)) imgUrl = encodeURI(src);
+        else if (DATA_URL_REG.test(src)) imgUrl = src;
+        else imgUrl = encodeImageSrc(src);
 
         const { start, end } = cursor;
         const { text } = block;
         // When there is a selection, use it as the alt text.
-        const imageAlt = start.offset !== end.offset ? text.substring(start.offset, end.offset) : alt;
+        const imageAlt =
+            start.offset !== end.offset ? text.substring(start.offset, end.offset) : alt;
         const imageText = `![${imageAlt}](${imgUrl})`;
 
         // The `text` setter diffs against the old value and dispatches a JSON op.
@@ -1022,14 +1000,11 @@ export class Muya {
      */
     setCursor(cursor: IPublicCursorInput) {
         const { scrollPage } = this.editor;
-        if (!scrollPage)
-            return;
+        if (!scrollPage) return;
 
-        const { anchor, focus, anchorPath, focusPath }
-            = this._normalizeCursorEndpoints(cursor);
+        const { anchor, focus, anchorPath, focusPath } = this._normalizeCursorEndpoints(cursor);
 
-        if (!anchor || !focus)
-            return;
+        if (!anchor || !focus) return;
 
         const { anchorBlock, focusBlock } = this._resolveCursorBlocks(
             cursor,
@@ -1038,8 +1013,7 @@ export class Muya {
             focusPath,
         );
 
-        if (anchorBlock == null || !anchorBlock.isContent())
-            return;
+        if (anchorBlock == null || !anchorBlock.isContent()) return;
 
         if (anchorBlock === focusBlock || focusBlock == null) {
             const begin = Math.min(anchor.offset, focus.offset);
@@ -1048,8 +1022,7 @@ export class Muya {
             return;
         }
 
-        if (!focusBlock.isContent())
-            return;
+        if (!focusBlock.isContent()) return;
 
         this.editor.selection.setSelection(
             { offset: anchor.offset, block: anchorBlock, path: anchorBlock.path },
@@ -1075,14 +1048,14 @@ export class Muya {
         focusPath: TBlockPath | undefined,
     ) {
         // queryBlock mutates its path argument (path.shift()) — pass copies.
-        const anchorBlock
-            = cursor.anchorBlock
-                ?? cursor.block
-                ?? (anchorPath ? scrollPage.queryBlock([...anchorPath]) : null);
-        const focusBlock
-            = cursor.focusBlock
-                ?? cursor.block
-                ?? (focusPath ? scrollPage.queryBlock([...focusPath]) : null);
+        const anchorBlock =
+            cursor.anchorBlock ??
+            cursor.block ??
+            (anchorPath ? scrollPage.queryBlock([...anchorPath]) : null);
+        const focusBlock =
+            cursor.focusBlock ??
+            cursor.block ??
+            (focusPath ? scrollPage.queryBlock([...focusPath]) : null);
 
         return { anchorBlock, focusBlock };
     }
@@ -1106,13 +1079,11 @@ export class Muya {
      */
     setCursorByOffset(indexCursor: IIndexCursor): boolean {
         const { scrollPage } = this.editor;
-        if (!scrollPage)
-            return false;
+        if (!scrollPage) return false;
 
         const cleanMarkdown = this.getMarkdown();
         const sentinelMarkdown = injectSentinels(cleanMarkdown, indexCursor);
-        if (sentinelMarkdown == null)
-            return false;
+        if (sentinelMarkdown == null) return false;
 
         // Preserve the undo history across the internal setContent rebuild
         // (setContent clears it) so this stays a caret-only operation.
@@ -1123,8 +1094,7 @@ export class Muya {
         this.editor.setContent(cleanMarkdown);
         this.setHistory(savedHistory);
 
-        if (!cursor)
-            return false;
+        if (!cursor) return false;
 
         this.setCursor(cursor);
 
@@ -1148,18 +1118,12 @@ export class Muya {
      */
     getCursorOffset(): IIndexCursor | null {
         const selection = this.editor.selection.getSelection();
-        if (!selection)
-            return null;
+        if (!selection) return null;
 
-        const sentinelState = injectStateSentinels(
-            this.editor.jsonState.getState(),
-            selection,
-        );
-        if (!sentinelState)
-            return null;
+        const sentinelState = injectStateSentinels(this.editor.jsonState.getState(), selection);
+        if (!sentinelState) return null;
 
-        const sentinelMarkdown
-            = this.editor.jsonState.getMarkdownFromState(sentinelState);
+        const sentinelMarkdown = this.editor.jsonState.getMarkdownFromState(sentinelState);
 
         return locateSentinelOffsets(sentinelMarkdown);
     }
@@ -1174,11 +1138,9 @@ export class Muya {
      */
     updateParagraph(type: string) {
         const block = this._outmostBlockAtCursor();
-        if (!block)
-            return;
+        if (!block) return;
 
-        if (this._handleCrossBlockParagraph(type))
-            return;
+        if (this._handleCrossBlockParagraph(type)) return;
 
         if (type === 'upgrade heading' || type === 'degrade heading') {
             this._withPreservedOffset(() => this._changeHeadingLevel(block, type));
@@ -1199,8 +1161,7 @@ export class Muya {
         }
 
         const label = PARAGRAPH_LABEL_MAP[type];
-        if (!label)
-            return;
+        if (!label) return;
 
         // Front matter is only valid as the very first block of a document, so
         // it is never an in-place replacement of the cursor block: idempotent
@@ -1220,14 +1181,12 @@ export class Muya {
         // into a single paragraph built from the first content's text.
         // `reset-to-paragraph` remains the explicit "unwrap the container"
         // command (handled above).
-        if (label === 'paragraph')
-            return this._convertLeafToParagraph();
+        if (label === 'paragraph') return this._convertLeafToParagraph();
 
         // Clicking an already-active type (its block is an ancestor of the
         // cursor, i.e. the menu item is checked) toggles it off: unwrap every
         // ancestor of that kind, or convert the matching leaf back to a paragraph.
-        if (this._toggleIfActive(label))
-            return;
+        if (this._toggleIfActive(label)) return;
 
         // A list kind clicked while inside a list of a DIFFERENT kind converts
         // the cursor's (innermost) list to that kind.
@@ -1250,34 +1209,30 @@ export class Muya {
      * to a paragraph. Returns false when nothing matches.
      */
     private _toggleIfActive(label: string): boolean {
-        const cursorContent = () => this.editor.activeContentBlock ?? this.editor.selection.anchorBlock;
+        const cursorContent = () =>
+            this.editor.activeContentBlock ?? this.editor.selection.anchorBlock;
         const content = cursorContent();
-        if (!content)
-            return false;
+        if (!content) return false;
 
         // Headings match only when the cursor's heading is exactly that level.
         if (label.startsWith('atx-heading ')) {
             const heading = content.closestBlock('atx-heading') as Parent | null;
-            if (!heading)
-                return false;
+            if (!heading) return false;
 
             const state = heading.getState();
             const level = Number(label.slice('atx-heading '.length));
-            if (!isAtxHeadingState(state) || state.meta.level !== level)
-                return false;
+            if (!isAtxHeadingState(state) || state.meta.level !== level) return false;
 
             this._withPreservedOffset(() => this.resetToParagraph(heading));
             return true;
         }
 
-        if (!TOGGLEABLE_BLOCK_LABELS.has(label) || !content.closestBlock(label))
-            return false;
+        if (!TOGGLEABLE_BLOCK_LABELS.has(label) || !content.closestBlock(label)) return false;
 
         this._withPreservedOffset(() => {
             for (let guard = 0; guard < 20; guard++) {
                 const target = cursorContent()?.closestBlock(label) as Parent | null;
-                if (!target)
-                    break;
+                if (!target) break;
                 this.resetToParagraph(target);
             }
         });
@@ -1287,9 +1242,15 @@ export class Muya {
 
     /** The nearest list ancestor of the cursor, of any kind. */
     private _closestListAtCursor(): Parent | null {
-        let node: Nullable<Parent> = (this.editor.activeContentBlock ?? this.editor.selection.anchorBlock)?.parent;
+        let node: Nullable<Parent> = (
+            this.editor.activeContentBlock ?? this.editor.selection.anchorBlock
+        )?.parent;
         while (node) {
-            if (node.blockName === 'bullet-list' || node.blockName === 'order-list' || node.blockName === 'task-list')
+            if (
+                node.blockName === 'bullet-list' ||
+                node.blockName === 'order-list' ||
+                node.blockName === 'task-list'
+            )
                 return node;
             node = node.parent;
         }
@@ -1334,14 +1295,18 @@ export class Muya {
         // or unwrap-restored). The text can change in place (a heading's `# `
         // marker), so shift offsets by that front delta to track the same char.
         const target = this.editor.activeContentBlock;
-        if (!target)
-            return;
+        if (!target) return;
 
-        const delta = anchorText != null && target.text !== anchorText
-            ? target.text.length - anchorText.length
-            : 0;
+        const delta =
+            anchorText != null && target.text !== anchorText
+                ? target.text.length - anchorText.length
+                : 0;
         const len = target.text.length;
-        target.setCursor(clampTo(anchorOffset + delta, len), clampTo(focusOffset + delta, len), true);
+        target.setCursor(
+            clampTo(anchorOffset + delta, len),
+            clampTo(focusOffset + delta, len),
+            true,
+        );
     }
 
     /**
@@ -1353,8 +1318,7 @@ export class Muya {
     private _findContentByText(text: string): Content | null {
         let leaf: Nullable<Content> = this.editor.scrollPage?.firstContentInDescendant();
         while (leaf) {
-            if (leaf instanceof Format && leaf.text === text)
-                return leaf;
+            if (leaf instanceof Format && leaf.text === text) return leaf;
             leaf = leaf.nextContentInContext();
         }
 
@@ -1370,19 +1334,19 @@ export class Muya {
      */
     private _convertOrInsertBelow(label: string) {
         const immediate = this._immediateBlockAtCursor();
-        if (!immediate)
-            return;
+        if (!immediate) return;
 
         const leadingText = this._blockLeadingText(immediate);
         if (canTurnInto(immediate, label)) {
-            this._withPreservedOffset(() => replaceBlockByLabel({ block: immediate, muya: this, label, text: leadingText }));
+            this._withPreservedOffset(() =>
+                replaceBlockByLabel({ block: immediate, muya: this, label, text: leadingText }),
+            );
             return;
         }
 
         if (leadingText.trim() === '')
             replaceBlockByLabel({ block: immediate, muya: this, label, text: '' });
-        else
-            insertBlockBelowByLabel({ block: immediate, muya: this, label });
+        else insertBlockBelowByLabel({ block: immediate, muya: this, label });
     }
 
     /**
@@ -1393,15 +1357,19 @@ export class Muya {
      * block).
      */
     resetToParagraph(block: Parent) {
-        if (block.blockName === 'table')
-            return;
+        if (block.blockName === 'table') return;
 
         if (isAnyListState(block.getState()) || block.blockName === 'block-quote') {
             this._unwrapToParagraphs(block);
             return;
         }
 
-        replaceBlockByLabel({ block, muya: this, label: 'paragraph', text: this._paragraphTextFor(block) });
+        replaceBlockByLabel({
+            block,
+            muya: this,
+            label: 'paragraph',
+            text: this._paragraphTextFor(block),
+        });
     }
 
     /**
@@ -1412,10 +1380,8 @@ export class Muya {
      */
     private _paragraphTextFor(block: Parent): string {
         const state = block.getState();
-        if (isCodeBlockState(state))
-            return state.text;
-        if (block.blockName === 'thematic-break')
-            return '';
+        if (isCodeBlockState(state)) return state.text;
+        if (block.blockName === 'thematic-break') return '';
 
         return this._blockLeadingText(block);
     }
@@ -1429,15 +1395,16 @@ export class Muya {
      */
     private _convertLeafToParagraph() {
         const leaf = this._immediateBlockAtCursor();
-        if (!leaf || leaf.blockName === 'paragraph')
-            return;
+        if (!leaf || leaf.blockName === 'paragraph') return;
 
-        this._withPreservedOffset(() => replaceBlockByLabel({
-            block: leaf,
-            muya: this,
-            label: 'paragraph',
-            text: this._paragraphTextFor(leaf),
-        }));
+        this._withPreservedOffset(() =>
+            replaceBlockByLabel({
+                block: leaf,
+                muya: this,
+                label: 'paragraph',
+                text: this._paragraphTextFor(leaf),
+            }),
+        );
     }
 
     /**
@@ -1447,20 +1414,17 @@ export class Muya {
     private _unwrapToParagraphs(block: Parent) {
         // A detached block has no parent to reparent its children into (#4686).
         const parent = block.parent;
-        if (!parent)
-            return;
+        if (!parent) return;
 
         const state = block.getState();
         let inner: TState[] = [];
-        if (isAnyListState(state))
-            inner = state.children.flatMap(li => deepClone(li.children));
-        else if (state.name === 'block-quote')
-            inner = deepClone(state.children);
+        if (isAnyListState(state)) inner = state.children.flatMap((li) => deepClone(li.children));
+        else if (state.name === 'block-quote') inner = deepClone(state.children);
 
-        if (!inner.length)
-            return;
+        if (!inner.length) return;
 
-        const cursorText = (this.editor.activeContentBlock ?? this.editor.selection.anchorBlock)?.text;
+        const cursorText = (this.editor.activeContentBlock ?? this.editor.selection.anchorBlock)
+            ?.text;
         let ref: Parent = block;
         let firstNew: Parent | null = null;
         for (const childState of inner) {
@@ -1474,8 +1438,9 @@ export class Muya {
 
         // Keep the caret in the lifted block that still holds the cursor's text
         // (its content was cloned), falling back to the first lifted block.
-        const restored = (cursorText != null ? this._findContentByText(cursorText) : null)
-            ?? firstNew?.firstContentInDescendant();
+        const restored =
+            (cursorText != null ? this._findContentByText(cursorText) : null) ??
+            firstNew?.firstContentInDescendant();
         restored?.setCursor(0, 0, true);
     }
 
@@ -1494,13 +1459,10 @@ export class Muya {
         const level = isAtxHeadingState(state) ? state.meta.level : 0;
         let newLevel = level;
 
-        if (type === 'upgrade heading' && level !== 1)
-            newLevel = level === 0 ? 6 : level - 1;
-        else if (type === 'degrade heading' && level !== 0)
-            newLevel = level === 6 ? 0 : level + 1;
+        if (type === 'upgrade heading' && level !== 1) newLevel = level === 0 ? 6 : level - 1;
+        else if (type === 'degrade heading' && level !== 0) newLevel = level === 6 ? 0 : level + 1;
 
-        if (newLevel === level)
-            return;
+        if (newLevel === level) return;
 
         replaceBlockByLabel({
             block,
@@ -1513,8 +1475,7 @@ export class Muya {
     /** Toggle loose/tight on the list at the cursor. */
     private _toggleLooseList(block: Parent) {
         const state = block.getState();
-        if (!isAnyListState(state))
-            return;
+        if (!isAnyListState(state)) return;
 
         // Toggling only flips meta.loose, so the rebuilt list keeps the same
         // structure and document position. Snapshot the selection as paths +
@@ -1549,15 +1510,15 @@ export class Muya {
         // mouse-up, the same ones the menu/IPC round-trip relies on) span
         // several blocks while live has collapsed, trust the cached endpoints so
         // the whole span survives the rebuild.
-        const cachedCrossBlock = !!sel.anchorBlock && !!sel.focusBlock && sel.anchorBlock !== sel.focusBlock;
+        const cachedCrossBlock =
+            !!sel.anchorBlock && !!sel.focusBlock && sel.anchorBlock !== sel.focusBlock;
         const useLive = !!live && !(cachedCrossBlock && live.isSelectionInSameBlock);
 
         const anchor = useLive ? live!.anchor : sel.anchor;
         const focus = useLive ? live!.focus : sel.focus;
         const anchorPath = useLive ? live!.anchor.path : sel.anchorPath;
         const focusPath = useLive ? live!.focus.path : sel.focusPath;
-        if (!anchor || !focus || !anchorPath?.length || !focusPath?.length)
-            return null;
+        if (!anchor || !focus || !anchorPath?.length || !focusPath?.length) return null;
 
         return {
             anchor: anchor.offset,
@@ -1573,17 +1534,14 @@ export class Muya {
      * content block so the caller can fall back.
      */
     private _restoreSelection(snapshot: ISelectionSnapshot | null): boolean {
-        if (!snapshot)
-            return false;
+        if (!snapshot) return false;
 
         const { scrollPage } = this.editor;
         // `queryBlock` consumes its path array in place, so resolve against copies.
         const anchorBlock = scrollPage?.queryBlock([...snapshot.anchorPath]);
         const focusBlock = scrollPage?.queryBlock([...snapshot.focusPath]);
-        if (!anchorBlock || !focusBlock)
-            return false;
-        if (!anchorBlock.isContent() || !focusBlock.isContent())
-            return false;
+        if (!anchorBlock || !focusBlock) return false;
+        if (!anchorBlock.isContent() || !focusBlock.isContent()) return false;
 
         this.editor.activeContentBlock = focusBlock;
         this.editor.selection.setSelection(
@@ -1597,37 +1555,34 @@ export class Muya {
     /** Convert an existing list to another list type, preserving items. */
     private _convertListType(block: Parent, label: string) {
         const state = block.getState();
-        if (!isAnyListState(state) || block.blockName === label)
-            return;
+        if (!isAnyListState(state) || block.blockName === label) return;
 
         const { bulletListMarker, orderListDelimiter } = this.options;
         const loose = !!state.meta.loose;
-        const childContents: TState[][] = state.children.map(li => deepClone(li.children));
+        const childContents: TState[][] = state.children.map((li) => deepClone(li.children));
 
         let newState: IBulletListState | IOrderListState | ITaskListState;
         if (label === 'task-list') {
             newState = {
                 name: 'task-list',
                 meta: { marker: bulletListMarker, loose },
-                children: childContents.map(children => ({
+                children: childContents.map((children) => ({
                     name: 'task-list-item',
                     meta: { checked: false },
                     children,
                 })),
             };
-        }
-        else if (label === 'order-list') {
+        } else if (label === 'order-list') {
             newState = {
                 name: 'order-list',
                 meta: { delimiter: orderListDelimiter, loose, start: 1 },
-                children: childContents.map(children => ({ name: 'list-item', children })),
+                children: childContents.map((children) => ({ name: 'list-item', children })),
             };
-        }
-        else {
+        } else {
             newState = {
                 name: 'bullet-list',
                 meta: { marker: bulletListMarker, loose },
-                children: childContents.map(children => ({ name: 'list-item', children })),
+                children: childContents.map((children) => ({ name: 'list-item', children })),
             };
         }
 
@@ -1640,20 +1595,17 @@ export class Muya {
         this.eventCenter.detachAllDomEvents();
         this.eventCenter.unsubscribeAll();
         // this.domNode[BLOCK_DOM_PROPERTY] = null;
-        if (this.domNode.remove)
-            this.domNode.remove();
+        if (this.domNode.remove) this.domNode.remove();
 
         // Hide all float tools.
-        if (this.ui)
-            this.ui.hideAllFloatTools();
+        if (this.ui) this.ui.hideAllFloatTools();
 
         // Destroy every registered UI plugin so the nodes they appended to
         // `document.body` (float boxes, the image resize bar, tooltips) are
         // removed rather than leaked (#3315).
         for (const plugin of Object.values(this._uiPlugins)) {
             const destroy = (plugin as { destroy?: unknown })?.destroy;
-            if (typeof destroy === 'function')
-                (destroy as () => void).call(plugin);
+            if (typeof destroy === 'function') (destroy as () => void).call(plugin);
         }
     }
 }
@@ -1665,12 +1617,10 @@ function applyAppearance(domNode: HTMLElement, options: Partial<IMuyaOptions>) {
         style.setProperty('--mu-font-size', `${options.fontSize}px`);
     if (typeof options.lineHeight === 'number')
         style.setProperty('--mu-line-height', `${options.lineHeight}`);
-    if (options.editorFontFamily)
-        style.setProperty('--mu-font-family', options.editorFontFamily);
+    if (options.editorFontFamily) style.setProperty('--mu-font-family', options.editorFontFamily);
     if (typeof options.codeFontSize === 'number')
         style.setProperty('--mu-code-font-size', `${options.codeFontSize}px`);
-    if (options.codeFontFamily)
-        style.setProperty('--mu-code-font-family', options.codeFontFamily);
+    if (options.codeFontFamily) style.setProperty('--mu-code-font-family', options.codeFontFamily);
     if ('wrapCodeBlocks' in options)
         domNode.classList.toggle(CLASS_NAMES.MU_CODE_WRAP, !!options.wrapCodeBlocks);
 }
@@ -1687,16 +1637,13 @@ function getContainer(originContainer: HTMLElement, options: IMuyaOptions) {
         newContainer.setAttribute(attr.name, attr.value);
     });
 
-    if (!hideQuickInsertHint)
-        newContainer.classList.add(CLASS_NAMES.MU_SHOW_QUICK_INSERT_HINT);
+    if (!hideQuickInsertHint) newContainer.classList.add(CLASS_NAMES.MU_SHOW_QUICK_INSERT_HINT);
 
-    if (spellcheckHideMarks)
-        newContainer.classList.add(CLASS_NAMES.MU_HIDE_SPELLING_MARKS);
+    if (spellcheckHideMarks) newContainer.classList.add(CLASS_NAMES.MU_HIDE_SPELLING_MARKS);
 
     // Apply focus mode at construction when initially enabled; `setFocusMode`
     // toggles it thereafter.
-    if (focusMode)
-        newContainer.classList.add(CLASS_NAMES.MU_FOCUS_MODE);
+    if (focusMode) newContainer.classList.add(CLASS_NAMES.MU_FOCUS_MODE);
 
     newContainer.classList.add(CLASS_NAMES.MU_EDITOR);
 

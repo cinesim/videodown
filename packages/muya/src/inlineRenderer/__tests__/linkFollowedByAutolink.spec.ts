@@ -10,7 +10,9 @@ import { tokenizer } from '../lexer';
 // than a link, so they must never override `[text](url)`.
 
 function linkTokens(src: string) {
-    return tokenizer(src).filter(t => t.type === 'link') as Array<Token & { href?: string; anchor?: string }>;
+    return tokenizer(src).filter((t) => t.type === 'link') as Array<
+        Token & { href?: string; anchor?: string }
+    >;
 }
 
 describe('inline link followed by trailing punctuation (#4671)', () => {

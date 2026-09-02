@@ -29,23 +29,20 @@ export function stableSlug(block: Parent): string {
 
 export function getTOC(muya: Muya): ITocItem[] {
     const { scrollPage } = muya.editor;
-    if (!scrollPage)
-        return [];
+    if (!scrollPage) return [];
 
     const items: ITocItem[] = [];
 
     for (const node of scrollPage.children.iterator()) {
         const { blockName } = node;
-        if (blockName !== 'atx-heading' && blockName !== 'setext-heading')
-            continue;
+        if (blockName !== 'atx-heading' && blockName !== 'setext-heading') continue;
 
         const block = node as IHeadingBlock;
         const head = block.children.head as Content | null;
         const text = head?.text ?? '';
 
-        const source = blockName === 'setext-heading'
-            ? text.trim()
-            : text.replace(/^\s*#{1,6}\s+/, '').trim();
+        const source =
+            blockName === 'setext-heading' ? text.trim() : text.replace(/^\s*#{1,6}\s+/, '').trim();
 
         // Show and slug the heading by its rendered text — inline markdown
         // (`**bold**`, `[label](url)`, images) stripped to what a reader sees —

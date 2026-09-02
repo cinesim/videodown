@@ -59,8 +59,7 @@ class MathPreview extends Parent {
     }
 
     update(math = this._math) {
-        if (this._math !== math)
-            this._math = math;
+        if (this._math !== math) this._math = math;
 
         const { i18n } = this.muya;
 
@@ -70,13 +69,12 @@ class MathPreview extends Parent {
                     displayMode: true,
                 });
                 this.domNode!.innerHTML = html;
-            }
-            catch (err) {
-                const message = err instanceof Error ? err.message : i18n.t('Invalid Mathematical Formula');
+            } catch (err) {
+                const message =
+                    err instanceof Error ? err.message : i18n.t('Invalid Mathematical Formula');
                 this.domNode!.innerHTML = `<div class="${CLASS_NAMES.MU_MATH_ERROR}">${escapeHTML(message)}</div>`;
             }
-        }
-        else {
+        } else {
             this.domNode!.innerHTML = `<div class="${CLASS_NAMES.MU_EMPTY}">&lt; ${i18n.t(
                 'Empty Mathematical Formula',
             )} &gt;</div>`;

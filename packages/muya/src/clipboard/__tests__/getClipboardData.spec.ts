@@ -41,12 +41,7 @@ function selectionOver(
     };
 }
 
-function makeClipboard(
-    text: string,
-    begin: number,
-    end: number,
-    blockName?: string,
-) {
+function makeClipboard(text: string, begin: number, end: number, blockName?: string) {
     const clipboard = new Clipboard(fakeMuya());
     Object.defineProperty(clipboard, 'selection', {
         get: () => ({
@@ -91,12 +86,7 @@ describe('clipboard.getClipboardData — single-block selection is not HTML-esca
 describe('clipboard.getClipboardData — single table-cell copy keeps the cell text (marktext 0028a4bc)', () => {
     it('copies the full cell text when the user selects everything in the cell', () => {
         const cellText = 'cell <body> & "value"';
-        const clipboard = makeClipboard(
-            cellText,
-            0,
-            cellText.length,
-            'table.cell.content',
-        );
+        const clipboard = makeClipboard(cellText, 0, cellText.length, 'table.cell.content');
 
         const { text } = clipboard.getClipboardData();
 

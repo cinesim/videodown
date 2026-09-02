@@ -24,17 +24,14 @@ export function mergePasteIntoHeading(
     states: TState[],
     cursor: IPasteCursor,
 ): TState[] {
-    if (states.length === 0)
-        return states;
+    if (states.length === 0) return states;
 
     const isAtx = wrapperBlock?.blockName === 'atx-heading';
     const isSetext = wrapperBlock?.blockName === 'setext-heading';
-    if (!isAtx && !isSetext)
-        return states;
+    if (!isAtx && !isSetext) return states;
 
     const first = states[0];
-    if (first.name !== 'paragraph')
-        return states;
+    if (first.name !== 'paragraph') return states;
 
     const original = anchorBlock.text;
     const head = original.substring(0, cursor.startOffset);
@@ -46,8 +43,7 @@ export function mergePasteIntoHeading(
         // A setext heading line can hold soft breaks, so the whole first
         // paragraph stays in it (muyajs only splits atx).
         anchorBlock.text = head + first.text;
-    }
-    else {
+    } else {
         // An atx heading is a single line: only the first soft-line stays; the
         // following lines become a paragraph block below it.
         const [firstLine, ...restLines] = first.text.split('\n');

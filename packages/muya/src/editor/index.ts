@@ -30,21 +30,23 @@ const debug = logger('editor:');
 // ot-json1 op descents are dynamically shaped — so we type these as
 // BlockNode (loose structural alias) inside the inner walkers and let
 // the runtime branches do the actual narrowing.
-type BlockNode = {
-    queryBlock?: (path: (string | number)[]) => BlockNode | undefined;
-    find?: (key: number | string) => BlockNode;
-    remove?: (source: string) => void;
-    replaceWith?: (newBlock: BlockNode, source: string) => void;
-    insertBefore?: (newBlock: BlockNode, ref: BlockNode, source: string) => void;
-    append?: (newBlock: BlockNode, source: string) => void;
-    update?: (value?: unknown, source?: string) => void;
-    blockName?: string;
-    align?: string;
-    _text?: string;
-    text?: string;
-    meta?: { lang?: string; type?: string };
-    parent?: BlockNode;
-} | undefined;
+type BlockNode =
+    | {
+          queryBlock?: (path: (string | number)[]) => BlockNode | undefined;
+          find?: (key: number | string) => BlockNode;
+          remove?: (source: string) => void;
+          replaceWith?: (newBlock: BlockNode, source: string) => void;
+          insertBefore?: (newBlock: BlockNode, ref: BlockNode, source: string) => void;
+          append?: (newBlock: BlockNode, source: string) => void;
+          update?: (value?: unknown, source?: string) => void;
+          blockName?: string;
+          align?: string;
+          _text?: string;
+          text?: string;
+          meta?: { lang?: string; type?: string };
+          parent?: BlockNode;
+      }
+    | undefined;
 
 function descend(
     subDoc: BlockNode,
@@ -55,10 +57,8 @@ function descend(
 
     for (; i < descent.length; i++) {
         const d = descent[i];
-        if (Array.isArray(d))
-            break;
-        if (typeof d === 'object')
-            continue;
+        if (Array.isArray(d)) break;
+        if (typeof d === 'object') continue;
         stack.push(subDoc);
         // Its valid to descend into a null space - just we can't pick there.
         subDoc = subDoc == null ? undefined : subDoc.queryBlock?.([d]);
@@ -67,38 +67,28 @@ function descend(
     return { subDoc, i };
 }
 
-function restore(
-    subDoc: BlockNode,
-    descent: JSONOpList,
-    stack: BlockNode[],
-    i: number,
-): BlockNode {
+function restore(subDoc: BlockNode, descent: JSONOpList, stack: BlockNode[], i: number): BlockNode {
     // Then back again.
     for (--i; i >= 0; i--) {
         const d = descent[i];
         if (typeof d !== 'object') {
             const container = stack.pop();
             if (
-                subDoc
-                === (container == null ? undefined : container.queryBlock?.([d as string | number]))
+                subDoc ===
+                (container == null ? undefined : container.queryBlock?.([d as string | number]))
             ) {
                 subDoc = container;
-            }
-            else {
+            } else {
                 if (subDoc === undefined) {
                     // TODO: handler typeof d === 'string'
-                    if (typeof d === 'number')
-                        container?.find?.(d)?.remove?.('api');
+                    if (typeof d === 'number') container?.find?.(d)?.remove?.('api');
                     subDoc = container;
-                }
-                else {
-                    if (typeof d === 'number')
-                        container?.find?.(d)?.replaceWith?.(subDoc, 'api');
+                } else {
+                    if (typeof d === 'number') container?.find?.(d)?.replaceWith?.(subDoc, 'api');
                     subDoc = container;
                 }
             }
-        }
-        else if (!Array.isArray(d) && hasPick(d)) {
+        } else if (!Array.isArray(d) && hasPick(d)) {
             subDoc = undefined;
         }
     }
@@ -115,8 +105,7 @@ function pick(subDoc: BlockNode, descent: JSONOpList): BlockNode {
     const i = descended.i;
 
     // Children. These need to be traversed in reverse order here.
-    for (let j = descent.length - 1; j >= i; j--)
-        subDoc = pick(subDoc, descent[j] as JSONOpList);
+    for (let j = descent.length - 1; j >= i; j--) subDoc = pick(subDoc, descent[j] as JSONOpList);
 
     return restore(subDoc, descent, stack, i);
 }
@@ -132,13 +121,11 @@ function drop(root: BlockNode, descent: JSONOpList, muya: Muya): BlockNode {
     function mut() {
         for (; m < i; m++) {
             const d = descent[m];
-            if (typeof d === 'object')
-                continue;
+            if (typeof d === 'object') continue;
             if (key === 'root') {
                 const wrap = container as { root: BlockNode };
                 container = wrap.root;
-            }
-            else {
+            } else {
                 container = (container as BlockNode)?.queryBlock?.([key]);
             }
             key = d as string | number;
@@ -152,17 +139,17 @@ function drop(root: BlockNode, descent: JSONOpList, muya: Muya): BlockNode {
         const ref = cur?.find?.(key);
         if (typeof key === 'number') {
             const insertedState = comp.i as { name: string };
-            const newBlock = ScrollPage.loadBlock(insertedState.name).create(muya, insertedState) as BlockNode;
+            const newBlock = ScrollPage.loadBlock(insertedState.name).create(
+                muya,
+                insertedState,
+            ) as BlockNode;
             if (cur && newBlock) {
-                if (ref)
-                    cur.insertBefore?.(newBlock, ref, 'api');
-                else
-                    cur.append?.(newBlock, 'api');
+                if (ref) cur.insertBefore?.(newBlock, ref, 'api');
+                else cur.append?.(newBlock, 'api');
             }
 
             subDoc = newBlock;
-        }
-        else {
+        } else {
             switch (key) {
                 case 'checked': {
                     ref?.update?.(comp.i, 'api');
@@ -186,19 +173,14 @@ function drop(root: BlockNode, descent: JSONOpList, muya: Muya): BlockNode {
         const sd = subDoc!;
         if (sd.blockName === 'table.cell') {
             sd.align = otText.type.apply(sd.align ?? '', es) as string;
-        }
-        else if (sd.blockName === 'language-input') {
+        } else if (sd.blockName === 'language-input') {
             sd._text = otText.type.apply(sd.text ?? '', es) as string;
-            if (sd.parent?.meta)
-                sd.parent.meta.lang = sd.text;
+            if (sd.parent?.meta) sd.parent.meta.lang = sd.text;
             sd.update?.();
-        }
-        else if (sd.blockName === 'code-block') {
+        } else if (sd.blockName === 'code-block') {
             // Handle modify code block type.
-            if (sd.meta)
-                sd.meta.type = otText.type.apply(sd.meta.type ?? '', es) as string;
-        }
-        else {
+            if (sd.meta) sd.meta.type = otText.type.apply(sd.meta.type ?? '', es) as string;
+        } else {
             sd._text = otText.type.apply(sd.text ?? '', es) as string;
             sd.update?.();
         }
@@ -212,22 +194,16 @@ function drop(root: BlockNode, descent: JSONOpList, muya: Muya): BlockNode {
             if (child !== subDoc && child !== undefined) {
                 mut();
                 // It maybe never go into this if statement.
-                if (key === 'root')
-                    (container as { root: BlockNode }).root = child;
-                else
-                    (container as Record<string, BlockNode>)[key] = child;
+                if (key === 'root') (container as { root: BlockNode }).root = child;
+                else (container as Record<string, BlockNode>)[key] = child;
                 subDoc = child;
             }
-        }
-        else if (typeof d === 'object') {
+        } else if (typeof d === 'object') {
             const comp = d as JSONOpComponent;
-            if (comp.i !== undefined)
-                applyInsert(comp);
+            if (comp.i !== undefined) applyInsert(comp);
 
-            if (comp.es)
-                applyTextEdit(comp.es);
-        }
-        else {
+            if (comp.es) applyTextEdit(comp.es);
+        } else {
             subDoc = subDoc != null ? subDoc.queryBlock?.([d]) : undefined;
         }
     }
@@ -265,11 +241,9 @@ export class Editor {
         const { activeContentBlock: oldActiveContentBlock } = this;
         if (block !== oldActiveContentBlock) {
             this._activeContentBlock = block;
-            if (oldActiveContentBlock)
-                oldActiveContentBlock.blurHandler();
+            if (oldActiveContentBlock) oldActiveContentBlock.blurHandler();
 
-            if (block)
-                block.focusHandler();
+            if (block) block.focusHandler();
         }
     }
 
@@ -302,11 +276,11 @@ export class Editor {
             const isSelectionInSameBlock = selectionResult?.isSelectionInSameBlock;
             // Fix issue that language input can not get focus when it's empty(Firefox only)
             if (
-                event.type === 'click'
-                && isFirefox
-                && isHTMLElement(event.target)
-                && event.target.textContent === ''
-                && event.target.classList.contains(CLASS_NAMES.MU_LANGUAGE_INPUT)
+                event.type === 'click' &&
+                isFirefox &&
+                isHTMLElement(event.target) &&
+                event.target.textContent === '' &&
+                event.target.classList.contains(CLASS_NAMES.MU_LANGUAGE_INPUT)
             ) {
                 (getBlock(event.target) as Content | undefined)?.setCursor(0, 0, true);
                 return;
@@ -362,12 +336,7 @@ export class Editor {
         // focus() triggered after a blur (e.g. the command palette) keeps
         // block-level commands operating on the block the user was editing
         // rather than the first block of the document.
-        if (
-            anchorBlock
-            && anchor
-            && focus
-            && scrollPage?.queryBlock(anchorPath) === anchorBlock
-        ) {
+        if (anchorBlock && anchor && focus && scrollPage?.queryBlock(anchorPath) === anchorBlock) {
             anchorBlock.setCursor(anchor.offset, focus.offset, true);
             return;
         }
@@ -375,8 +344,7 @@ export class Editor {
         // TODO: the cursor maybe passed by muya options.cursor, and no need to find the first leaf block.
         const firstLeafBlock = scrollPage?.firstContentInDescendant();
 
-        if (firstLeafBlock == null)
-            return;
+        if (firstLeafBlock == null) return;
 
         const cursor = {
             path: firstLeafBlock.path,
@@ -389,9 +357,9 @@ export class Editor {
             },
         };
 
-        const needUpdated
-            = firstLeafBlock.blockName === 'paragraph.content'
-                && (firstLeafBlock as Format).checkNeedRender(cursor);
+        const needUpdated =
+            firstLeafBlock.blockName === 'paragraph.content' &&
+            (firstLeafBlock as Format).checkNeedRender(cursor);
 
         firstLeafBlock.setCursor(0, 0, needUpdated);
     }
@@ -404,8 +372,7 @@ export class Editor {
         this.jsonState.dispatch(operations, source);
 
         // Codes bellow are copy from `ot-json1.apply` and modified.
-        if (operations === null)
-            return;
+        if (operations === null) return;
 
         try {
             const snapshot = pick(this.scrollPage as BlockNode, operations);
@@ -413,20 +380,20 @@ export class Editor {
             drop(snapshot, operations, muya);
 
             this._restoreSelection(selection);
-        }
-        catch (error) {
+        } catch (error) {
             // The incremental walk left the live tree half-applied (pick removed
             // blocks drop never re-inserted). The json state is authoritative and
             // already up to date — rebuild from it instead of leaving an empty doc.
-            debug.error(`updateContents incremental apply failed; rebuilding from state: ${String(error)}`);
+            debug.error(
+                `updateContents incremental apply failed; rebuilding from state: ${String(error)}`,
+            );
             this.scrollPage!.updateState(this.jsonState.getState());
             this._restoreSelection(selection, true);
         }
     }
 
     private _restoreSelection(selection: Nullable<IHistorySelection>, treeRebuilt = false) {
-        if (!selection)
-            return;
+        if (!selection) return;
 
         const { anchor, focus, isSelectionInSameBlock } = selection;
         // `ScrollPage.queryBlock` consumes the path array in place (`path.shift`),
@@ -449,10 +416,8 @@ export class Editor {
         // fall back to focusing the first content block when the saved path no
         // longer points at a content leaf (e.g. a paragraph became a table).
         if (treeRebuilt) {
-            if (cursorBlock && cursorBlock.isContent())
-                cursorBlock.setCursor(begin, end, true);
-            else
-                this.focus();
+            if (cursorBlock && cursorBlock.isContent()) cursorBlock.setCursor(begin, end, true);
+            else this.focus();
 
             return;
         }
@@ -501,7 +466,6 @@ export class Editor {
         this.history.clear();
         this.searchModule.reset();
 
-        if (autoFocus)
-            this.focus();
+        if (autoFocus) this.focus();
     }
 }

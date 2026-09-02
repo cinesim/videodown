@@ -86,13 +86,9 @@ export function normalizeHtml(html: string): string {
                 parsed.push([m[1], m[2] ?? '']);
             }
             parsed.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-            const rebuilt = parsed
-                .map(([k, v]) => (v === '' ? k : `${k}=${v}`))
-                .join(' ');
+            const rebuilt = parsed.map(([k, v]) => (v === '' ? k : `${k}=${v}`)).join(' ');
             const sc = selfClose ? ' /' : '';
-            return rebuilt
-                ? `<${name} ${rebuilt}${sc}>`
-                : `<${name}${sc}>`;
+            return rebuilt ? `<${name} ${rebuilt}${sc}>` : `<${name}${sc}>`;
         },
     );
 
@@ -105,10 +101,7 @@ export function normalizeHtml(html: string): string {
     // covers cmark's `<br>\nfoo` vs marked's `<br>foo`: after the void-tag
     // normalisation above both inputs reach `<br />`, then we strip the
     // following whitespace run.
-    out = out.replace(
-        /(<(?:br|hr|wbr|img|input)\s+\/>)[ \t\n\r]+/gi,
-        '$1',
-    );
+    out = out.replace(/(<(?:br|hr|wbr|img|input)\s+\/>)[ \t\n\r]+/gi, '$1');
 
     // Strip the leading / trailing newlines that some renderers leave on
     // their top-level output. Crucially, do NOT collapse internal blank-line
@@ -141,8 +134,7 @@ interface IExpectedFailures {
     gfm: number[];
 }
 
-const expectedFailures: IExpectedFailures
-    = expectedFailuresRaw as IExpectedFailures;
+const expectedFailures: IExpectedFailures = expectedFailuresRaw as IExpectedFailures;
 
 export function getExpectedFailures(suite: 'commonmark' | 'gfm'): Set<number> {
     return new Set(expectedFailures[suite] ?? []);
@@ -153,10 +145,7 @@ export function getExpectedFailures(suite: 'commonmark' | 'gfm'): Set<number> {
  * messages so vitest's diff output shows the actual / expected HTML side-by-
  * side, with the markdown source as context.
  */
-export function formatFailureMessage(
-    example: ISpecExample,
-    result: IRunResult,
-): string {
+export function formatFailureMessage(example: ISpecExample, result: IRunResult): string {
     return [
         '',
         `--- markdown (${example.section} #${example.number}) ---`,

@@ -37,9 +37,7 @@ class Footnote extends Parent {
         backlink.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            const target = document.querySelector(
-                `#noteref-${footnote.meta.identifier}`,
-            );
+            const target = document.querySelector(`#noteref-${footnote.meta.identifier}`);
             target?.scrollIntoView({ behavior: 'smooth' });
         });
         footnote.domNode!.appendChild(backlink);
@@ -74,7 +72,7 @@ class Footnote extends Parent {
         return {
             name: 'footnote',
             meta: { identifier: this.meta.identifier },
-            children: this.children.map(child => (child as Parent).getState()),
+            children: this.children.map((child) => (child as Parent).getState()),
         };
     }
 }

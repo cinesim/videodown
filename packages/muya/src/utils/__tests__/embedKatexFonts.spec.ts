@@ -11,7 +11,9 @@ describe('embedKatexFonts', () => {
         const faces = out.match(/@font-face\s*\{[^}]*\}/g) ?? [];
         expect(faces.length).toBe(20);
         for (const face of faces) {
-            expect(face).toMatch(/src:\s*url\(data:font\/woff2;base64,[^)]+\)\s*format\("woff2"\);/);
+            expect(face).toMatch(
+                /src:\s*url\(data:font\/woff2;base64,[^)]+\)\s*format\("woff2"\);/,
+            );
         }
     });
 

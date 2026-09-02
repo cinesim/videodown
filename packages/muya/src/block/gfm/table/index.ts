@@ -40,7 +40,7 @@ class Table extends Parent {
             children: [
                 {
                     name: 'table.row',
-                    children: header.map(c => ({
+                    children: header.map((c) => ({
                         name: 'table.cell',
                         meta: { align: 'none' },
                         text: c,
@@ -87,9 +87,7 @@ class Table extends Parent {
     isEmpty() {
         const state = this.getState();
 
-        return state.children.every(row =>
-            row.children.every(cell => cell.text === ''),
-        );
+        return state.children.every((row) => row.children.every((cell) => cell.text === ''));
     }
 
     private _listenDomEvent() {
@@ -112,16 +110,18 @@ class Table extends Parent {
     queryBlock(path: TBlockPath) {
         // Table's only child at runtime is `TableInner` (the body wrapper),
         // which extends the queryBlock mixin and is always present.
-        return (this.firstChild as Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined }).queryBlock(path);
+        return (
+            this.firstChild as Parent & {
+                queryBlock: (p: TBlockPath) => Parent | Content | undefined;
+            }
+        ).queryBlock(path);
     }
 
     protected override empty() {
-        if (this.isEmpty())
-            return;
+        if (this.isEmpty()) return;
 
         const table = this.children.head;
-        if (table == null)
-            return;
+        if (table == null) return;
 
         table.forEach((row) => {
             (row as TableRow).forEach((cell) => {
@@ -133,8 +133,8 @@ class Table extends Parent {
     insertRow(offset: number) {
         const { columnCount } = this;
         const firstRowState = this.getState().children[0];
-        const currentRow
-            = offset > 0
+        const currentRow =
+            offset > 0
                 ? (this.firstChild as TableInner).find(offset - 1)
                 : (this.firstChild as TableInner).find(offset);
         const state = {
@@ -155,8 +155,7 @@ class Table extends Parent {
 
         if (offset > 0)
             (this.firstChild as TableInner).insertAfter(rowBlock, currentRow as TableRow);
-        else
-            (this.firstChild as TableInner).insertBefore(rowBlock, currentRow as TableRow);
+        else (this.firstChild as TableInner).insertBefore(rowBlock, currentRow as TableRow);
 
         return rowBlock.firstContentInDescendant();
     }
@@ -175,8 +174,7 @@ class Table extends Parent {
             const ref = (row as TableRow).find(offset);
 
             (row as TableRow).insertBefore(cell, ref as TableBodyCell);
-            if (!firstCellInNewColumn)
-                firstCellInNewColumn = cell;
+            if (!firstCellInNewColumn) firstCellInNewColumn = cell;
         });
 
         return firstCellInNewColumn!.firstChild as TableCellContent;
@@ -185,8 +183,7 @@ class Table extends Parent {
     removeRow(offset: number): Nullable<Content> {
         const inner = this.firstChild as TableInner;
         const row = inner.find(offset);
-        if (row == null)
-            return;
+        if (row == null) return;
 
         // Capture a surviving neighbour
         // BEFORE the detach so the caller can place the caret on a cell that
@@ -198,8 +195,7 @@ class Table extends Parent {
         // Always grab the outside-of-table fallback as well, in case the
         // whole table is going away. `nextContentInContext` / `prev` walk
         // out of the table by design.
-        const outsideContent
-            = this.nextContentInContext() ?? this.previousContentInContext();
+        const outsideContent = this.nextContentInContext() ?? this.previousContentInContext();
 
         row.remove();
 
@@ -223,8 +219,7 @@ class Table extends Parent {
             // Same outside-of-table fallback as removeRow when the whole
             // table is removed — never leave the caret inside a detached
             // subtree.
-            const outsideContent
-                = this.nextContentInContext() ?? this.previousContentInContext();
+            const outsideContent = this.nextContentInContext() ?? this.previousContentInContext();
             this.remove();
             return outsideContent ?? null;
         }
@@ -235,14 +230,13 @@ class Table extends Parent {
         // cell per row in a loop.
         const firstRow = table.firstChild as TableRow;
         const targetCellInFirstRow = firstRow.find(offset) as TableBodyCell | null;
-        const neighbourCell
-            = (targetCellInFirstRow?.next as TableBodyCell | null)
-                ?? (targetCellInFirstRow?.prev as TableBodyCell | null);
+        const neighbourCell =
+            (targetCellInFirstRow?.next as TableBodyCell | null) ??
+            (targetCellInFirstRow?.prev as TableBodyCell | null);
 
         table.forEach((row) => {
             const cell = (row as TableRow).find(offset);
-            if (cell)
-                cell.remove();
+            if (cell) cell.remove();
         });
 
         return (neighbourCell?.firstChild as TableCellContent | undefined) ?? null;
@@ -278,8 +272,7 @@ class Table extends Parent {
      */
     cellAt(row: number, column: number): Nullable<TableBodyCell> {
         const rowBlock = (this.firstChild as TableInner).find(row) as TableRow | undefined;
-        if (rowBlock == null)
-            return null;
+        if (rowBlock == null) return null;
 
         return (rowBlock.find(column) as TableBodyCell | undefined) ?? null;
     }
@@ -310,8 +303,7 @@ class Table extends Parent {
             const cells: ITableRowState['children'] = [];
             for (let c = minColumn; c <= maxColumn; c++) {
                 const cell = this.cellAt(r, c);
-                if (cell)
-                    cells.push(cell.getState());
+                if (cell) cells.push(cell.getState());
             }
             children.push({ name: 'table.row', children: cells });
         }

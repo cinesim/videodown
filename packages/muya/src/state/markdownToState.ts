@@ -22,7 +22,7 @@ interface IMarkdownToStateOptions {
     isGitlabCompatibilityEnabled: boolean;
     trimUnnecessaryCodeBlockEmptyLines: boolean;
     frontMatter: boolean;
-};
+}
 
 const DEFAULT_OPTIONS = {
     footnote: false,
@@ -35,13 +35,7 @@ const DEFAULT_OPTIONS = {
 // Token types whose handler manipulates the `parentList` stack (push a
 // container and recurse via synthetic `block-end`), as opposed to the leaf
 // tokens that only append a state to the current level.
-const CONTAINER_TOKEN_TYPES = new Set([
-    'block-end',
-    'blockquote',
-    'list',
-    'list_item',
-    'footnote',
-]);
+const CONTAINER_TOKEN_TYPES = new Set(['block-end', 'blockquote', 'list', 'list_item', 'footnote']);
 
 export class MarkdownToState {
     constructor(private _options: IMarkdownToStateOptions = DEFAULT_OPTIONS) {}
@@ -78,7 +72,12 @@ export class MarkdownToState {
             if (CONTAINER_TOKEN_TYPES.has(token.type))
                 this._handleContainerToken(token, parentList, tokens);
             else
-                this._handleLeafToken(token, parentList, tokens, trimUnnecessaryCodeBlockEmptyLines);
+                this._handleLeafToken(
+                    token,
+                    parentList,
+                    tokens,
+                    trimUnnecessaryCodeBlockEmptyLines,
+                );
         }
 
         return states.length ? states : [{ name: 'paragraph', text: '' }];
@@ -97,8 +96,8 @@ export class MarkdownToState {
                 // >
                 // bar
                 if (
-                    parentList[0].length === 0
-                    && (token.tokenType === 'blockquote' || token.tokenType === 'list-item')
+                    parentList[0].length === 0 &&
+                    (token.tokenType === 'blockquote' || token.tokenType === 'list-item')
                 ) {
                     state = {
                         name: 'paragraph' as const,
@@ -124,8 +123,7 @@ export class MarkdownToState {
 
             case 'list': {
                 const { listType, loose, start } = token;
-                const bulletMarkerOrDelimiter
-                    = token.items[0].bulletMarkerOrDelimiter;
+                const bulletMarkerOrDelimiter = token.items[0].bulletMarkerOrDelimiter;
 
                 let listState: IOrderListState | IBulletListState | ITaskListState;
                 if (listType === 'order') {
@@ -138,8 +136,7 @@ export class MarkdownToState {
                         },
                         children: [],
                     };
-                }
-                else if (listType === 'task') {
+                } else if (listType === 'task') {
                     listState = {
                         name: 'task-list',
                         meta: {
@@ -148,8 +145,7 @@ export class MarkdownToState {
                         },
                         children: [],
                     };
-                }
-                else {
+                } else {
                     listState = {
                         name: 'bullet-list',
                         meta: {
@@ -177,8 +173,7 @@ export class MarkdownToState {
                         meta: { checked: Boolean(checked) },
                         children: [],
                     };
-                }
-                else {
+                } else {
                     itemState = {
                         name: 'list-item',
                         children: [],
@@ -251,9 +246,7 @@ export class MarkdownToState {
 
             case 'heading': {
                 const { headingStyle, depth, text, marker } = token;
-                value = headingStyle === 'atx'
-                    ? `${'#'.repeat(+depth)} ${text}`
-                    : text;
+                value = headingStyle === 'atx' ? `${'#'.repeat(+depth)} ${text}` : text;
 
                 if (headingStyle === 'atx') {
                     const atxState: IAtxHeadingState = {
@@ -262,8 +255,7 @@ export class MarkdownToState {
                         text: value,
                     };
                     state = atxState;
-                }
-                else {
+                } else {
                     const setextState: ISetextHeadingState = {
                         name: 'setext-heading',
                         meta: { level: depth, underline: marker },
@@ -283,7 +275,13 @@ export class MarkdownToState {
                 const codeText = codeBlockStyle === 'indented' ? text.replace(/\n$/, '') : text;
                 const fenceLength = /^ {0,3}([`~]{3,})/.exec(raw)?.[1].length;
                 parentList[0].push(
-                    this._buildCodeState(codeText, infoString, codeBlockStyle, trimUnnecessaryCodeBlockEmptyLines, fenceLength),
+                    this._buildCodeState(
+                        codeText,
+                        infoString,
+                        codeBlockStyle,
+                        trimUnnecessaryCodeBlockEmptyLines,
+                        fenceLength,
+                    ),
                 );
                 break;
             }
@@ -310,7 +308,7 @@ export class MarkdownToState {
                 });
 
                 tableState.children.push(
-                    ...rows.map(row => ({
+                    ...rows.map((row) => ({
                         name: 'table.row' as const,
                         children: row.map((c, i) => ({
                             name: 'table.cell' as const,
@@ -335,8 +333,7 @@ export class MarkdownToState {
                         text,
                     };
                     parentList[0].push(state);
-                }
-                else {
+                } else {
                     state = {
                         name: 'html-block' as const,
                         text,
@@ -424,15 +421,20 @@ export class MarkdownToState {
         let value = text;
         // Fix: #1265.
         if (
-            trimUnnecessaryCodeBlockEmptyLines
-            && (value.endsWith('\n') || value.startsWith('\n'))
+            trimUnnecessaryCodeBlockEmptyLines &&
+            (value.endsWith('\n') || value.startsWith('\n'))
         ) {
             value = value.replace(/\n+$/, '').replace(/^\n+/, '');
         }
 
         const diagramMatch = /^(mermaid|vega-lite|plantuml|flowchart|sequence)$/.exec(lang);
         if (diagramMatch) {
-            const diagramType = diagramMatch[1] as 'mermaid' | 'vega-lite' | 'plantuml' | 'flowchart' | 'sequence';
+            const diagramType = diagramMatch[1] as
+                | 'mermaid'
+                | 'vega-lite'
+                | 'plantuml'
+                | 'flowchart'
+                | 'sequence';
             return {
                 name: 'diagram' as const,
                 text: value,

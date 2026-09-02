@@ -29,7 +29,8 @@ import type { MarkedExtension, TokenizerObject, Tokens } from 'marked';
 //   U+F900–U+FAFF  CJK Compatibility Ideographs
 //   U+AC00–U+D7AF  Hangul Syllables
 //   U+FF66–U+FF9D  Halfwidth Katakana
-const CJK = '\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uAC00-\\uD7AF\\uFF66-\\uFF9D';
+const CJK =
+    '\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uAC00-\\uD7AF\\uFF66-\\uFF9D';
 // CJK Unified Ideographs Extension B (non-BMP, U+20000–U+2A6DF) — matched as
 // a full code point under the `u` flag inside the delimiter regexes.
 const CJK_NON_BMP = '\\u{20000}-\\u{2A6DF}';
@@ -123,10 +124,7 @@ function scanEmphasisRun(
     let delimTotal = lLength;
     let midDelimTotal = 0;
 
-    const endReg
-        = opener[0][0] === '*'
-            ? inline.emStrongRDelimAst
-            : inline.emStrongRDelimUnd;
+    const endReg = opener[0][0] === '*' ? inline.emStrongRDelimAst : inline.emStrongRDelimUnd;
     endReg.lastIndex = 0;
 
     // Clip maskedSrc to the opener so the right-delimiter scan starts
@@ -137,16 +135,9 @@ function scanEmphasisRun(
     let match: RegExpExecArray | null;
     // eslint-disable-next-line no-cond-assign
     while ((match = endReg.exec(maskedSrc)) != null) {
-        rDelim
-            = match[1]
-                || match[2]
-                || match[3]
-                || match[4]
-                || match[5]
-                || match[6];
+        rDelim = match[1] || match[2] || match[3] || match[4] || match[5] || match[6];
 
-        if (!rDelim)
-            continue;
+        if (!rDelim) continue;
 
         rLength = [...rDelim].length;
 
@@ -154,8 +145,7 @@ function scanEmphasisRun(
             // Found another opener — push the requirement deeper.
             delimTotal += rLength;
             continue;
-        }
-        else if ((match[5] || match[6]) && lLength % 3 && !((lLength + rLength) % 3)) {
+        } else if ((match[5] || match[6]) && lLength % 3 && !((lLength + rLength) % 3)) {
             // Rule of 3 — a delimiter run usable as both opener and
             // closer can't close here.
             midDelimTotal += rLength;
@@ -163,8 +153,7 @@ function scanEmphasisRun(
         }
 
         delimTotal -= rLength;
-        if (delimTotal > 0)
-            continue;
+        if (delimTotal > 0) continue;
 
         rLength = Math.min(rLength, rLength + delimTotal + midDelimTotal);
 
@@ -224,15 +213,13 @@ function cjkAwareEmStrong(
 
     try {
         const match = inline.emStrongLDelim.exec(src);
-        if (!match)
-            return undefined;
+        if (!match) return undefined;
 
         // CommonMark §6.4: a `**`/`__` run that is both left- and right-flanking
         // can only open emphasis when preceded by punctuation. With CJK now in
         // the punctuation class, `unicodeAlphaNumeric` excludes CJK so this
         // guard no longer rejects CJK-preceded openers.
-        if (match[3] && prevChar.match(other.unicodeAlphaNumeric))
-            return undefined;
+        if (match[3] && prevChar.match(other.unicodeAlphaNumeric)) return undefined;
 
         const nextChar = match[1] || match[2] || '';
 
@@ -240,8 +227,7 @@ function cjkAwareEmStrong(
             return scanEmphasisRun(src, maskedSrc, match, inline, this.lexer);
 
         return undefined;
-    }
-    finally {
+    } finally {
         inline.emStrongLDelim = saved.emStrongLDelim;
         inline.emStrongRDelimAst = saved.emStrongRDelimAst;
         inline.emStrongRDelimUnd = saved.emStrongRDelimUnd;

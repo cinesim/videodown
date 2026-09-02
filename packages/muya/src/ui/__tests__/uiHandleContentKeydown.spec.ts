@@ -65,8 +65,16 @@ describe('ui.handleContentKeydown', () => {
     it('does not preventDefault for Shift+ArrowUp/Down when a capturing float is shown', () => {
         const ui = makeUi();
         ui.shownFloat.add(fakeFloat(true));
-        const up = { key: 'ArrowUp', shiftKey: true, preventDefault: vi.fn() } as unknown as KeyboardEvent;
-        const down = { key: 'ArrowDown', shiftKey: true, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+        const up = {
+            key: 'ArrowUp',
+            shiftKey: true,
+            preventDefault: vi.fn(),
+        } as unknown as KeyboardEvent;
+        const down = {
+            key: 'ArrowDown',
+            shiftKey: true,
+            preventDefault: vi.fn(),
+        } as unknown as KeyboardEvent;
 
         expect(ui.handleContentKeydown(up)).toBe(false);
         expect(up.preventDefault).not.toHaveBeenCalled();

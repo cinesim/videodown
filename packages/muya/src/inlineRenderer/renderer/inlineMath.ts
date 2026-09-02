@@ -7,38 +7,23 @@ import 'katex/dist/contrib/mhchem.mjs';
 
 import 'katex/dist/katex.min.css';
 
-export default function inlineMath(this: Renderer, {
-    h,
-    cursor,
-    block,
-    token,
-    outerClass,
-}: ISyntaxRenderOptions & { token: CodeEmojiMathToken }) {
+export default function inlineMath(
+    this: Renderer,
+    { h, cursor, block, token, outerClass }: ISyntaxRenderOptions & { token: CodeEmojiMathToken },
+) {
     const className = this.getClassName(outerClass, block, token, cursor);
     const { i18n } = this.muya;
-    const mathSelector
-        = className === CLASS_NAMES.MU_HIDE
+    const mathSelector =
+        className === CLASS_NAMES.MU_HIDE
             ? `span.${className}.${CLASS_NAMES.MU_MATH}`
             : `span.${CLASS_NAMES.MU_MATH}`;
 
     const { start, end } = token.range;
     const { marker } = token;
 
-    const startMarker = this.highlight(
-        h,
-        block,
-        start,
-        start + marker.length,
-        token,
-    );
+    const startMarker = this.highlight(h, block, start, start + marker.length, token);
     const endMarker = this.highlight(h, block, end - marker.length, end, token);
-    const content = this.highlight(
-        h,
-        block,
-        start + marker.length,
-        end - marker.length,
-        token,
-    );
+    const content = this.highlight(h, block, start + marker.length, end - marker.length, token);
 
     const { content: math, type } = token;
 
@@ -53,16 +38,14 @@ export default function inlineMath(this: Renderer, {
     let errorTitle = '';
     if (loadMathMap.has(key)) {
         mathVnode = loadMathMap.get(key);
-    }
-    else {
+    } else {
         try {
             const html = katex.renderToString(math, {
                 displayMode,
             });
             mathVnode = htmlToVNode(html);
             loadMathMap.set(key, mathVnode);
-        }
-        catch (err) {
+        } catch (err) {
             mathVnode = `<${i18n.t('Invalid Mathematical Formula')}>`;
             previewSelector += `.${CLASS_NAMES.MU_MATH_ERROR}`;
             errorTitle = err instanceof Error ? err.message : '';

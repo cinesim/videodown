@@ -28,10 +28,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -56,18 +54,21 @@ function placeCursorOnFirstBlock(muya: Muya): Content {
 // a click sets `activeContentBlock`. Used to exercise nested-block anchoring.
 function placeCursorOn(muya: Muya, text: string): Content {
     let target: Content | null = null;
-    const visit = (block: { text?: string; constructor: { blockName?: string }; children?: { forEach: (cb: (b: unknown) => void) => void } }) => {
+    const visit = (block: {
+        text?: string;
+        constructor: { blockName?: string };
+        children?: { forEach: (cb: (b: unknown) => void) => void };
+    }) => {
         if (
-            (block.constructor as { blockName?: string }).blockName?.endsWith('.content')
-            && block.text === text
+            (block.constructor as { blockName?: string }).blockName?.endsWith('.content') &&
+            block.text === text
         ) {
             target = block as unknown as Content;
         }
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     muya.editor.activeContentBlock = target;
     return target;
 }

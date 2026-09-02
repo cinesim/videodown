@@ -36,8 +36,7 @@ export function findScrollContainer(node: HTMLElement): HTMLElement {
     let el: HTMLElement | null = node;
     while (el && el !== document.body && el !== document.documentElement) {
         const { overflowY } = getComputedStyle(el);
-        if (overflowY === 'auto' || overflowY === 'scroll')
-            return el;
+        if (overflowY === 'auto' || overflowY === 'scroll') return el;
 
         el = el.parentElement;
     }
@@ -50,28 +49,30 @@ export function findScrollContainer(node: HTMLElement): HTMLElement {
 // cast here means callsites never need to reach into `element[KEY]` with
 // `as` themselves.
 export function getBlock(el: Element | null | undefined): Parent | Content | undefined {
-    if (!el)
-        return undefined;
+    if (!el) return undefined;
     // `BLOCK_DOM_PROPERTY` is a string key (`__MUYA_BLOCK__`) that
     // `TreeNode.attachDOMNode` stamps onto rendered elements. The DOM types
     // can't express the project-specific property, so the lookup is widened
     // to `Record<string, …>` here once for all callers.
     // eslint-disable-next-line no-restricted-syntax
-    const block = (el as unknown as Record<string, Parent | Content | undefined>)[BLOCK_DOM_PROPERTY];
+    const block = (el as unknown as Record<string, Parent | Content | undefined>)[
+        BLOCK_DOM_PROPERTY
+    ];
     return block;
 }
 
-export function createDomNode(tagName: string, { classList = [], attributes = {}, datasets = {} }: ICreateDomOptions = {} as ICreateDomOptions) {
+export function createDomNode(
+    tagName: string,
+    { classList = [], attributes = {}, datasets = {} }: ICreateDomOptions = {} as ICreateDomOptions,
+) {
     const domNode = document.createElement(tagName);
 
-    for (const className of classList)
-        domNode.classList.add(className);
+    for (const className of classList) domNode.classList.add(className);
 
     for (const [key, value] of Object.entries(attributes))
         domNode.setAttribute(key, value.toString());
 
-    for (const [key, value] of Object.entries(datasets))
-        domNode.dataset[key] = value.toString();
+    for (const [key, value] of Object.entries(datasets)) domNode.dataset[key] = value.toString();
 
     return domNode;
 }
@@ -88,19 +89,15 @@ export function operateClassName(element: HTMLElement, ctrl: 'add' | 'remove', c
 
 export function insertBefore(newNode: HTMLElement, originNode: HTMLElement) {
     const parentNode = originNode.parentNode;
-    if (parentNode)
-        parentNode.insertBefore(newNode, originNode);
+    if (parentNode) parentNode.insertBefore(newNode, originNode);
 }
 
 // DOM operations
 export function insertAfter(newNode: HTMLElement, originNode: HTMLElement) {
     const parentNode = originNode.parentNode;
 
-    if (!parentNode)
-        return;
+    if (!parentNode) return;
 
-    if (originNode.nextSibling)
-        parentNode.insertBefore(newNode, originNode.nextSibling);
-    else
-        parentNode.appendChild(newNode);
+    if (originNode.nextSibling) parentNode.insertBefore(newNode, originNode.nextSibling);
+    else parentNode.appendChild(newNode);
 }

@@ -30,8 +30,7 @@ function isCheckbox(node: TreeNode): node is TaskListCheckbox {
 function checkboxOf(item: TaskListItem): TaskListCheckbox | null {
     let found: TaskListCheckbox | null = null;
     item.attachments.forEach((attachment: Parent) => {
-        if (isCheckbox(attachment))
-            found = attachment;
+        if (isCheckbox(attachment)) found = attachment;
     });
 
     return found;
@@ -40,13 +39,11 @@ function checkboxOf(item: TaskListItem): TaskListCheckbox | null {
 // Set a task item's checked state, dispatching the OT op (`TaskListItem.checked`
 // setter) and syncing its checkbox DOM. No-op when already in the target state.
 function setItemChecked(item: TaskListItem, checked: boolean): void {
-    if (item.checked === checked)
-        return;
+    if (item.checked === checked) return;
 
     item.checked = checked;
     const checkbox = checkboxOf(item);
-    if (checkbox)
-        checkbox.syncDom(checked);
+    if (checkbox) checkbox.syncDom(checked);
 }
 
 // The nested `task-list` directly under a `task-list-item`, if any. A task item
@@ -54,8 +51,7 @@ function setItemChecked(item: TaskListItem, checked: boolean): void {
 function nestedTaskListOf(item: TaskListItem): TaskList | null {
     let nested: TaskList | null = null;
     item.children.forEach((child: TreeNode) => {
-        if (isTaskList(child))
-            nested = child;
+        if (isTaskList(child)) nested = child;
     });
 
     return nested;
@@ -64,12 +60,10 @@ function nestedTaskListOf(item: TaskListItem): TaskList | null {
 // Cascade `checked` to every descendant task item (depth-first).
 function cascadeToDescendants(item: TaskListItem, checked: boolean): void {
     const nested = nestedTaskListOf(item);
-    if (!nested)
-        return;
+    if (!nested) return;
 
     nested.children.forEach((child: TreeNode) => {
-        if (!isTaskListItem(child))
-            return;
+        if (!isTaskListItem(child)) return;
 
         setItemChecked(child, checked);
         cascadeToDescendants(child, checked);
@@ -80,8 +74,7 @@ function cascadeToDescendants(item: TaskListItem, checked: boolean): void {
 function allSiblingsChecked(list: TaskList): boolean {
     let all = true;
     list.children.forEach((child: TreeNode) => {
-        if (isTaskListItem(child) && !child.checked)
-            all = false;
+        if (isTaskListItem(child) && !child.checked) all = false;
     });
 
     return all;
@@ -94,12 +87,10 @@ function rederiveAncestors(item: TaskListItem): void {
 
     while (isTaskList(list)) {
         const ancestor = list.parent;
-        if (!isTaskListItem(ancestor))
-            return;
+        if (!isTaskListItem(ancestor)) return;
 
         const computed = allSiblingsChecked(list);
-        if (ancestor.checked === computed)
-            return;
+        if (ancestor.checked === computed) return;
 
         setItemChecked(ancestor, computed);
         list = ancestor.parent;
@@ -145,8 +136,7 @@ class TaskListCheckbox extends TreeNode {
         this.classList = ['mu-task-list-checkbox'];
 
         if (checked) {
-            if (!isFirefox)
-                this.attributes.checked = true;
+            if (!isFirefox) this.attributes.checked = true;
 
             this.classList.push(CLASS_NAMES.MU_CHECKBOX_CHECKED);
         }
@@ -159,8 +149,7 @@ class TaskListCheckbox extends TreeNode {
         const { domNode, muya } = this;
         const { eventCenter } = muya;
         const clickHandler = (event: Event) => {
-            if (!isMouseEvent(event))
-                return;
+            if (!isMouseEvent(event)) return;
 
             event.stopPropagation();
 
@@ -168,8 +157,7 @@ class TaskListCheckbox extends TreeNode {
                 this._checked = !this._checked;
 
                 this.update(this._checked, 'user');
-            }
-            else if (isHTMLInputElement(event.target)) {
+            } else if (isHTMLInputElement(event.target)) {
                 const { checked } = event.target;
                 this._checked = checked;
                 this.update(checked, 'user');
@@ -181,9 +169,7 @@ class TaskListCheckbox extends TreeNode {
             (this.parent as TaskListItem).firstContentInDescendant()?.setCursor(0, 0, true);
         };
 
-        const eventIds = [
-            eventCenter.attachDOMEvent(domNode!, 'click', clickHandler),
-        ];
+        const eventIds = [eventCenter.attachDOMEvent(domNode!, 'click', clickHandler)];
 
         this._eventIds.push(...eventIds);
     }
@@ -216,10 +202,8 @@ class TaskListCheckbox extends TreeNode {
         this.syncDom(checked);
 
         const taskListItem = this.parent as TaskListItem;
-        if (source === 'api')
-            taskListItem.meta.checked = checked;
-        else
-            taskListItem.checked = checked;
+        if (source === 'api') taskListItem.meta.checked = checked;
+        else taskListItem.checked = checked;
     }
 
     // Sync only this checkbox's DOM + internal flag to `checked`. Used by the
@@ -239,8 +223,7 @@ class TaskListCheckbox extends TreeNode {
     }
 
     private _detachDOMEvents() {
-        for (const id of this._eventIds)
-            this.muya.eventCenter.detachDOMEvent(id);
+        for (const id of this._eventIds) this.muya.eventCenter.detachDOMEvent(id);
     }
 
     override remove(_source: string) {

@@ -12,12 +12,12 @@ export default function autoLinkExtension(
     const { start, end } = token.range;
 
     const content = this.highlight(h, block, start, end, token);
-    const hyperlink
-        = linkType === 'www'
+    const hyperlink =
+        linkType === 'www'
             ? encodeURI(`http://${www}`)
             : linkType === 'url'
-                ? encodeURI(url)
-                : `mailto:${email}`;
+              ? encodeURI(url)
+              : `mailto:${email}`;
 
     return [
         h(

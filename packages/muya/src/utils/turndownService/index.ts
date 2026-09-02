@@ -11,8 +11,7 @@ function inlineStyleValue(node: Node, name: keyof CSSStyleDeclaration): string {
 
 function hasStrongFontWeight(node: Node): boolean {
     const fontWeight = inlineStyleValue(node, 'fontWeight');
-    if (/^(?:bold|bolder)$/.test(fontWeight))
-        return true;
+    if (/^(?:bold|bolder)$/.test(fontWeight)) return true;
 
     const numericWeight = Number.parseInt(fontWeight, 10);
     return Number.isFinite(numericWeight) && numericWeight >= 600;
@@ -20,10 +19,8 @@ function hasStrongFontWeight(node: Node): boolean {
 
 function hasNonStrongFontWeight(node: Node): boolean {
     const fontWeight = inlineStyleValue(node, 'fontWeight');
-    if (!fontWeight)
-        return false;
-    if (/^(?:normal|lighter)$/.test(fontWeight))
-        return true;
+    if (!fontWeight) return false;
+    if (/^(?:normal|lighter)$/.test(fontWeight)) return true;
 
     const numericWeight = Number.parseInt(fontWeight, 10);
     return Number.isFinite(numericWeight) && numericWeight < 600;
@@ -56,8 +53,7 @@ function hasSemanticAncestor(
 ): boolean {
     let current = node.parentElement;
     while (current) {
-        if (isSemantic(current) && !isDisabled(current))
-            return true;
+        if (isSemantic(current) && !isDisabled(current)) return true;
         current = current.parentElement;
     }
 
@@ -86,8 +82,7 @@ function formatContent(
     strong: boolean,
     emphasis: boolean,
 ): string {
-    if (!content)
-        return '';
+    if (!content) return '';
 
     let result = content;
     if (emphasis) {
@@ -111,20 +106,26 @@ function getInlineStyleFormatting(node: Node) {
 
 function isTaskListCheckbox(node: unknown) {
     return (
-        isHTMLInputElement(node)
-        && node.type === 'checkbox'
-        && (node.parentNode?.nodeName === 'P' || node.parentNode?.nodeName === 'LI')
+        isHTMLInputElement(node) &&
+        node.type === 'checkbox' &&
+        (node.parentNode?.nodeName === 'P' || node.parentNode?.nodeName === 'LI')
     );
 }
 
 function normalizeTaskMarkerSpacing(content: string) {
-    return content.replace(/^(\[[ x]\])[ \t\u00A0]+/i, (_, marker: string) => `${marker.toLowerCase()} `);
+    return content.replace(
+        /^(\[[ x]\])[ \t\u00A0]+/i,
+        (_, marker: string) => `${marker.toLowerCase()} `,
+    );
 }
 
 function containsOwnTaskListCheckbox(node: Node) {
-    return isHTMLElement(node)
-        && Array.from(node.querySelectorAll('input[type="checkbox"]'))
-            .some(input => isTaskListCheckbox(input) && input.closest('li') === node);
+    return (
+        isHTMLElement(node) &&
+        Array.from(node.querySelectorAll('input[type="checkbox"]')).some(
+            (input) => isTaskListCheckbox(input) && input.closest('li') === node,
+        )
+    );
 }
 
 export function usePluginsAddRules(turndownService: TurndownService) {
@@ -161,20 +162,14 @@ export function usePluginsAddRules(turndownService: TurndownService) {
 
     turndownService.addRule('cssInlineStyle', {
         filter(node: Node) {
-            if (!isStyledSpan(node))
-                return false;
+            if (!isStyledSpan(node)) return false;
 
             const formatting = getInlineStyleFormatting(node);
             return formatting.strong || formatting.emphasis;
         },
         replacement(content: string, node: Node, options: TurndownService.Options) {
             const formatting = getInlineStyleFormatting(node);
-            return formatContent(
-                content,
-                options,
-                formatting.strong,
-                formatting.emphasis,
-            );
+            return formatContent(content, options, formatting.strong, formatting.emphasis);
         },
     });
 
@@ -184,25 +179,13 @@ export function usePluginsAddRules(turndownService: TurndownService) {
         replacement(content, node, options) {
             const hLevel = Number(node.nodeName.charAt(1));
 
-            if (
-                (options.headingStyle === 'setext' || /\n/.test(content))
-                && hLevel < 3
-            ) {
-                const markerLength = Math.max(
-                    ...content.split('\n').map(l => l.length),
-                );
+            if ((options.headingStyle === 'setext' || /\n/.test(content)) && hLevel < 3) {
+                const markerLength = Math.max(...content.split('\n').map((l) => l.length));
                 const underline = (hLevel === 1 ? '=' : '-').repeat(markerLength);
 
                 return `\n\n${content}\n${underline}\n\n`;
-            }
-            else {
-                return (
-                    `\n\n${
-                        '#'.repeat(hLevel)
-                    } ${
-                        content.replace(/\n+/, '')
-                    }\n\n`
-                );
+            } else {
+                return `\n\n${'#'.repeat(hLevel)} ${content.replace(/\n+/, '')}\n\n`;
             }
         },
     });
@@ -220,9 +203,8 @@ export function usePluginsAddRules(turndownService: TurndownService) {
         filter: 'p',
 
         replacement(content: string, node: Node) {
-            const isTaskListItemParagraph
-                = node instanceof HTMLElement
-                    && node.firstElementChild?.tagName === 'INPUT';
+            const isTaskListItemParagraph =
+                node instanceof HTMLElement && node.firstElementChild?.tagName === 'INPUT';
             return isTaskListItemParagraph
                 ? `${content.replace(/\]\s+\n/, '] ')}\n\n`
                 : `\n\n${content}\n\n`;
@@ -232,11 +214,7 @@ export function usePluginsAddRules(turndownService: TurndownService) {
     turndownService.addRule('listItem', {
         filter: 'li',
 
-        replacement(
-            content: string,
-            node: Node,
-            options: { bulletListMarker?: string },
-        ) {
+        replacement(content: string, node: Node, options: { bulletListMarker?: string }) {
             let prefix = `${options.bulletListMarker} `;
             const parent = node.parentNode;
             if (isHTMLElement(parent) && parent.nodeName === 'OL') {
@@ -250,14 +228,9 @@ export function usePluginsAddRules(turndownService: TurndownService) {
                 .replace(/^\n+/, '') // remove leading newlines
                 .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
                 .replace(/\n/g, `\n${continuationIndent}`); // indent
-            if (containsOwnTaskListCheckbox(node))
-                content = normalizeTaskMarkerSpacing(content);
+            if (containsOwnTaskListCheckbox(node)) content = normalizeTaskMarkerSpacing(content);
 
-            return (
-                prefix
-                + content
-                + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
-            );
+            return prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '');
         },
     });
 
@@ -265,9 +238,9 @@ export function usePluginsAddRules(turndownService: TurndownService) {
     turndownService.addRule('multiplemath', {
         filter(node: Node) {
             return (
-                node instanceof HTMLElement
-                && node.nodeName === 'PRE'
-                && node.classList.contains('multiple-math')
+                node instanceof HTMLElement &&
+                node.nodeName === 'PRE' &&
+                node.classList.contains('multiple-math')
             );
         },
         replacement(content: string) {

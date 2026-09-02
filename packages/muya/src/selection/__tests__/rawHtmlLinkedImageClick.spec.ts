@@ -21,8 +21,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
     delete (window as unknown as { MUYA_VERSION?: string }).MUYA_VERSION;
 });
 
@@ -36,12 +35,8 @@ function boot(markdown: string): Muya {
 }
 
 function injectImg(muya: Muya, src: string): HTMLImageElement {
-    const wrapper = muya.domNode.querySelector<HTMLElement>(
-        `span.${CLASS_NAMES.MU_INLINE_IMAGE}`,
-    )!;
-    const container = wrapper.querySelector<HTMLElement>(
-        `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-    )!;
+    const wrapper = muya.domNode.querySelector<HTMLElement>(`span.${CLASS_NAMES.MU_INLINE_IMAGE}`)!;
+    const container = wrapper.querySelector<HTMLElement>(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)!;
     const img = document.createElement('img');
     img.setAttribute('src', src);
     container.appendChild(img);
@@ -51,8 +46,7 @@ function injectImg(muya: Muya, src: string): HTMLImageElement {
 function captureFormatClickTypes(muya: Muya): string[] {
     const types: string[] = [];
     muya.eventCenter.on('format-click', (payload: { formatType?: string }) => {
-        if (payload && payload.formatType)
-            types.push(payload.formatType);
+        if (payload && payload.formatType) types.push(payload.formatType);
     });
     return types;
 }

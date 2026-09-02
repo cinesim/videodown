@@ -44,8 +44,7 @@ export function renderToStaticHTML(
     markdown: string,
     options: IRenderToStaticHTMLOptions = {},
 ): string {
-    if (!markdown)
-        return '';
+    if (!markdown) return '';
 
     const footnote = options.footnote ?? false;
 
@@ -62,11 +61,9 @@ export function renderToStaticHTML(
     // Must run before DOMPurify so the `data-identifier` marker emitted by
     // the marked footnote extension is still readable; the default config
     // strips `data-*` attributes.
-    if (footnote)
-        html = transformFootnotes(html);
+    if (footnote) html = transformFootnotes(html);
 
-    if (options.sanitize === false)
-        return html;
+    if (options.sanitize === false) return html;
 
     return sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 }

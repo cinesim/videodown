@@ -11,8 +11,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     delete (window as Partial<Window>).MUYA_VERSION;
 });
 
@@ -33,9 +32,13 @@ function placeCursorOnFirstContent(muya: Muya): void {
 
 function secondBlockContent(muya: Muya): Format {
     const blocks: { firstContentInDescendant: () => Format }[] = [];
-    (muya.editor.scrollPage as unknown as {
-        children: { forEach: (cb: (b: { firstContentInDescendant: () => Format }) => void) => void };
-    }).children.forEach(b => blocks.push(b));
+    (
+        muya.editor.scrollPage as unknown as {
+            children: {
+                forEach: (cb: (b: { firstContentInDescendant: () => Format }) => void) => void;
+            };
+        }
+    ).children.forEach((b) => blocks.push(b));
     return blocks[1].firstContentInDescendant();
 }
 

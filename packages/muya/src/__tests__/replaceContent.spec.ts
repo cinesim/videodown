@@ -32,10 +32,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -67,7 +65,10 @@ function domHtml(muya: Muya): string {
         el.removeAttribute('spellcheck');
         el.removeAttribute('style');
     });
-    return clone.innerHTML.replace(/\u200B/g, '').replace(/\s+/g, ' ').trim();
+    return clone.innerHTML
+        .replace(/\u200B/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
 // Build a detached ground-truth tree for `markdown` and return both its
@@ -119,46 +120,43 @@ const cases: Array<[string, string, string]> = [
 ];
 
 describe('muya replaceContent — single undo boundary', () => {
-    it.each(cases)(
-        'records ONE boundary and round-trips: %s',
-        async (_name, before, after) => {
-            const muya = bootMuya(before);
-            await vi.waitFor(() => expect(muya.getMarkdown().trim()).toBe(before.trim()));
-            placeCursorOnFirstBlock(muya);
+    it.each(cases)('records ONE boundary and round-trips: %s', async (_name, before, after) => {
+        const muya = bootMuya(before);
+        await vi.waitFor(() => expect(muya.getMarkdown().trim()).toBe(before.trim()));
+        placeCursorOnFirstBlock(muya);
 
-            const beforeMd = muya.getMarkdown();
-            const beforeDom = groundTruth(before).dom;
-            const truth = groundTruth(after);
+        const beforeMd = muya.getMarkdown();
+        const beforeDom = groundTruth(before).dom;
+        const truth = groundTruth(after);
 
-            // Forward replacement records exactly ONE undo boundary.
-            const depthBefore = undoDepth(muya);
-            const changed = muya.replaceContent(after);
-            expect(changed).toBe(true);
-            expect(undoDepth(muya)).toBe(depthBefore + 1);
+        // Forward replacement records exactly ONE undo boundary.
+        const depthBefore = undoDepth(muya);
+        const changed = muya.replaceContent(after);
+        expect(changed).toBe(true);
+        expect(undoDepth(muya)).toBe(depthBefore + 1);
 
-            // Json state AND live DOM both reflect the new content.
+        // Json state AND live DOM both reflect the new content.
+        expect(muya.getMarkdown()).toBe(truth.md);
+        expect(domHtml(muya)).toBe(truth.dom);
+
+        // FIRST undo reverts the entire bulk change in one step.
+        placeCursorOnFirstBlock(muya);
+        muya.undo();
+        await vi.waitFor(() => {
+            expect(muya.getMarkdown()).toBe(beforeMd);
+        });
+        // Live DOM is restored too (catches a desynced incremental walker).
+        expect(domHtml(muya)).toBe(beforeDom);
+        expect(redoDepth(muya)).toBe(1);
+
+        // redo re-applies the entire change in one step.
+        placeCursorOnFirstBlock(muya);
+        muya.redo();
+        await vi.waitFor(() => {
             expect(muya.getMarkdown()).toBe(truth.md);
-            expect(domHtml(muya)).toBe(truth.dom);
-
-            // FIRST undo reverts the entire bulk change in one step.
-            placeCursorOnFirstBlock(muya);
-            muya.undo();
-            await vi.waitFor(() => {
-                expect(muya.getMarkdown()).toBe(beforeMd);
-            });
-            // Live DOM is restored too (catches a desynced incremental walker).
-            expect(domHtml(muya)).toBe(beforeDom);
-            expect(redoDepth(muya)).toBe(1);
-
-            // redo re-applies the entire change in one step.
-            placeCursorOnFirstBlock(muya);
-            muya.redo();
-            await vi.waitFor(() => {
-                expect(muya.getMarkdown()).toBe(truth.md);
-            });
-            expect(domHtml(muya)).toBe(truth.dom);
-        },
-    );
+        });
+        expect(domHtml(muya)).toBe(truth.dom);
+    });
 
     it('returns false and records nothing when content is unchanged', async () => {
         const muya = bootMuya('same\n');

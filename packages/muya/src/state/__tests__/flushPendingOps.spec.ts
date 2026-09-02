@@ -15,8 +15,7 @@ beforeEach(() => {
     window.MUYA_VERSION = 'test';
 });
 afterEach(() => {
-    while (hosts.length)
-        hosts.pop()!.remove();
+    while (hosts.length) hosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
 });
 
@@ -30,7 +29,7 @@ function boot(md: string): Muya {
 }
 
 function nextFrame(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 describe('muya.flush() — make pending edits durable synchronously (#2938)', () => {

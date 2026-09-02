@@ -9,7 +9,7 @@ import { tokenizer } from '../lexer';
 // (?!.,:*_~) must not be part of the link.
 
 function autoLinkExt(src: string) {
-    const token = tokenizer(src).find(t => t.type === 'auto_link_extension') as
+    const token = tokenizer(src).find((t) => t.type === 'auto_link_extension') as
         | (Token & { url?: string; www?: string; raw: string })
         | undefined;
     return token;

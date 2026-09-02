@@ -9,7 +9,7 @@ import { tokenizer } from '../lexer';
 // escapes, so the inner `\$` was read as the closing delimiter and the math
 // expression was truncated / mis-tokenized.
 function mathContent(src: string): string | undefined {
-    const token = tokenizer(src).find(t => t.type === 'inline_math') as
+    const token = tokenizer(src).find((t) => t.type === 'inline_math') as
         | CodeEmojiMathToken
         | undefined;
     return token?.content;

@@ -48,10 +48,8 @@ afterEach(() => {
     // Drop any document-global Selection so a stale Range can't point into a
     // removed host node and break a later test's setCursor.
     window.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, locale: typeof en): Muya {
@@ -66,8 +64,8 @@ function bootMuya(markdown: string, locale: typeof en): Muya {
     return muya;
 }
 
-const COPY_LINK_SELECTOR
-    = '.ag-copy-header-link, .mu-copy-header-link, [class*="copy-header-link"]';
+const COPY_LINK_SELECTOR =
+    '.ag-copy-header-link, .mu-copy-header-link, [class*="copy-header-link"]';
 
 // Drive the real "type `# x`" input path: write the text into the active
 // content block's contenteditable node, place the caret, and run the block's
@@ -83,13 +81,11 @@ function typeHeading(muya: Muya, raw: string): void {
     muya.editor.activeContentBlock = content;
     content.domNode!.textContent = raw;
     content.setCursor(raw.length, raw.length);
-    content.inputHandler(
-        new InputEvent('input', { bubbles: true, inputType: 'insertText' }),
-    );
+    content.inputHandler(new InputEvent('input', { bubbles: true, inputType: 'insertText' }));
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function copyLinkAffordance(muya: Muya): HTMLElement | null {

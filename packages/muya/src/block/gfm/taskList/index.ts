@@ -17,9 +17,7 @@ class TaskList extends Parent {
         const taskList = new TaskList(muya, state);
 
         taskList.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock(child.name).create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock(child.name).create(muya, child)),
         );
 
         return taskList;
@@ -40,8 +38,7 @@ class TaskList extends Parent {
             marker: meta.marker,
         };
         this.classList = [CLASS_NAMES.MU_TASK_LIST];
-        if (!meta.loose)
-            this.classList.push('mu-tight-list');
+        if (!meta.loose) this.classList.push('mu-tight-list');
 
         this.createDomNode();
     }
@@ -51,8 +48,7 @@ class TaskList extends Parent {
      */
     orderIfNecessary() {
         const { autoMoveCheckedToEnd } = this.muya.options;
-        if (!autoMoveCheckedToEnd)
-            return;
+        if (!autoMoveCheckedToEnd) return;
 
         let first = this.firstChild as TaskListItem;
         let last = this.lastChild as TaskListItem;
@@ -62,11 +58,9 @@ class TaskList extends Parent {
             if (!first.checked) {
                 first = first.next as TaskListItem;
                 anchor = first;
-            }
-            else if (last.checked) {
+            } else if (last.checked) {
                 last = last.prev as TaskListItem;
-            }
-            else {
+            } else {
                 const temp = last;
                 last = last.prev as TaskListItem;
                 temp.insertInto(this, anchor);
@@ -79,7 +73,7 @@ class TaskList extends Parent {
         const state: ITaskListState = {
             name: 'task-list',
             meta: { ...this.meta },
-            children: this.children.map(child => (child as TaskListItem).getState()),
+            children: this.children.map((child) => (child as TaskListItem).getState()),
         };
 
         return state;

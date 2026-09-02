@@ -27,8 +27,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     delete (window as Partial<Window>).MUYA_VERSION;
 });
 

@@ -12,7 +12,8 @@ function mockFetchReturningTitle(titleInnerHtml: string) {
     return vi.fn(async () => ({
         status: 200,
         headers: {
-            get: (h: string) => (h.toLowerCase() === 'content-type' ? 'text/html; charset=utf-8' : null),
+            get: (h: string) =>
+                h.toLowerCase() === 'content-type' ? 'text/html; charset=utf-8' : null,
         },
         text: async () => body,
     }));
@@ -27,7 +28,9 @@ describe('getPageTitle decodes HTML entities (#2525)', () => {
     it('decodes named entities in the fetched page title', async () => {
         vi.stubGlobal(
             'fetch',
-            mockFetchReturningTitle('On Statistical Data Compression &ndash; Digitale Bibliothek Th&uuml;ringen'),
+            mockFetchReturningTitle(
+                'On Statistical Data Compression &ndash; Digitale Bibliothek Th&uuml;ringen',
+            ),
         );
 
         const title = await getPageTitle('https://www.db-thueringen.de/receive/dbt_mods_00027239');

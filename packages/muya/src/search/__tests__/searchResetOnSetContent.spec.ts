@@ -20,13 +20,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -75,6 +72,6 @@ describe('search resets when the document content is replaced (#1932)', () => {
         search.search('foo');
 
         expect(search.matches.length).toBe(2);
-        expect(search.matches.every(m => m.block.parent !== null)).toBe(true);
+        expect(search.matches.every((m) => m.block.parent !== null)).toBe(true);
     });
 });

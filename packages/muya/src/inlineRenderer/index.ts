@@ -27,10 +27,9 @@ class InlineRenderer {
         // TODO: different content block should have different rules.
         // eg: atxheading.content has no soft|hard line break
         // setextheading.content has no heading rules.
-        const hasBeginRules
-            = /thematicbreak\.content|paragraph\.content|atxheading\.content/.test(
-                block.blockName,
-            );
+        const hasBeginRules = /thematicbreak\.content|paragraph\.content|atxheading\.content/.test(
+            block.blockName,
+        );
 
         return tokenizer(text, { hasBeginRules, labels, options, highlights });
     }
@@ -50,20 +49,17 @@ class InlineRenderer {
         this.renderer.urlMap.clear();
 
         const { scrollPage } = this.muya.editor;
-        if (!scrollPage)
-            return;
+        if (!scrollPage) return;
 
         scrollPage.breadthFirstTraverse((node) => {
-            if (node.isContent())
-                node.update();
+            if (node.isContent()) node.update();
         });
     }
 
     patch(block: Format, cursor?: IRenderCursor, highlights: IHighlight[] = []) {
         this._collectReferenceDefinitions();
         const { domNode } = block;
-        if (block.isParent())
-            debug.error('Patch can only handle content block');
+        if (block.isParent()) debug.error('Patch can only handle content block');
 
         const tokens = this._tokenizer(block, highlights);
         const html = this.renderer.output(
@@ -83,10 +79,8 @@ class InlineRenderer {
                 for (const st of sts) {
                     if (st.name === 'paragraph') {
                         const { label, info } = this.getLabelInfo(st);
-                        if (label && info)
-                            labels.set(label, info);
-                    }
-                    else if ((st as TContainerState).children) {
+                        if (label && info) labels.set(label, info);
+                    } else if ((st as TContainerState).children) {
                         travel((st as TContainerState).children);
                     }
                 }

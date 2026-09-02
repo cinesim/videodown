@@ -8,7 +8,7 @@ files:
   - '!src/*'
   - '!scripts/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.oxlintrc.json,.oxfmtrc.json,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,bun.lock}'
   # ================================
   # Do not bundle these files
@@ -34,7 +34,6 @@ files:
   - '!node_modules/**/build/Release/{*.lib,*.exp,*.ilk,*.pdb,*.iobj,*.ipdb}'
   - '!node_modules/**/build/Release/obj'
   # Do not bundle development related files
-  - '!eslint.config.js'
   - '!jsconfig.json'
   - '!docs/*'
 extraResources:

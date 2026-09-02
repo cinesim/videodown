@@ -46,17 +46,16 @@ export class TableColumnToolbar extends BaseFloat {
         super.listen();
 
         const handler = throttle((event: Event) => {
-            if (!isMouseEvent(event))
-                return;
+            if (!isMouseEvent(event)) return;
 
             const { x, y } = event;
             const eles = [...document.elementsFromPoint(x, y)];
             const bellowEles = [...document.elementsFromPoint(x, y + OFFSET)];
             const hasTableCell = (eles: Element[]) => {
                 return eles.some(
-                    ele =>
-                        ele[BLOCK_DOM_PROPERTY]
-                        && ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
+                    (ele) =>
+                        ele[BLOCK_DOM_PROPERTY] &&
+                        ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
                 );
             };
 
@@ -64,20 +63,18 @@ export class TableColumnToolbar extends BaseFloat {
                 // No need to show table column tools when format tool bar is shown. or the table column tools will show on the top of format toolbar.
                 const { ui } = this.muya;
                 for (const { name, status } of ui.shownFloat) {
-                    if (name === 'mu-format-picker' && status)
-                        return this.hide();
+                    if (name === 'mu-format-picker' && status) return this.hide();
                 }
                 const tableCellEle = bellowEles.find(
-                    ele =>
-                        ele[BLOCK_DOM_PROPERTY]
-                        && ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
+                    (ele) =>
+                        ele[BLOCK_DOM_PROPERTY] &&
+                        ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
                 );
                 const cellBlock = tableCellEle![BLOCK_DOM_PROPERTY];
                 this._block = cellBlock as CellBlock;
                 this.show(tableCellEle!);
                 this.render();
-            }
-            else {
+            } else {
                 this.hide();
             }
         }, 300);
@@ -86,7 +83,12 @@ export class TableColumnToolbar extends BaseFloat {
     }
 
     render() {
-        const { _icons: icons, _oldVNode: oldVNode, _toolsContainer: toolsContainer, _block: block } = this;
+        const {
+            _icons: icons,
+            _oldVNode: oldVNode,
+            _toolsContainer: toolsContainer,
+            _block: block,
+        } = this;
         const { i18n } = this.muya;
         const children = icons.map((i) => {
             const iconWrapperSelector = 'div.icon-wrapper';
@@ -96,7 +98,7 @@ export class TableColumnToolbar extends BaseFloat {
                     'i.icon-inner',
                     {
                         style: {
-                            'background': `url(${i.icon}) no-repeat`,
+                            background: `url(${i.icon}) no-repeat`,
                             'background-size': '100%',
                         },
                     },
@@ -106,11 +108,9 @@ export class TableColumnToolbar extends BaseFloat {
             const iconWrapper = h(iconWrapperSelector, icon);
 
             let itemSelector = `li.item.${i.type}`;
-            if (block?.align === i.type)
-                itemSelector += '.active';
+            if (block?.align === i.type) itemSelector += '.active';
 
-            if (i.type === 'remove')
-                itemSelector += '.delete';
+            if (i.type === 'remove') itemSelector += '.delete';
 
             return h(
                 itemSelector,
@@ -130,10 +130,8 @@ export class TableColumnToolbar extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(toolsContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(toolsContainer, vnode);
 
         this._oldVNode = vnode;
     }
@@ -144,8 +142,7 @@ export class TableColumnToolbar extends BaseFloat {
 
         const { _block: block } = this;
         // Block is not null, just in case
-        if (!block || !block.parent)
-            return;
+        if (!block || !block.parent) return;
 
         const offset = block.parent.offset(block);
         const { table, row } = block;
@@ -159,20 +156,17 @@ export class TableColumnToolbar extends BaseFloat {
                 // removed). Without this setCursor the caret stays in the
                 // detached cell.
                 const cursorBlock = block.table.removeColumn(offset);
-                if (cursorBlock)
-                    cursorBlock.setCursor(0, 0);
+                if (cursorBlock) cursorBlock.setCursor(0, 0);
 
                 return this.hide();
             }
 
             case 'insert left':
-                // fall through
+            // fall through
             case 'insert right': {
-                const offset
-                    = item.type === 'insert left' ? columnCount : columnCount + 1;
+                const offset = item.type === 'insert left' ? columnCount : columnCount + 1;
                 const cursorBlock = table.insertColumn(offset);
-                if (cursorBlock)
-                    cursorBlock.setCursor(0, 0);
+                if (cursorBlock) cursorBlock.setCursor(0, 0);
 
                 return this.hide();
             }

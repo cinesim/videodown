@@ -35,10 +35,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -60,11 +58,10 @@ function codeContent(muya: Muya): Content {
     }) => {
         if (block.constructor.blockName === 'codeblock.content')
             target = block as unknown as Content;
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error('codeblock.content block not found');
+    if (!target) throw new Error('codeblock.content block not found');
     return target;
 }
 
@@ -79,7 +76,7 @@ function keyEvent(over: Partial<KeyboardEvent> = {}): KeyboardEvent {
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 describe('codeBlockContent.backspaceHandler — offset-0 converts to paragraph', () => {

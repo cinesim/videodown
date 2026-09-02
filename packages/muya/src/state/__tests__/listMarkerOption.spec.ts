@@ -28,13 +28,14 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
-function bootMuya(markdown: string, options: Partial<ConstructorParameters<typeof Muya>[1]> = {}): Muya {
+function bootMuya(
+    markdown: string,
+    options: Partial<ConstructorParameters<typeof Muya>[1]> = {},
+): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
     const muya = new Muya(host, { markdown, ...options } as ConstructorParameters<typeof Muya>[1]);
@@ -63,7 +64,10 @@ describe('list marker option — bulletListMarker', () => {
             expect(firstBlock(muya).name).toBe('bullet-list');
             expect(firstBlock(muya).meta.marker).toBe('-');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('- ')).toBe(true);
     });
 
@@ -75,7 +79,10 @@ describe('list marker option — bulletListMarker', () => {
             expect(firstBlock(muya).name).toBe('bullet-list');
             expect(firstBlock(muya).meta.marker).toBe('*');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('* ')).toBe(true);
         expect(lines[0].startsWith('- ')).toBe(false);
     });
@@ -88,7 +95,10 @@ describe('list marker option — bulletListMarker', () => {
             expect(firstBlock(muya).name).toBe('bullet-list');
             expect(firstBlock(muya).meta.marker).toBe('+');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('+ ')).toBe(true);
     });
 });
@@ -102,7 +112,10 @@ describe('list marker option — orderListDelimiter', () => {
             expect(firstBlock(muya).name).toBe('order-list');
             expect(firstBlock(muya).meta.delimiter).toBe('.');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('1. ')).toBe(true);
     });
 
@@ -114,7 +127,10 @@ describe('list marker option — orderListDelimiter', () => {
             expect(firstBlock(muya).name).toBe('order-list');
             expect(firstBlock(muya).meta.delimiter).toBe(')');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('1) ')).toBe(true);
         expect(lines[0].startsWith('1. ')).toBe(false);
     });
@@ -127,7 +143,10 @@ describe('list marker option — orderListDelimiter', () => {
             expect(firstBlock(muya).name).toBe('order-list');
             expect(firstBlock(muya).meta.delimiter).toBe(')');
         });
-        const lines = muya.getMarkdown().split('\n').filter(l => l.trim() !== '');
+        const lines = muya
+            .getMarkdown()
+            .split('\n')
+            .filter((l) => l.trim() !== '');
         expect(lines[0].startsWith('1) ')).toBe(true);
     });
 });

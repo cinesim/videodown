@@ -17,8 +17,7 @@ export function shouldCrossBlockCut(key: string, metaKey: boolean, ctrlKey: bool
     if (/Alt|Option|Meta|Shift|CapsLock|ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(key))
         return false;
 
-    if (metaKey || ctrlKey)
-        return false;
+    if (metaKey || ctrlKey) return false;
 
     return true;
 }
@@ -49,8 +48,7 @@ class Clipboard {
         const ownsEvent = () => this.muya.hasFocus();
 
         const copyCutHandler = (event: Event) => {
-            if (!ownsEvent() || !isClipboardEvent(event))
-                return;
+            if (!ownsEvent() || !isClipboardEvent(event)) return;
             event.preventDefault();
             event.stopPropagation();
 
@@ -58,13 +56,11 @@ class Clipboard {
 
             this.copyHandler(event);
 
-            if (isCut)
-                this.cutHandler();
+            if (isCut) this.cutHandler();
         };
 
         const keydownHandler = (event: Event) => {
-            if (!ownsEvent() || !isKeyboardEvent(event))
-                return;
+            if (!ownsEvent() || !isKeyboardEvent(event)) return;
             const { key, metaKey } = event;
 
             if (this.selection.table.hasSelection) {
@@ -76,11 +72,9 @@ class Clipboard {
             }
 
             const { isSelectionInSameBlock } = this.selection.getSelection() ?? {};
-            if (isSelectionInSameBlock)
-                return;
+            if (isSelectionInSameBlock) return;
 
-            if (!shouldCrossBlockCut(key, metaKey, event.ctrlKey))
-                return;
+            if (!shouldCrossBlockCut(key, metaKey, event.ctrlKey)) return;
 
             // Enter over a cross-block selection: suppress the corrupting native
             // Enter and mirror the same-block path — delete then split (#2443).
@@ -88,20 +82,17 @@ class Clipboard {
                 event.preventDefault();
                 this.cutHandler();
                 const block = this.muya.editor.activeContentBlock;
-                if (!event.shiftKey && block instanceof Format)
-                    block.enterHandler(event);
+                if (!event.shiftKey && block instanceof Format) block.enterHandler(event);
                 return;
             }
 
-            if (key === 'Backspace' || key === 'Delete')
-                event.preventDefault();
+            if (key === 'Backspace' || key === 'Delete') event.preventDefault();
 
             this.cutHandler();
         };
 
         const pasteHandler = (event: Event) => {
-            if (ownsEvent() && isClipboardEvent(event))
-                this.pasteHandler(event);
+            if (ownsEvent() && isClipboardEvent(event)) this.pasteHandler(event);
         };
 
         const { eventCenter } = this.muya;
@@ -124,11 +115,7 @@ class Clipboard {
         cutSelection(this);
     }
 
-    pasteHandler(
-        event: ClipboardEvent,
-        rawText?: string,
-        rawHtml?: string,
-    ): Promise<void> {
+    pasteHandler(event: ClipboardEvent, rawText?: string, rawHtml?: string): Promise<void> {
         return pasteSelection(this, event, rawText, rawHtml);
     }
 
@@ -156,8 +143,7 @@ class Clipboard {
     // clipboard text ourselves and feed it through the paste pipeline.
     async pasteAsPlainText(): Promise<void> {
         const text = await this._readClipboardText();
-        if (text)
-            await pastePlainText(this, text);
+        if (text) await pastePlainText(this, text);
     }
 
     // Insert an image at the cursor from an explicit `src` (a saved file path or
@@ -177,8 +163,7 @@ class Clipboard {
         if (typeof reader === 'function') {
             try {
                 return await reader();
-            }
-            catch {
+            } catch {
                 return '';
             }
         }
@@ -186,8 +171,7 @@ class Clipboard {
         if (typeof navigator !== 'undefined' && navigator.clipboard?.readText) {
             try {
                 return await navigator.clipboard.readText();
-            }
-            catch {
+            } catch {
                 return '';
             }
         }

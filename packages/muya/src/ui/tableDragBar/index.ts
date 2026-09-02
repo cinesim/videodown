@@ -30,12 +30,9 @@ function calculateAspects(tableBlock: Table, barType: BarType) {
     if (barType === 'bottom') {
         const firstRow = table.querySelector('tr');
 
-        return Array.from(firstRow!.children).map(cell => cell.clientWidth);
-    }
-    else {
-        return Array.from(table.querySelectorAll('tr')).map(
-            row => row.clientHeight,
-        );
+        return Array.from(firstRow!.children).map((cell) => cell.clientWidth);
+    } else {
+        return Array.from(table.querySelectorAll('tr')).map((row) => row.clientHeight);
     }
 }
 
@@ -44,8 +41,7 @@ export function getAllTableCells(tableBlock: Table) {
     const rows = table.querySelectorAll('tr');
     const cells = [];
 
-    for (const row of Array.from(rows))
-        cells.push(Array.from(row.children));
+    for (const row of Array.from(rows)) cells.push(Array.from(row.children));
 
     return cells as HTMLTableCellElement[][];
 }
@@ -65,14 +61,12 @@ function getDragCells(tableBlock: Table, barType: BarType, index: number) {
     if (barType === 'right') {
         const row = [...table.querySelectorAll('tr')][index];
         dragCells.push(...row.children);
-    }
-    else {
+    } else {
         const rows = [...table.querySelectorAll('tr')];
         const len = rows.length;
         let i;
 
-        for (i = 0; i < len; i++)
-            dragCells.push(rows[i].children[index]);
+        for (i = 0; i < len; i++) dragCells.push(rows[i].children[index]);
     }
 
     return dragCells as HTMLTableCellElement[];
@@ -100,15 +94,8 @@ const bottomOptions = {
     showArrow: false,
 };
 
-function isInMovedRange(
-    i: number,
-    index: number,
-    curIndex: number,
-    isPositive: boolean,
-) {
-    return isPositive
-        ? i > index && i <= curIndex
-        : i >= curIndex && i < index;
+function isInMovedRange(i: number, index: number, curIndex: number, isPositive: boolean) {
+    return isPositive ? i > index && i <= curIndex : i >= curIndex && i < index;
 }
 
 function switchTransform(
@@ -121,8 +108,7 @@ function switchTransform(
 ): string | null {
     if (isInMovedRange(i, index, curIndex, isPositive))
         return `${axis}(${isPositive ? -aspect : aspect}px)`;
-    if (i !== index)
-        return `${axis}(0px)`;
+    if (i !== index) return `${axis}(0px)`;
 
     return null;
 }
@@ -135,8 +121,7 @@ function applyBottomSwitch(
     for (const row of cells) {
         for (let i = 0; i < len; i++) {
             const transform = compute(i);
-            if (transform !== null)
-                row[i].style.transform = transform;
+            if (transform !== null) row[i].style.transform = transform;
         }
     }
 }
@@ -148,11 +133,9 @@ function applyRightSwitch(
 ) {
     for (let i = 0; i < len; i++) {
         const transform = compute(i);
-        if (transform === null)
-            continue;
+        if (transform === null) continue;
 
-        for (const cell of cells[i])
-            cell.style.transform = transform;
+        for (const cell of cells[i]) cell.style.transform = transform;
     }
 }
 
@@ -180,8 +163,7 @@ export class TableDragBar extends BaseFloat {
         super.listen();
 
         const handler = throttle((event: Event) => {
-            if (!isMouseEvent(event))
-                return;
+            if (!isMouseEvent(event)) return;
 
             const { x, y } = event;
             const els = [...document.elementsFromPoint(x, y)];
@@ -190,20 +172,20 @@ export class TableDragBar extends BaseFloat {
 
             const hasTableCell = (els: Element[]) =>
                 els.some(
-                    ele =>
-                        ele[BLOCK_DOM_PROPERTY]
-                        && ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
+                    (ele) =>
+                        ele[BLOCK_DOM_PROPERTY] &&
+                        ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
                 );
 
             if (
-                !this._isDragTableBar
-                && !hasTableCell(els)
-                && (hasTableCell(aboveEls) || hasTableCell(leftEls))
+                !this._isDragTableBar &&
+                !hasTableCell(els) &&
+                (hasTableCell(aboveEls) || hasTableCell(leftEls))
             ) {
                 const tableCellEl = [...aboveEls, ...leftEls].find(
-                    ele =>
-                        ele[BLOCK_DOM_PROPERTY]
-                        && ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
+                    (ele) =>
+                        ele[BLOCK_DOM_PROPERTY] &&
+                        ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell',
                 );
                 const cellBlock = tableCellEl![BLOCK_DOM_PROPERTY] as TableBodyCell;
                 const barType = hasTableCell(aboveEls) ? 'bottom' : 'right';
@@ -216,8 +198,7 @@ export class TableDragBar extends BaseFloat {
                 this._block = cellBlock;
                 this.show(tableCellEl!);
                 this._render(barType);
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
@@ -261,8 +242,7 @@ export class TableDragBar extends BaseFloat {
 
     private _startDrag(event: Event) {
         event.preventDefault();
-        if (!isMouseEvent(event) || !this._block || !this._barType)
-            return;
+        if (!isMouseEvent(event) || !this._block || !this._barType) return;
 
         const { table } = this._block;
         const { eventCenter } = this.muya;
@@ -297,15 +277,12 @@ export class TableDragBar extends BaseFloat {
     }
 
     private _docMousemove = (event: Event) => {
-        if (!this._dragInfo || !isMouseEvent(event))
-            return;
+        if (!this._dragInfo || !isMouseEvent(event)) return;
 
         const { barType } = this._dragInfo;
         const attrName = barType === 'bottom' ? 'clientX' : 'clientY';
-        const offset = (this._dragInfo.offset
-            = event[attrName] - this._dragInfo[attrName]);
-        if (Math.abs(offset) < 5)
-            return;
+        const offset = (this._dragInfo.offset = event[attrName] - this._dragInfo[attrName]);
+        if (Math.abs(offset) < 5) return;
 
         this._isDragTableBar = true;
         this._calculateCurIndex();
@@ -318,12 +295,10 @@ export class TableDragBar extends BaseFloat {
 
         const { eventCenter } = this.muya;
 
-        for (const id of this._dragEventIds)
-            eventCenter.detachDOMEvent(id);
+        for (const id of this._dragEventIds) eventCenter.detachDOMEvent(id);
 
         this._dragEventIds = [];
-        if (!this._isDragTableBar)
-            return;
+        if (!this._isDragTableBar) return;
 
         this._setDropTargetStyle();
 
@@ -335,8 +310,7 @@ export class TableDragBar extends BaseFloat {
     };
 
     private _calculateCurIndex = () => {
-        if (!this._dragInfo)
-            return;
+        if (!this._dragInfo) return;
 
         const { aspects, index } = this._dragInfo;
         let { offset } = this._dragInfo;
@@ -346,29 +320,20 @@ export class TableDragBar extends BaseFloat {
         if (offset > 0) {
             for (i = index; i < len; i++) {
                 const aspect = aspects[i];
-                if (i === index)
-                    offset -= Math.floor(aspect / 2);
-                else
-                    offset -= aspect;
+                if (i === index) offset -= Math.floor(aspect / 2);
+                else offset -= aspect;
 
-                if (offset < 0)
-                    break;
-                else
-                    curIndex++;
+                if (offset < 0) break;
+                else curIndex++;
             }
-        }
-        else if (offset < 0) {
+        } else if (offset < 0) {
             for (i = index; i >= 0; i--) {
                 const aspect = aspects[i];
-                if (i === index)
-                    offset += Math.floor(aspect / 2);
-                else
-                    offset += aspect;
+                if (i === index) offset += Math.floor(aspect / 2);
+                else offset += aspect;
 
-                if (offset > 0)
-                    break;
-                else
-                    curIndex--;
+                if (offset > 0) break;
+                else curIndex--;
             }
         }
 
@@ -389,8 +354,7 @@ export class TableDragBar extends BaseFloat {
     };
 
     private _setSwitchStyle = () => {
-        if (!this._dragInfo)
-            return;
+        if (!this._dragInfo) return;
 
         const { index, offset, curIndex, barType, aspects, cells } = this._dragInfo;
         const aspect = aspects[index];
@@ -400,27 +364,20 @@ export class TableDragBar extends BaseFloat {
         const compute = (i: number) =>
             switchTransform(i, index, curIndex, aspect, axis, isPositive);
 
-        if (barType === 'bottom')
-            applyBottomSwitch(cells, len, compute);
-        else
-            applyRightSwitch(cells, len, compute);
+        if (barType === 'bottom') applyBottomSwitch(cells, len, compute);
+        else applyRightSwitch(cells, len, compute);
     };
 
     private _setDropTargetStyle = () => {
-        if (!this._dragInfo)
-            return;
+        if (!this._dragInfo) return;
 
-        const { dragCells, barType, curIndex, index, aspects, offset }
-            = this._dragInfo;
+        const { dragCells, barType, curIndex, index, aspects, offset } = this._dragInfo;
         let move = 0;
         let i;
         if (offset > 0) {
-            for (i = index + 1; i <= curIndex; i++)
-                move += aspects[i];
-        }
-        else {
-            for (i = curIndex; i < index; i++)
-                move -= aspects[i];
+            for (i = index + 1; i <= curIndex; i++) move += aspects[i];
+        } else {
+            for (i = curIndex; i < index; i++) move -= aspects[i];
         }
 
         for (const cell of dragCells) {
@@ -433,12 +390,10 @@ export class TableDragBar extends BaseFloat {
     };
 
     private _switchTableData = () => {
-        if (!this._dragInfo)
-            return;
+        if (!this._dragInfo) return;
 
         const { barType, index, curIndex, table, offset } = this._dragInfo;
-        if (index === curIndex)
-            return;
+        if (index === curIndex) return;
 
         const tableState = table.getState();
 
@@ -450,45 +405,36 @@ export class TableDragBar extends BaseFloat {
         // Find the new cursor position in table.
         if (table.active) {
             // TODO: @JOCS remove use this.selection directly
-            const { anchorBlock, anchor, focus, isSelectionInSameBlock }
-                = this.muya.editor.selection ?? {};
+            const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
+                this.muya.editor.selection ?? {};
             const { rowOffset, columnOffset } = anchorBlock?.closestBlock(
                 'table.cell',
             ) as TableBodyCell;
 
-            startOffset = isSelectionInSameBlock
-                ? Math.min(anchor!.offset, focus!.offset)
-                : 0;
-            endOffset = isSelectionInSameBlock
-                ? Math.max(anchor!.offset, focus!.offset)
-                : 0;
+            startOffset = isSelectionInSameBlock ? Math.min(anchor!.offset, focus!.offset) : 0;
+            endOffset = isSelectionInSameBlock ? Math.max(anchor!.offset, focus!.offset) : 0;
             if (barType === 'bottom') {
                 cursorRowOffset = rowOffset;
                 if (columnOffset === index) {
                     cursorColumnOffset = curIndex;
-                }
-                else if (
-                    columnOffset >= Math.min(index, curIndex)
-                    && columnOffset <= Math.max(index, curIndex)
+                } else if (
+                    columnOffset >= Math.min(index, curIndex) &&
+                    columnOffset <= Math.max(index, curIndex)
                 ) {
                     cursorColumnOffset = columnOffset + (offset > 0 ? -1 : 1);
-                }
-                else {
+                } else {
                     cursorColumnOffset = columnOffset;
                 }
-            }
-            else {
+            } else {
                 cursorColumnOffset = columnOffset;
                 if (rowOffset === index) {
                     cursorRowOffset = curIndex;
-                }
-                else if (
-                    rowOffset >= Math.min(index, curIndex)
-                    && rowOffset <= Math.max(index, curIndex)
+                } else if (
+                    rowOffset >= Math.min(index, curIndex) &&
+                    rowOffset <= Math.max(index, curIndex)
                 ) {
                     cursorRowOffset = rowOffset + (offset > 0 ? -1 : 1);
-                }
-                else {
+                } else {
                     cursorRowOffset = rowOffset;
                 }
             }
@@ -499,16 +445,12 @@ export class TableDragBar extends BaseFloat {
                 const cellState = row.children.splice(index, 1)[0];
                 row.children.splice(curIndex, 0, cellState);
             });
-        }
-        else {
+        } else {
             const rowState = tableState.children.splice(index, 1)[0];
             tableState.children.splice(curIndex, 0, rowState);
         }
 
-        const newTable = ScrollPage.loadBlock('table').create(
-            this.muya,
-            tableState,
-        );
+        const newTable = ScrollPage.loadBlock('table').create(this.muya, tableState);
         table.replaceWith(newTable);
 
         if (cursorRowOffset !== null && cursorColumnOffset !== null) {

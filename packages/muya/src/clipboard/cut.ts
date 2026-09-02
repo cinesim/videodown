@@ -26,10 +26,10 @@ function isSelectAll(
     const lastContent = clipboard.scrollPage?.lastContentInDescendant();
 
     return (
-        firstContent === startBlock
-        && startOffset === 0
-        && lastContent === endBlock
-        && endOffset === endBlock.text.length
+        firstContent === startBlock &&
+        startOffset === 0 &&
+        lastContent === endBlock &&
+        endOffset === endBlock.text.length
     );
 }
 
@@ -39,17 +39,16 @@ function isSelectAll(
  */
 function resetToEmptyParagraph(clipboard: Clipboard): void {
     const { scrollPage } = clipboard;
-    if (scrollPage == null)
-        return;
+    if (scrollPage == null) return;
 
     scrollPage.forEach((child) => {
         (child as Parent).remove();
     });
 
-    const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
-        clipboard.muya,
-        { name: 'paragraph', text: '' },
-    );
+    const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(clipboard.muya, {
+        name: 'paragraph',
+        text: '',
+    });
     scrollPage.append(newParagraphBlock, 'user');
 
     const cursorBlock = newParagraphBlock.firstContentInDescendant();
@@ -60,29 +59,22 @@ function resetToEmptyParagraph(clipboard: Clipboard): void {
 // add or remove a block-leading marker (`# `, `- `, …).
 function setCursorAndConvert(block: Content, offset: number): void {
     block.setCursor(offset, offset, true);
-    if (block instanceof Format)
-        block.checkInlineUpdate();
+    if (block instanceof Format) block.checkInlineUpdate();
 }
 
 // Collapse the document to a single empty paragraph once a cut empties it.
 function resetIfEmpty(clipboard: Clipboard): void {
-    if (clipboard.scrollPage?.length() === 0)
-        resetToEmptyParagraph(clipboard);
+    if (clipboard.scrollPage?.length() === 0) resetToEmptyParagraph(clipboard);
 }
 
 // Empty every cell content leaf from `start` up to and including `after`,
 // keeping the table grid intact.
-function emptyCellContentsUntil(
-    start: Nullable<Content>,
-    after: TreeNode,
-): void {
+function emptyCellContentsUntil(start: Nullable<Content>, after: TreeNode): void {
     let cellContent = start;
     while (cellContent) {
-        if (cellContent.text !== '')
-            cellContent.text = '';
+        if (cellContent.text !== '') cellContent.text = '';
 
-        if (cellContent === after)
-            break;
+        if (cellContent === after) break;
 
         cellContent = cellContent.nextContentInContext();
     }
@@ -99,11 +91,7 @@ function removeBlocksWithinTable(before: TreeNode, after: TreeNode): void {
  * not remove — every cell from the table's first cell up to and including
  * `after`'s cell.
  */
-function removeBlocksIntoTable(
-    before: TreeNode,
-    after: TreeNode,
-    table: Parent,
-): void {
+function removeBlocksIntoTable(before: TreeNode, after: TreeNode, table: Parent): void {
     const beforeOutMost = before.outMostBlock;
 
     // Remove every outmost block strictly between `before`'s outmost block
@@ -142,8 +130,7 @@ function pruneAfterBranch(afterBranch: TreeNode, after: TreeNode): void {
         removePrecedingSiblings(onPath);
         const parent = onPath.parent;
         onPath.remove();
-        if (parent.children.length > 0)
-            return;
+        if (parent.children.length > 0) return;
 
         onPath = parent;
     }
@@ -185,23 +172,22 @@ function removeBlocks(before: TreeNode, after: TreeNode): void {
     }
 
     const beforeAncestors = new Set<TreeNode>();
-    for (let node: Nullable<TreeNode> = before; node; node = node.parent)
-        beforeAncestors.add(node);
+    for (let node: Nullable<TreeNode> = before; node; node = node.parent) beforeAncestors.add(node);
 
     // The shared container: the lowest ancestor of `after` that also
     // contains `before`.
     let afterBranch: TreeNode = after;
     while (
-        afterBranch.parent
-        && !afterBranch.parent.isScrollPage
-        && !beforeAncestors.has(afterBranch.parent)
+        afterBranch.parent &&
+        !afterBranch.parent.isScrollPage &&
+        !beforeAncestors.has(afterBranch.parent)
     ) {
         afterBranch = afterBranch.parent;
     }
 
     const commonParent = afterBranch.parent;
     const beforeBranch = commonParent
-        ? [...beforeAncestors].find(node => node.parent === commonParent)
+        ? [...beforeAncestors].find((node) => node.parent === commonParent)
         : null;
 
     // Remove every sibling strictly between `beforeBranch` and
@@ -218,12 +204,10 @@ function removeBlocks(before: TreeNode, after: TreeNode): void {
     // atomic blocks like code/math/html/diagram/frontmatter, whose inner
     // tree collapses to a single json node, from being double-removed).
     const nextContent = after.nextContentInContext();
-    const afterHasSurvivors
-        = nextContent != null && nextContent.isInBlock(afterBranch as Parent);
+    const afterHasSurvivors = nextContent != null && nextContent.isInBlock(afterBranch as Parent);
 
     if (!afterHasSurvivors) {
-        if (afterBranch.parent)
-            afterBranch.remove();
+        if (afterBranch.parent) afterBranch.remove();
 
         return;
     }
@@ -246,16 +230,14 @@ function selectedTableCells(
 
     for (const dom of selectedDoms) {
         const block = getBlock(dom);
-        if (block == null || block.blockName !== 'table.cell')
-            continue;
+        if (block == null || block.blockName !== 'table.cell') continue;
 
         const cell = block as TableBodyCell;
         cells.push(cell);
         table ??= cell.table;
     }
 
-    if (table == null || cells.length === 0)
-        return null;
+    if (table == null || cells.length === 0) return null;
 
     return { table, cells };
 }
@@ -264,13 +246,10 @@ function selectedTableCells(
 // a single empty paragraph when the table was the only block).
 function removeWholeTable(clipboard: Clipboard, table: Table): void {
     clipboard.selection.table.clear();
-    const outsideContent
-        = table.nextContentInContext() ?? table.previousContentInContext();
+    const outsideContent = table.nextContentInContext() ?? table.previousContentInContext();
     table.remove();
-    if (clipboard.scrollPage?.length() === 0)
-        resetToEmptyParagraph(clipboard);
-    else
-        outsideContent?.setCursor(0, 0, true);
+    if (clipboard.scrollPage?.length() === 0) resetToEmptyParagraph(clipboard);
+    else outsideContent?.setCursor(0, 0, true);
 }
 
 // For an already-empty frozen selection: if the rectangle covers whole
@@ -280,12 +259,11 @@ function removeWholeTable(clipboard: Clipboard, table: Table): void {
 // remaining offsets stay valid.
 function removeEmptyTableStructure(clipboard: Clipboard): boolean {
     const selectedCells = selectedTableCells(clipboard);
-    if (selectedCells == null)
-        return false;
+    if (selectedCells == null) return false;
 
     const { table, cells } = selectedCells;
-    const rows = new Set(cells.map(cell => cell.rowOffset));
-    const columns = new Set(cells.map(cell => cell.columnOffset));
+    const rows = new Set(cells.map((cell) => cell.rowOffset));
+    const columns = new Set(cells.map((cell) => cell.columnOffset));
     const spansAllRows = rows.size === table.rowCount;
     const spansAllColumns = columns.size === table.columnCount;
 
@@ -308,8 +286,7 @@ function removeEmptyTableStructure(clipboard: Clipboard): boolean {
     if (spansAllColumns) {
         clipboard.selection.table.clear();
         let cursorBlock: Nullable<Content> = null;
-        for (const row of [...rows].sort((a, b) => b - a))
-            cursorBlock = table.removeRow(row);
+        for (const row of [...rows].sort((a, b) => b - a)) cursorBlock = table.removeRow(row);
         cursorBlock?.setCursor(0, 0, true);
 
         return true;
@@ -323,12 +300,11 @@ function removeEmptyTableStructure(clipboard: Clipboard): boolean {
 // clear, and an empty whole column/row selection deletes that structure.
 function cutTableStructure(clipboard: Clipboard): boolean {
     const selectedCells = selectedTableCells(clipboard);
-    if (selectedCells == null)
-        return false;
+    if (selectedCells == null) return false;
 
     const { table, cells } = selectedCells;
-    const rows = new Set(cells.map(cell => cell.rowOffset));
-    const columns = new Set(cells.map(cell => cell.columnOffset));
+    const rows = new Set(cells.map((cell) => cell.rowOffset));
+    const columns = new Set(cells.map((cell) => cell.columnOffset));
 
     if (rows.size === table.rowCount && columns.size === table.columnCount) {
         removeWholeTable(clipboard, table);
@@ -336,8 +312,7 @@ function cutTableStructure(clipboard: Clipboard): boolean {
         return true;
     }
 
-    if (cells.some(cell => (cell.firstChild as Content)?.text))
-        return false;
+    if (cells.some((cell) => (cell.firstChild as Content)?.text)) return false;
 
     return removeEmptyTableStructure(clipboard);
 }
@@ -354,34 +329,25 @@ export function cutSelection(clipboard: Clipboard): void {
     }
 
     if (clipboard.selection.table.hasSelection) {
-        if (!cutTableStructure(clipboard))
-            clipboard.selection.table.clearSelectedCells();
+        if (!cutTableStructure(clipboard)) clipboard.selection.table.clearSelectedCells();
 
         return;
     }
 
     const selection = clipboard.selection.getSelection();
-    if (selection == null)
-        return;
+    if (selection == null) return;
 
-    const {
-        isSelectionInSameBlock,
-        anchor,
-        focus,
-        direction,
-    } = selection;
+    const { isSelectionInSameBlock, anchor, focus, direction } = selection;
     const anchorBlock = anchor.block;
     const focusBlock = focus.block;
 
     // Handler `cut` event in the same block.
     if (isSelectionInSameBlock) {
         const { text } = anchorBlock;
-        const startOffset
-            = direction === SelectionDirection.FORWARD ? anchor.offset : focus.offset;
+        const startOffset = direction === SelectionDirection.FORWARD ? anchor.offset : focus.offset;
         const endOffset = direction === SelectionDirection.FORWARD ? focus.offset : anchor.offset;
 
-        anchorBlock.text
-            = text.substring(0, startOffset) + text.substring(endOffset);
+        anchorBlock.text = text.substring(0, startOffset) + text.substring(endOffset);
 
         setCursorAndConvert(anchorBlock, startOffset);
 
@@ -414,9 +380,8 @@ export function cutSelection(clipboard: Clipboard): void {
     // only the structure strictly between the two leaves (and the emptied
     // end-side containers). The start block keeps its container — a list
     // item stays a list item, a quote stays a quote.
-    startBlock.text
-        = startBlock.text.substring(0, startOffset)
-            + endBlock.text.substring(endOffset);
+    startBlock.text =
+        startBlock.text.substring(0, startOffset) + endBlock.text.substring(endOffset);
 
     removeBlocks(startBlock, endBlock);
 
@@ -434,9 +399,8 @@ function collapseLanguageInputCut(
     startOffset: number,
     endOffset: number,
 ): void {
-    const mergedText
-        = startBlock.text.substring(0, startOffset)
-            + endBlock.text.substring(endOffset);
+    const mergedText =
+        startBlock.text.substring(0, startOffset) + endBlock.text.substring(endOffset);
     const codeBlock = startBlock.outMostBlock;
 
     removeBlocks(startBlock, endBlock);
@@ -457,9 +421,7 @@ function collapseLanguageInputCut(
 // frozen; once the cells are empty, the next press removes whole column(s) /
 // row(s) / the whole table, or drops the selection for a partial rectangle.
 export function deleteTableSelection(clipboard: Clipboard): void {
-    if (clipboard.selection.table.emptySelectedCells())
-        return;
+    if (clipboard.selection.table.emptySelectedCells()) return;
 
-    if (!removeEmptyTableStructure(clipboard))
-        clipboard.selection.table.clear();
+    if (!removeEmptyTableStructure(clipboard)) clipboard.selection.table.clear();
 }

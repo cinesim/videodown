@@ -35,7 +35,7 @@ class BlockQuote extends Parent {
     override getState(): IBlockQuoteState {
         const state: IBlockQuoteState = {
             name: 'block-quote',
-            children: this.children.map(child => (child as Parent).getState()),
+            children: this.children.map((child) => (child as Parent).getState()),
         };
 
         return state;

@@ -13,19 +13,13 @@ import { getCopyTextType, isStandaloneTableHtml, resolveClipboardImagePath } fro
 
 describe('isStandaloneTableHtml', () => {
     it('matches a single top-level <table>...</table>', () => {
-        expect(
-            isStandaloneTableHtml(
-                '<table><tr><td>a</td></tr></table>',
-            ),
-        ).toBe(true);
+        expect(isStandaloneTableHtml('<table><tr><td>a</td></tr></table>')).toBe(true);
     });
 
     it('tolerates leading/trailing whitespace and attributes on the opener', () => {
-        expect(
-            isStandaloneTableHtml(
-                '  <table border="1"><tr><td>a</td></tr></table>\n',
-            ),
-        ).toBe(true);
+        expect(isStandaloneTableHtml('  <table border="1"><tr><td>a</td></tr></table>\n')).toBe(
+            true,
+        );
     });
 
     it('rejects non-table HTML', () => {
@@ -34,11 +28,7 @@ describe('isStandaloneTableHtml', () => {
     });
 
     it('rejects content with trailing text outside the table', () => {
-        expect(
-            isStandaloneTableHtml(
-                '<table><tr><td>a</td></tr></table> extra',
-            ),
-        ).toBe(false);
+        expect(isStandaloneTableHtml('<table><tr><td>a</td></tr></table> extra')).toBe(false);
     });
 
     it('rejects plain text and empty strings', () => {
@@ -65,9 +55,9 @@ describe('getCopyTextType — pre-existing classifier behaviour stays put', () =
     });
 
     it('pasteAsPlainText ignores html', () => {
-        expect(
-            getCopyTextType('<p>hi</p>', '<p>hi</p>', PasteType.PASTE_AS_PLAIN_TEXT),
-        ).toBe('code');
+        expect(getCopyTextType('<p>hi</p>', '<p>hi</p>', PasteType.PASTE_AS_PLAIN_TEXT)).toBe(
+            'code',
+        );
     });
 });
 
@@ -95,16 +85,14 @@ describe('resolveClipboardImagePath', () => {
             '/a/b.svg',
             '/a/b.webp',
         ]) {
-            expect(await resolveClipboardImagePath(() => Promise.resolve(path))).toBe(
-                path,
-            );
+            expect(await resolveClipboardImagePath(() => Promise.resolve(path))).toBe(path);
         }
     });
 
     it('tolerates a query string after the extension', async () => {
-        expect(
-            await resolveClipboardImagePath(() => Promise.resolve('/a/b.png?x=1')),
-        ).toBe('/a/b.png?x=1');
+        expect(await resolveClipboardImagePath(() => Promise.resolve('/a/b.png?x=1'))).toBe(
+            '/a/b.png?x=1',
+        );
     });
 
     it('returns "" when the hook resolves an empty string', async () => {
@@ -112,11 +100,7 @@ describe('resolveClipboardImagePath', () => {
     });
 
     it('returns "" when the resolved path is not an image', async () => {
-        expect(
-            await resolveClipboardImagePath(() => Promise.resolve('/a/b.txt')),
-        ).toBe('');
-        expect(
-            await resolveClipboardImagePath(() => Promise.resolve('/a/b.pdf')),
-        ).toBe('');
+        expect(await resolveClipboardImagePath(() => Promise.resolve('/a/b.txt'))).toBe('');
+        expect(await resolveClipboardImagePath(() => Promise.resolve('/a/b.pdf'))).toBe('');
     });
 });

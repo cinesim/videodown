@@ -32,12 +32,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -76,7 +73,7 @@ function stubSelection(muya: Muya, a: Content, aOff: number, f: Content, fOff: n
 
 async function cutAndRead(muya: Muya): Promise<string> {
     muya.editor.clipboard.cutHandler();
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
     return muya.getMarkdown();
 }
 
@@ -84,7 +81,7 @@ describe('track C — cross-block cut starting in a code fence language line (#9
     it('collapses the code block to a paragraph holding the merged text', async () => {
         const muya = bootMuya('```js\nconst x = 1\n```\n\nhello world\n');
         const blocks = contentBlocks(muya);
-        const langInput = blocks.find(b => b.blockName === 'language-input')!;
+        const langInput = blocks.find((b) => b.blockName === 'language-input')!;
         const para = blocks[blocks.length - 1];
         // 'js'@1 -> 'j' merged with 'hello world'@5 -> ' world'.
         stubSelection(muya, langInput, 1, para, 5);

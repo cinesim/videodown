@@ -16,8 +16,7 @@ function expandTableColspans(table: HTMLTableElement) {
 
         for (const cell of cells) {
             const colSpan = Math.max(1, Math.trunc(cell.colSpan || 1));
-            if (colSpan <= 1)
-                continue;
+            if (colSpan <= 1) continue;
 
             cell.removeAttribute('colspan');
 
@@ -35,19 +34,16 @@ function expandTableColspans(table: HTMLTableElement) {
 
 export async function getPageTitle(url: string) {
     // No need to request the title when it's not url.
-    if (!url.startsWith('http'))
-        return '';
+    if (!url.startsWith('http')) return '';
 
     // No need to request the title when off line.
-    if (!isOnline())
-        return '';
+    if (!isOnline()) return '';
 
     try {
         const res = await fetch(url, { method: 'GET', mode: 'cors' });
         const contentType = res.headers.get('content-type');
 
-        if (res.status !== 200 || !contentType || !/text\/html/i.test(contentType))
-            return '';
+        if (res.status !== 200 || !contentType || !/text\/html/i.test(contentType)) return '';
 
         // Parse inertly and read `<title>` textContent, which decodes HTML
         // entities so they don't leak into the pasted link text (#2525).
@@ -56,29 +52,20 @@ export async function getPageTitle(url: string) {
         const title = doc.querySelector('title')?.textContent?.trim();
 
         return title || '';
-    }
-    catch {
+    } catch {
         return '';
     }
 }
 
-export async function normalizePastedHTML(
-    html: string,
-    options: INormalizePastedHTMLOptions = {},
-) {
+export async function normalizePastedHTML(html: string, options: INormalizePastedHTMLOptions = {}) {
     // Only extract the `body.innerHTML` when the `html` is a full HTML Document.
     if (/<body>[\s\S]*<\/body>/.test(html)) {
         const match = /<body>([\s\S]*)<\/body>/.exec(html);
-        if (match && typeof match[1] === 'string')
-            html = match[1];
+        if (match && typeof match[1] === 'string') html = match[1];
     }
 
     // Prevent XSS and sanitize HTML.
-    const sanitizedHtml = sanitize(
-        html,
-        PREVIEW_DOMPURIFY_CONFIG,
-        false,
-    ) as string;
+    const sanitizedHtml = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, false) as string;
     const tempWrapper = document.createElement('div');
     tempWrapper.innerHTML = sanitizedHtml;
 
@@ -108,15 +95,12 @@ export async function normalizePastedHTML(
 
         for (const td of tds) {
             const rawHtml = td.innerHTML;
-            if (/<br>/.test(rawHtml))
-                td.innerHTML = rawHtml.replace(/<br>/g, '&lt;br&gt;');
+            if (/<br>/.test(rawHtml)) td.innerHTML = rawHtml.replace(/<br>/g, '&lt;br&gt;');
         }
     }
 
     // Prevent it parse into a link if copy a url.
-    const links: HTMLElement[] = Array.from(
-        tempWrapper.querySelectorAll('a'),
-    );
+    const links: HTMLElement[] = Array.from(tempWrapper.querySelectorAll('a'));
 
     for (const link of links) {
         const href = link.getAttribute('href');
@@ -136,8 +120,7 @@ export async function normalizePastedHTML(
             const title = await Promise.race([getPageTitle(href), timer]);
             if (title) {
                 link.textContent = title as string;
-            }
-            else if (!options.preserveBareUrlLinks) {
+            } else if (!options.preserveBareUrlLinks) {
                 // Escape + sanitize the fallback text (muyajs uses
                 // `sanitize(text, PREVIEW_DOMPURIFY_CONFIG, true)`) so a stray
                 // angle bracket can't re-enter as live markup.
@@ -161,17 +144,14 @@ export async function normalizePastedHTML(
 // slot so it goes through `HtmlToMarkdown` instead of being inserted verbatim.
 const STANDALONE_TABLE_REG = /^<table\b[\s\S]*<\/table>$/i;
 export function isStandaloneTableHtml(text: string) {
-    if (!text)
-        return false;
+    if (!text) return false;
 
     const trimmed = text.trim();
-    if (!STANDALONE_TABLE_REG.test(trimmed))
-        return false;
+    if (!STANDALONE_TABLE_REG.test(trimmed)) return false;
 
     // The greedy regex above also matches two sibling `<table>`s, so parse the
     // blob into a temporary container and require exactly one root element.
-    if (typeof document === 'undefined')
-        return true;
+    if (typeof document === 'undefined') return true;
 
     const tmp = document.createElement('div');
     tmp.innerHTML = trimmed;
@@ -192,13 +172,11 @@ export function isStandaloneTableHtml(text: string) {
 export async function resolveClipboardImagePath(
     hook: (() => Promise<string>) | undefined,
 ): Promise<string> {
-    if (typeof hook !== 'function')
-        return '';
+    if (typeof hook !== 'function') return '';
 
     const path = await hook();
 
-    if (typeof path === 'string' && path && IMAGE_EXT_REG.test(path))
-        return path;
+    if (typeof path === 'string' && path && IMAGE_EXT_REG.test(path)) return path;
 
     return '';
 }
@@ -211,18 +189,14 @@ export async function resolveClipboardImagePath(
  * prefer `clipboardData.files` and fall back to scanning `clipboardData.items`
  * for the first `image/*` entry. Returns `null` when no image is present.
  */
-export function getClipboardImageFile(
-    clipboardData: DataTransfer | null,
-): File | null {
-    if (!clipboardData)
-        return null;
+export function getClipboardImageFile(clipboardData: DataTransfer | null): File | null {
+    if (!clipboardData) return null;
 
     const { files, items } = clipboardData;
 
     if (files && files.length > 0) {
         for (const file of Array.from(files)) {
-            if (file.type.startsWith('image/'))
-                return file;
+            if (file.type.startsWith('image/')) return file;
         }
     }
 
@@ -230,8 +204,7 @@ export function getClipboardImageFile(
         for (const item of Array.from(items)) {
             if (item.kind === 'file' && item.type.startsWith('image/')) {
                 const file = item.getAsFile();
-                if (file)
-                    return file;
+                if (file) return file;
             }
         }
     }
@@ -301,11 +274,9 @@ function bufferToDataURL(mimeType: string) {
  */
 export function getCopyTextType(html: string, text: string, pasteType: PasteType) {
     const getTextType = (text: string) => {
-        const match
-        // eslint-disable-next-line regexp/no-super-linear-backtracking
-            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/[a-z\d-]+>$/i.exec(
-                text.trim(),
-            );
+        const match =
+            // eslint-disable-next-line regexp/no-super-linear-backtracking
+            /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/[a-z\d-]+>$/i.exec(text.trim());
         if (match && match[1]) {
             // The regex is case-insensitive, so `<P>` yields `tag = 'P'`;
             // PARAGRAPH_TYPES is all lowercase. Normalize before checking.
@@ -317,8 +288,6 @@ export function getCopyTextType(html: string, text: string, pasteType: PasteType
         return 'text';
     };
 
-    if (pasteType === PasteType.NORMAL)
-        return html && text ? 'html' : getTextType(text);
-    else
-        return getTextType(text);
+    if (pasteType === PasteType.NORMAL) return html && text ? 'html' : getTextType(text);
+    else return getTextType(text);
 }

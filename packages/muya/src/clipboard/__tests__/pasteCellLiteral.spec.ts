@@ -35,12 +35,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -84,7 +81,7 @@ function pasteEvent(text: string) {
 async function pasteInto(muya: Muya, block: Content, start: number, end: number, text: string) {
     stubSelection(muya, block, start, end);
     await muya.editor.clipboard.pasteHandler(pasteEvent(text), text, '');
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
 }
 
 describe('paste — table cell takes text literally (muyajs parity)', () => {

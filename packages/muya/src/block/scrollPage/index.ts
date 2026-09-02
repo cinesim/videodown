@@ -42,8 +42,7 @@ export class ScrollPage extends Parent {
     static loadBlock(blockName: string): IConstructor<Parent> {
         const block = this._registeredBlocks.get(blockName);
 
-        if (!block)
-            debug.warn(`block:${blockName} is not existed.`);
+        if (!block) debug.warn(`block:${blockName} is not existed.`);
 
         return block as IConstructor<Parent>;
     }
@@ -109,11 +108,12 @@ export class ScrollPage extends Parent {
      * @param {Array} path
      */
     queryBlock(path: TBlockPath) {
-        if (path.length === 0)
-            return this;
+        if (path.length === 0) return this;
 
         const p = path.shift() as number;
-        const block = this.find(p) as Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined };
+        const block = this.find(p) as Parent & {
+            queryBlock: (p: TBlockPath) => Parent | Content | undefined;
+        };
         return block && path.length ? block.queryBlock(path) : block;
     }
 
@@ -121,8 +121,7 @@ export class ScrollPage extends Parent {
         const REG = new RegExp(`\\[${label}\\](?!:)`);
 
         this.breadthFirstTraverse((node) => {
-            if (node.isContent() && REG.test(node.text))
-                node.update();
+            if (node.isContent() && REG.test(node.text)) node.update();
         });
     }
 
@@ -139,8 +138,7 @@ export class ScrollPage extends Parent {
     private _updateActiveStatus = () => {
         const { blur, focus } = this._blurFocus;
 
-        if (blur == null && focus == null)
-            return;
+        if (blur == null && focus == null) return;
 
         let needBlurBlocks: Parent[] = [];
         let needFocusBlocks: Parent[] = [];
@@ -149,15 +147,18 @@ export class ScrollPage extends Parent {
         if (blur && focus) {
             needFocusBlocks = focus.getAncestors();
             block = blur.parent;
-            while (block && block.isParent && block.isParent() && !needFocusBlocks.includes(block)) {
+            while (
+                block &&
+                block.isParent &&
+                block.isParent() &&
+                !needFocusBlocks.includes(block)
+            ) {
                 needBlurBlocks.push(block);
                 block = block.parent;
             }
-        }
-        else if (blur) {
+        } else if (blur) {
             needBlurBlocks = blur.getAncestors();
-        }
-        else if (focus) {
+        } else if (focus) {
             needFocusBlocks = focus.getAncestors();
         }
 
@@ -181,8 +182,7 @@ export class ScrollPage extends Parent {
 
     // Create a new paragraph if click the blank area in editor.
     private _clickHandler(event: Event) {
-        if (!isMouseEvent(event) || !isHTMLElement(event.target))
-            return;
+        if (!isMouseEvent(event) || !isHTMLElement(event.target)) return;
 
         const target = event.target;
 
@@ -194,21 +194,14 @@ export class ScrollPage extends Parent {
             const { bottom } = lastChildDom!.getBoundingClientRect();
 
             if (clientY > bottom) {
-                if (
-                    lastChild.blockName === 'paragraph'
-                    && lastContentBlock.text === ''
-                ) {
+                if (lastChild.blockName === 'paragraph' && lastContentBlock.text === '') {
                     lastContentBlock.setCursor(0, 0);
-                }
-                else {
+                } else {
                     const state = {
                         name: 'paragraph',
                         text: '',
                     };
-                    const newNode = ScrollPage.loadBlock(state.name).create(
-                        this.muya,
-                        state,
-                    );
+                    const newNode = ScrollPage.loadBlock(state.name).create(this.muya, state);
                     this.append(newNode, 'user');
                     const cursorBlock = newNode.lastContentInDescendant();
                     cursorBlock.setCursor(0, 0, true);

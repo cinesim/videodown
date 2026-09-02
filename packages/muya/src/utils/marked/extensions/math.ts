@@ -15,8 +15,7 @@ interface IOptions {
 }
 
 const inlineStartRule = /(\s|^)\${1,2}(?!\$)/;
-const inlineRule
-    = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n$]))\1(?=[\s?!.,:]|$)/;
+const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n$]))\1(?=[\s?!.,:]|$)/;
 const blockRule = /^(\${1,2})\n((?:\\[\s\S]|[^\\])+?)\n\1[ \t]*(?:\n|$)/;
 
 const DEFAULT_OPTIONS = {
@@ -46,8 +45,7 @@ function createRenderer(options: IOptions, newlineAfter: boolean) {
                     displayMode,
                 }) + (newlineAfter ? '\n' : '')
             );
-        }
-        else {
+        } else {
             return type === 'inlineMath'
                 ? `$${text}$`
                 : `<pre class="multiple-math" data-math-style="${mathStyle}">${text}</pre>\n`;
@@ -61,14 +59,12 @@ function inlineKatex(renderer: (token: IMathToken) => string) {
         level: 'inline' as const,
         start(src: string) {
             const match = src.match(inlineStartRule);
-            if (!match)
-                return;
+            if (!match) return;
 
             const index = (match.index || 0) + match[1].length;
             const possibleKatex = src.substring(index);
 
-            if (inlineRule.test(possibleKatex))
-                return index;
+            if (inlineRule.test(possibleKatex)) return index;
         },
         tokenizer(src: string) {
             const match = src.match(inlineRule);

@@ -21,7 +21,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
-      - name: Run ESLint (muya)
+      - name: Run Oxfmt (muya)
+        run: bun run --cwd packages/muya format:check
+
+      - name: Run Oxlint (muya)
         run: bun run --cwd packages/muya lint
 
       - name: Run TypeScript typecheck (muya)

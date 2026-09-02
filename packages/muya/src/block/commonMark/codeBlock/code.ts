@@ -6,7 +6,10 @@ import type CodeBlock from './index';
 import { fromEvent } from 'rxjs';
 import copyIcon from '../../../assets/icons/copy/2.png';
 import { CopyType } from '../../../clipboard/types';
-import { LINE_NUMBERS_ROWS_CLASS, lineNumbersWrapperHTML } from '../../../utils/codeBlockLineNumbers';
+import {
+    LINE_NUMBERS_ROWS_CLASS,
+    lineNumbersWrapperHTML,
+} from '../../../utils/codeBlockLineNumbers';
 import logger from '../../../utils/logger';
 import { h, toHTML } from '../../../utils/snabbdom';
 import Parent from '../../base/parent';
@@ -22,7 +25,7 @@ function renderCopyButton(i18n: I18n) {
             'i.icon-inner',
             {
                 style: {
-                    'background': `url(${copyIcon}) no-repeat`,
+                    background: `url(${copyIcon}) no-repeat`,
                     'background-size': '100%',
                 },
             },
@@ -93,8 +96,7 @@ class Code extends Parent {
         const { i18n, options } = this.muya;
         const withLineNumbers = options.codeBlockLineNumbers && this._withLineNumbers;
         let html = toHTML(renderCopyButton(i18n));
-        if (withLineNumbers)
-            html += lineNumbersWrapperHTML();
+        if (withLineNumbers) html += lineNumbersWrapperHTML();
         this.domNode!.innerHTML = html;
         this.lineNumbersWrapper = withLineNumbers
             ? this.domNode!.querySelector<HTMLElement>(`.${LINE_NUMBERS_ROWS_CLASS}`)
@@ -104,8 +106,7 @@ class Code extends Parent {
     private _listen() {
         const { editor } = this.muya;
 
-        if (this.domNode == null)
-            return;
+        if (this.domNode == null) return;
 
         // Copy code content to clipboard.
         const clickHandler = (event: Event) => {

@@ -38,8 +38,7 @@ function simplify(token: ILexerToken): ISimplifiedToken {
     }
     if (token.tokens && Array.isArray(token.tokens) && token.type === 'footnote') {
         out.children = token.tokens.map(simplify);
-    }
-    else if (typeof token.text === 'string') {
+    } else if (typeof token.text === 'string') {
         out.text = token.text;
     }
     return out;
@@ -51,7 +50,7 @@ function parse(markdown: string) {
         math: false,
         frontMatter: false,
     })
-        .filter(t => t.type !== 'space')
+        .filter((t) => t.type !== 'space')
         .map(simplify);
 }
 
@@ -143,7 +142,7 @@ At vero eos [^foo1]: et accusam.`);
         const tokens = parse(`foo[^1]
 
 \\[^1]: foo`);
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         expect(types).not.toContain('footnote');
     });
 
@@ -155,7 +154,7 @@ At vero eos [^foo1]: et accusam.`);
         const tokens = parse(`foo[^1]
 
 [^1\\]: foo`);
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         expect(types).not.toContain('footnote');
     });
 
@@ -163,7 +162,7 @@ At vero eos [^foo1]: et accusam.`);
         const tokens = parse(`foo[^1]
 
 [ ^1]: foo`);
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         expect(types).not.toContain('footnote');
     });
 
@@ -203,7 +202,9 @@ At vero eos [^foo1]: et accusam.`);
 [^1]: see $a + b$ for the formula`,
             { footnote: true, math: true, frontMatter: false },
         );
-        const footnote = tokens.find(t => t.type === 'footnote') as Extract<typeof tokens[number], { type: 'footnote' }> | undefined;
+        const footnote = tokens.find((t) => t.type === 'footnote') as
+            | Extract<(typeof tokens)[number], { type: 'footnote' }>
+            | undefined;
         expect(footnote).toBeDefined();
         // The inline math `$a + b$` lives inside the footnote's paragraph
         // children, but block lexing produces a paragraph token whose
@@ -220,9 +221,9 @@ At vero eos [^foo1]: et accusam.`);
 
 [^1]: foo`,
             { footnote: false, math: false, frontMatter: false },
-        ).filter(t => t.type !== 'space');
+        ).filter((t) => t.type !== 'space');
         // Without the extension the definition stays as a plain paragraph.
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         expect(types).toContain('paragraph');
         expect(types).not.toContain('footnote');
     });
@@ -270,11 +271,11 @@ describe('marked footnote extension — multi-line bodies', () => {
 [^foo1]: Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
 
     At vero eos et accusam et justo duo dolores et ea rebum!`);
-        const footnote = tokens.find(t => t.type === 'footnote');
+        const footnote = tokens.find((t) => t.type === 'footnote');
         expect(footnote?.identifier).toBe('foo1');
         // Two paragraph children: the inline lead, then the indented
         // continuation paragraph.
-        const paragraphs = footnote?.children?.filter(t => t.type === 'paragraph') ?? [];
+        const paragraphs = footnote?.children?.filter((t) => t.type === 'paragraph') ?? [];
         expect(paragraphs).toHaveLength(2);
         expect(paragraphs[0].text).toContain('Lorem ipsum dolor sit amet');
         expect(paragraphs[1].text).toContain('At vero eos et accusam');
@@ -288,9 +289,9 @@ describe('marked footnote extension — multi-line bodies', () => {
     First paragraph of the footnote.
 
     Second paragraph of the footnote.`);
-        const footnote = tokens.find(t => t.type === 'footnote');
+        const footnote = tokens.find((t) => t.type === 'footnote');
         expect(footnote?.identifier).toBe('foo1');
-        const paragraphs = footnote?.children?.filter(t => t.type === 'paragraph') ?? [];
+        const paragraphs = footnote?.children?.filter((t) => t.type === 'paragraph') ?? [];
         expect(paragraphs).toHaveLength(2);
         expect(paragraphs[0].text).toBe('First paragraph of the footnote.');
         expect(paragraphs[1].text).toBe('Second paragraph of the footnote.');
@@ -306,9 +307,9 @@ describe('marked footnote extension — multi-line bodies', () => {
     - list element 1
     - list element 2
     - list element 3`);
-        const footnote = tokens.find(t => t.type === 'footnote');
+        const footnote = tokens.find((t) => t.type === 'footnote');
         expect(footnote?.identifier).toBe('foo1');
-        const childTypes = footnote?.children?.map(t => t.type) ?? [];
+        const childTypes = footnote?.children?.map((t) => t.type) ?? [];
         expect(childTypes).toContain('paragraph');
         expect(childTypes).toContain('list');
     });
@@ -325,12 +326,12 @@ describe('marked footnote extension — multi-line bodies', () => {
     \`\`\`
 
     Trailing paragraph.`);
-        const footnote = tokens.find(t => t.type === 'footnote');
+        const footnote = tokens.find((t) => t.type === 'footnote');
         expect(footnote?.identifier).toBe('foo1');
-        const childTypes = footnote?.children?.map(t => t.type) ?? [];
+        const childTypes = footnote?.children?.map((t) => t.type) ?? [];
         // Lead, code, trailing — three children of distinct types.
         expect(childTypes).toContain('code');
-        expect(childTypes.filter(t => t === 'paragraph')).toHaveLength(2);
+        expect(childTypes.filter((t) => t === 'paragraph')).toHaveLength(2);
     });
 });
 
@@ -346,14 +347,15 @@ describe('marked footnote extension — termination', () => {
     Continuation that belongs to the footnote.
 
 Trailing paragraph that does NOT belong to the footnote.`);
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         // Exactly one footnote in the stream.
-        expect(types.filter(t => t === 'footnote')).toHaveLength(1);
+        expect(types.filter((t) => t === 'footnote')).toHaveLength(1);
         // A separate trailing paragraph outside the footnote.
         const trailing = tokens.find(
-            t => t.type === 'paragraph'
-                && typeof t.text === 'string'
-                && t.text.startsWith('Trailing paragraph'),
+            (t) =>
+                t.type === 'paragraph' &&
+                typeof t.text === 'string' &&
+                t.text.startsWith('Trailing paragraph'),
         );
         expect(trailing).toBeDefined();
     });
@@ -368,7 +370,7 @@ Trailing paragraph that does NOT belong to the footnote.`);
     Continuation that belongs to the footnote.
 
   Sed diam nonumy — only 2-space indent, NOT continuation.`);
-        const footnote = tokens.find(t => t.type === 'footnote');
+        const footnote = tokens.find((t) => t.type === 'footnote');
         expect(footnote).toBeDefined();
         // The 2-space-indented line is NOT consumed into the footnote
         // children (the BLOCK_RULE terminates first).

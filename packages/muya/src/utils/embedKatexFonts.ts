@@ -72,20 +72,18 @@ const SRC_RE = /src:[^;]*;/;
 const QUOTE_RE = /^["']|["']$/g;
 
 function descriptor(block: string, re: RegExp, fallback: string): string {
-    return (block.match(re)?.[1]?.trim().replace(QUOTE_RE, '') ?? fallback);
+    return block.match(re)?.[1]?.trim().replace(QUOTE_RE, '') ?? fallback;
 }
 
 export function embedKatexFonts(css: string): string {
     return css.replace(FONT_FACE_BLOCK_RE, (block) => {
         const family = descriptor(block, FAMILY_RE, '');
-        if (!family)
-            return block;
+        if (!family) return block;
         const weight = descriptor(block, WEIGHT_RE, 'normal').toLowerCase();
         const style = descriptor(block, STYLE_RE, 'normal').toLowerCase();
 
         const dataUri = FACE_TO_DATA_URI[`${family}|${weight}|${style}`];
-        if (!dataUri)
-            return block;
+        if (!dataUri) return block;
 
         return block.replace(SRC_RE, `src: url(${dataUri}) format("woff2");`);
     });

@@ -177,8 +177,7 @@ describe('test LinkedList', () => {
                 return anotherLinkedList;
             }, anotherLinkedList);
 
-            for (const node of linkedList!.iterator())
-                linkedList?.remove(node);
+            for (const node of linkedList!.iterator()) linkedList?.remove(node);
 
             expect(anotherLinkedList.length).toBe(5);
             expect(linkedList?.length).toBe(0);

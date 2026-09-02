@@ -12,21 +12,9 @@ export default function autoLink(
     const { isLink, marker, href, email } = token;
     const { start, end } = token.range;
 
-    const startMarker = this.highlight(
-        h,
-        block,
-        start,
-        start + marker.length,
-        token,
-    );
+    const startMarker = this.highlight(h, block, start, start + marker.length, token);
     const endMarker = this.highlight(h, block, end - marker.length, end, token);
-    const content = this.highlight(
-        h,
-        block,
-        start + marker.length,
-        end - marker.length,
-        token,
-    );
+    const content = this.highlight(h, block, start + marker.length, end - marker.length, token);
 
     const hyperlink = isLink ? href : `mailto:${email}`;
 

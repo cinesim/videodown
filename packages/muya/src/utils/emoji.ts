@@ -15,8 +15,7 @@ export function validEmoji(text: string) {
  */
 
 export function checkEditEmoji(node: HTMLElement) {
-    if (node && node.classList.contains(CLASS_NAMES.MU_EMOJI_MARKED_TEXT))
-        return node;
+    if (node && node.classList.contains(CLASS_NAMES.MU_EMOJI_MARKED_TEXT)) return node;
 
     return false;
 }

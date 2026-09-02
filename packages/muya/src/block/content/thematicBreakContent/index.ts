@@ -41,14 +41,10 @@ class ThematicBreakContent extends Format {
                 name: 'paragraph',
                 text: '',
             };
-            const emptyParagraph = ScrollPage.loadBlock(newState.name).create(
-                muya,
-                newState,
-            );
+            const emptyParagraph = ScrollPage.loadBlock(newState.name).create(muya, newState);
             const thematicBreak = this.parent;
             thematicBreak!.parent!.insertBefore(emptyParagraph, thematicBreak);
-        }
-        else if (isKeyboardEvent(event)) {
+        } else if (isKeyboardEvent(event)) {
             const offset = text.length;
             this.setCursor(offset, offset);
             super.enterHandler(event);
@@ -62,8 +58,7 @@ class ThematicBreakContent extends Format {
             // Remove the text content and convert it to paragraph
             this.text = '';
             this.convertToParagraph();
-        }
-        else {
+        } else {
             super.backspaceHandler(event);
         }
     }

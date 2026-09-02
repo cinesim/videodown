@@ -3,15 +3,18 @@ import type Parent from '../block/base/parent';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Muya } from '../muya';
 
-interface IStateBlock { name: string; text: string; children: IStateBlock[] }
+interface IStateBlock {
+    name: string;
+    text: string;
+    children: IStateBlock[];
+}
 
 const hosts: HTMLElement[] = [];
 beforeEach(() => {
     window.MUYA_VERSION = 'test';
 });
 afterEach(() => {
-    while (hosts.length)
-        hosts.pop()!.remove();
+    while (hosts.length) hosts.pop()!.remove();
 });
 function boot(md: string): Muya {
     const host = document.createElement('div');
@@ -133,7 +136,7 @@ describe('cross-block paragraph wrapping', () => {
         muya.updateParagraph('ol-order'); // click ordered again -> unwrap
         await vi.waitFor(() => {
             const s = muya.getState() as unknown as IStateBlock[];
-            expect(s.some(b => b.name === 'order-list')).toBe(false);
+            expect(s.some((b) => b.name === 'order-list')).toBe(false);
         });
         // the original span (alpha .. bravo) is restored
         const sel = muya.editor.selection;

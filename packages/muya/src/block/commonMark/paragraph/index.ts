@@ -14,9 +14,7 @@ class Paragraph extends Parent {
     static create(muya: Muya, state: IParagraphState) {
         const paragraph = new Paragraph(muya);
 
-        paragraph.append(
-            ScrollPage.loadBlock('paragraph.content').create(muya, state.text),
-        );
+        paragraph.append(ScrollPage.loadBlock('paragraph.content').create(muya, state.text));
 
         return paragraph;
     }

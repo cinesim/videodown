@@ -1,5 +1,12 @@
 import type { Muya } from '../../../index';
-import type { CodeEmojiMathToken, HTMLTagToken, ImageToken, LinkToken, ReferenceLinkToken, Token } from '../../../inlineRenderer/types';
+import type {
+    CodeEmojiMathToken,
+    HTMLTagToken,
+    ImageToken,
+    LinkToken,
+    ReferenceLinkToken,
+    Token,
+} from '../../../inlineRenderer/types';
 import type { IRenderCursor } from '../../../selection/types';
 import type {
     IBlockQuoteState,
@@ -45,32 +52,29 @@ const MATH_BLOCK_REG = /^\$\$/;
 // eslint-disable-next-line regexp/no-super-linear-backtracking
 const TABLE_BLOCK_REG = /^\|.*?(\\*)\|.*?(\\*)\|/;
 
-type BlockConversion
-    = | { kind: 'math' }
-        | { kind: 'code'; lang: string }
-        | { kind: 'table' }
-        | { kind: 'html'; tagName: string };
+type BlockConversion =
+    | { kind: 'math' }
+    | { kind: 'code'; lang: string }
+    | { kind: 'table' }
+    | { kind: 'html'; tagName: string };
 
 // Single source of truth for "what block, if any, does this paragraph text
 // convert into on Enter". Shared by the enterHandler guard (to decide whether
 // to convert in place) and `_enterConvert` (to perform it), so the match rules
 // can never drift between the two.
 function matchBlockConversion(text: string): BlockConversion | null {
-    if (MATH_BLOCK_REG.test(text))
-        return { kind: 'math' };
+    if (MATH_BLOCK_REG.test(text)) return { kind: 'math' };
 
     const codeBlockToken = text.match(CODE_BLOCK_REG);
-    if (codeBlockToken)
-        return { kind: 'code', lang: codeBlockToken[2] };
+    if (codeBlockToken) return { kind: 'code', lang: codeBlockToken[2] };
 
     const tableMatch = TABLE_BLOCK_REG.exec(text);
     if (tableMatch && isLengthEven(tableMatch[1]) && isLengthEven(tableMatch[2]))
         return { kind: 'table' };
 
     const htmlMatch = HTML_BLOCK_REG.exec(text);
-    const tagName = htmlMatch && htmlMatch[1] && HTML_TAGS.find(t => t === htmlMatch[1]);
-    if (tagName && VOID_HTML_TAGS.every(tag => tag !== tagName))
-        return { kind: 'html', tagName };
+    const tagName = htmlMatch && htmlMatch[1] && HTML_TAGS.find((t) => t === htmlMatch[1]);
+    if (tagName && VOID_HTML_TAGS.every((tag) => tag !== tagName)) return { kind: 'html', tagName };
 
     return null;
 }
@@ -98,8 +102,7 @@ type TEndFormatHandler = (token: Token, offset: number) => Nullable<IEndFormatHi
 function endHitStrongLike(token: Token, offset: number): Nullable<IEndFormatHit> {
     const { end } = token.range;
     const { marker } = token as CodeEmojiMathToken;
-    if (marker && offset === end - marker.length)
-        return { offset: marker.length };
+    if (marker && offset === end - marker.length) return { offset: marker.length };
 
     return null;
 }
@@ -110,12 +113,9 @@ function endHitImageLink(token: Token, offset: number): Nullable<IEndFormatHit> 
     const srcAndTitle = (token as ImageToken).srcAndTitle;
     const hrefAndTitle = (token as LinkToken).hrefAndTitle;
     const linkTitleLen = (srcAndTitle || hrefAndTitle).length;
-    const secondLashLen
-        = backlash && backlash.second ? backlash.second.length : 0;
-    if (offset === end - 3 - (linkTitleLen + secondLashLen))
-        return { offset: 2 };
-    if (offset === end - 1)
-        return { offset: 1 };
+    const secondLashLen = backlash && backlash.second ? backlash.second.length : 0;
+    if (offset === end - 3 - (linkTitleLen + secondLashLen)) return { offset: 2 };
+    if (offset === end - 1) return { offset: 1 };
 
     return null;
 }
@@ -124,17 +124,13 @@ function endHitReference(token: Token, offset: number): Nullable<IEndFormatHit> 
     const { end } = token.range;
     const { backlash, isFullLink, label } = token as ReferenceLinkToken;
     const labelLen = label ? label.length : 0;
-    const secondLashLen
-        = backlash && backlash.second ? backlash.second.length : 0;
+    const secondLashLen = backlash && backlash.second ? backlash.second.length : 0;
     if (isFullLink) {
-        if (offset === end - 3 - labelLen - secondLashLen)
-            return { offset: 2 };
-        if (offset === end - 1)
-            return { offset: 1 };
+        if (offset === end - 3 - labelLen - secondLashLen) return { offset: 2 };
+        if (offset === end - 1) return { offset: 1 };
         return null;
     }
-    if (offset === end - 1)
-        return { offset: 1 };
+    if (offset === end - 1) return { offset: 1 };
 
     return null;
 }
@@ -142,8 +138,7 @@ function endHitReference(token: Token, offset: number): Nullable<IEndFormatHit> 
 function endHitHtmlTag(token: Token, offset: number): Nullable<IEndFormatHit> {
     const { end } = token.range;
     const { closeTag } = token as HTMLTagToken;
-    if (closeTag && offset === end - closeTag.length)
-        return { offset: closeTag.length };
+    if (closeTag && offset === end - closeTag.length) return { offset: closeTag.length };
 
     return null;
 }
@@ -169,14 +164,11 @@ function parseTableHeader(text: string) {
 
     for (i = 0; i < len; i++) {
         const char = text[i];
-        if (/^[^|]$/.test(char))
-            rowHeader[rowHeader.length - 1] += char;
+        if (/^[^|]$/.test(char)) rowHeader[rowHeader.length - 1] += char;
 
-        if (/\\/.test(char))
-            rowHeader[rowHeader.length - 1] += text[++i];
+        if (/\\/.test(char)) rowHeader[rowHeader.length - 1] += text[++i];
 
-        if (/\|/.test(char) && i !== len - 1)
-            rowHeader.push('');
+        if (/\|/.test(char) && i !== len - 1) rowHeader.push('');
     }
 
     return rowHeader;
@@ -212,8 +204,7 @@ class ParagraphContent extends Format {
         this.inlineRenderer.patch(this, cursor, highlights);
         const { label } = this.inlineRenderer.getLabelInfo(this);
 
-        if (this.scrollPage && label)
-            this.scrollPage.updateRefLinkAndImage(label);
+        if (this.scrollPage && label) this.scrollPage.updateRefLinkAndImage(label);
     }
 
     override backspaceHandler(event: Event) {
@@ -258,8 +249,7 @@ class ParagraphContent extends Format {
         event.stopPropagation();
 
         const match = matchBlockConversion(this.text);
-        if (!match)
-            return super.enterHandler(event);
+        if (!match) return super.enterHandler(event);
 
         switch (match.kind) {
             case 'math': {
@@ -270,10 +260,7 @@ class ParagraphContent extends Format {
                         mathStyle: '',
                     },
                 };
-                const mathBlock = ScrollPage.loadBlock('math-block').create(
-                    this.muya,
-                    state,
-                );
+                const mathBlock = ScrollPage.loadBlock('math-block').create(this.muya, state);
                 this.parent!.replaceWith(mathBlock);
                 mathBlock.firstContentInDescendant().setCursor(0, 0);
                 break;
@@ -284,7 +271,9 @@ class ParagraphContent extends Format {
                 // Diagram fences (```mermaid etc.) become diagram blocks,
                 // mirroring the file-load path in markdownToState; everything
                 // else is a fenced code block.
-                const diagramMatch = /^(?:mermaid|vega-lite|plantuml|flowchart|sequence)$/.exec(lang);
+                const diagramMatch = /^(?:mermaid|vega-lite|plantuml|flowchart|sequence)$/.exec(
+                    lang,
+                );
                 if (diagramMatch) {
                     const type = lang as IDiagramMeta['type'];
                     const state = {
@@ -295,16 +284,12 @@ class ParagraphContent extends Format {
                             lang: type === 'vega-lite' ? 'json' : 'yaml',
                         },
                     };
-                    const diagramBlock = ScrollPage.loadBlock(state.name).create(
-                        this.muya,
-                        state,
-                    );
+                    const diagramBlock = ScrollPage.loadBlock(state.name).create(this.muya, state);
 
                     this.parent!.replaceWith(diagramBlock);
 
                     diagramBlock.firstContentInDescendant().setCursor(0, 0, true);
-                }
-                else {
+                } else {
                     const state = {
                         name: 'code-block',
                         meta: {
@@ -313,10 +298,7 @@ class ParagraphContent extends Format {
                         },
                         text: '',
                     };
-                    const codeBlock = ScrollPage.loadBlock(state.name).create(
-                        this.muya,
-                        state,
-                    );
+                    const codeBlock = ScrollPage.loadBlock(state.name).create(this.muya, state);
 
                     this.parent!.replaceWith(codeBlock);
 
@@ -355,10 +337,7 @@ class ParagraphContent extends Format {
                     name: 'html-block',
                     text: `<${tagName}>\n\n</${tagName}>`,
                 };
-                const htmlBlock = ScrollPage.loadBlock('html-block').create(
-                    this.muya,
-                    state,
-                );
+                const htmlBlock = ScrollPage.loadBlock('html-block').create(this.muya, state);
                 this.parent!.replaceWith(htmlBlock);
                 const offset = tagName.length + 3;
                 htmlBlock.firstContentInDescendant().setCursor(offset, offset);
@@ -369,8 +348,7 @@ class ParagraphContent extends Format {
 
     private _enterInBlockQuote(event: KeyboardEvent) {
         const { text, parent } = this;
-        if (text.length !== 0)
-            return super.enterHandler(event);
+        if (text.length !== 0) return super.enterHandler(event);
 
         event.preventDefault();
         event.stopPropagation();
@@ -405,8 +383,7 @@ class ParagraphContent extends Format {
                     // children of a blockquote are always Parent-derived
                     // blocks (paragraph, list, …). isParent() narrows so
                     // `getState()` (defined on Parent, not TreeNode) resolves.
-                    if (node.isParent())
-                        newBlockState.children.push(node.getState());
+                    if (node.isParent()) newBlockState.children.push(node.getState());
                     node.remove();
                 });
                 const newBlockQuote = ScrollPage.loadBlock(newBlockState.name).create(
@@ -460,12 +437,12 @@ class ParagraphContent extends Format {
 
                     default: {
                         const newParagraph = parent!.clone() as Paragraph;
-                        const newListState: IBulletListState | IOrderListState | ITaskListState
-                            = list instanceof TaskList
+                        const newListState: IBulletListState | IOrderListState | ITaskListState =
+                            list instanceof TaskList
                                 ? { name: 'task-list', meta: { ...list.meta }, children: [] }
                                 : list instanceof OrderList
-                                    ? { name: 'order-list', meta: { ...list.meta }, children: [] }
-                                    : { name: 'bullet-list', meta: { ...list.meta }, children: [] };
+                                  ? { name: 'order-list', meta: { ...list.meta }, children: [] }
+                                  : { name: 'bullet-list', meta: { ...list.meta }, children: [] };
                         const offset = list.offset(listItem);
                         list.forEachAt(offset + 1, undefined, (node) => {
                             if (node.isParent()) {
@@ -473,8 +450,7 @@ class ParagraphContent extends Format {
                                 if (newListState.name === 'task-list') {
                                     if (isTaskListItemState(childState))
                                         newListState.children.push(childState);
-                                }
-                                else if (isListItemState(childState)) {
+                                } else if (isListItemState(childState)) {
                                     newListState.children.push(childState);
                                 }
                             }
@@ -491,10 +467,9 @@ class ParagraphContent extends Format {
                         break;
                     }
                 }
-            }
-            else {
-                const newListItemState: IListItemState | ITaskListItemState
-                    = listItem.blockName === 'task-list-item'
+            } else {
+                const newListItemState: IListItemState | ITaskListItemState =
+                    listItem.blockName === 'task-list-item'
                         ? { name: 'task-list-item', meta: { checked: false }, children: [] }
                         : { name: 'list-item', children: [] };
 
@@ -504,8 +479,7 @@ class ParagraphContent extends Format {
                 // (#4644). Keep the empty first paragraph and split below it.
                 const from = offset === 0 ? 1 : offset;
                 listItem.forEachAt(from, undefined, (node) => {
-                    if (node.isParent())
-                        newListItemState.children.push(node.getState());
+                    if (node.isParent()) newListItemState.children.push(node.getState());
                     node.remove();
                 });
 
@@ -517,17 +491,20 @@ class ParagraphContent extends Format {
 
                 newListItem.firstContentInDescendant().setCursor(0, 0);
             }
-        }
-        else {
+        } else {
             if (parent!.isOnlyChild()) {
                 this.text = text.substring(0, start.offset);
                 const paragraphChild: IParagraphState = {
                     name: 'paragraph',
                     text: text.substring(end.offset),
                 };
-                const newNodeState: IListItemState | ITaskListItemState
-                    = listItem.blockName === 'task-list-item'
-                        ? { name: 'task-list-item', meta: { checked: false }, children: [paragraphChild] }
+                const newNodeState: IListItemState | ITaskListItemState =
+                    listItem.blockName === 'task-list-item'
+                        ? {
+                              name: 'task-list-item',
+                              meta: { checked: false },
+                              children: [paragraphChild],
+                          }
                         : { name: 'list-item', children: [paragraphChild] };
 
                 const newListItem = ScrollPage.loadBlock(newNodeState.name).create(
@@ -539,19 +516,16 @@ class ParagraphContent extends Format {
 
                 this.update();
                 newListItem.firstContentInDescendant().setCursor(0, 0, true);
-            }
-            else {
+            } else {
                 super.enterHandler(event);
             }
         }
     }
 
     override enterHandler(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
-        if (event.shiftKey)
-            return this.shiftEnterHandler(event);
+        if (event.shiftKey) return this.shiftEnterHandler(event);
 
         // Any paragraph that would convert to a block (code fence, math block,
         // table, HTML block) converts in place, even inside a block-quote or
@@ -559,17 +533,13 @@ class ParagraphContent extends Format {
         // (matches muyajs). Otherwise typing the block syntax in a list would
         // split the item and strand an empty list entry (#2276, plus table /
         // HTML block).
-        if (matchBlockConversion(this.text))
-            return this._enterConvert(event);
+        if (matchBlockConversion(this.text)) return this._enterConvert(event);
 
         const type = this._paragraphParentType();
 
-        if (type === 'block-quote')
-            this._enterInBlockQuote(event);
-        else if (type === 'list-item' || type === 'task-list-item')
-            this._enterInListItem(event);
-        else
-            this._enterConvert(event);
+        if (type === 'block-quote') this._enterInBlockQuote(event);
+        else if (type === 'list-item' || type === 'task-list-item') this._enterInListItem(event);
+        else this._enterConvert(event);
     }
 
     private _paragraphParentType() {
@@ -584,9 +554,9 @@ class ParagraphContent extends Format {
 
         while (parent && !parent.isScrollPage) {
             if (
-                parent.blockName === 'block-quote'
-                || parent.blockName === 'list-item'
-                || parent.blockName === 'task-list-item'
+                parent.blockName === 'block-quote' ||
+                parent.blockName === 'list-item' ||
+                parent.blockName === 'task-list-item'
             ) {
                 type = parent.blockName;
                 break;
@@ -601,8 +571,7 @@ class ParagraphContent extends Format {
     private _handleBackspaceInParagraph(this: ParagraphContent) {
         const previousContentBlock = this.previousContentInContext();
         // Handle no previous content block, the first paragraph in document.
-        if (!previousContentBlock)
-            return;
+        if (!previousContentBlock) return;
 
         const { text: oldText } = previousContentBlock;
         const offset = oldText.length;
@@ -622,8 +591,7 @@ class ParagraphContent extends Format {
         if (parent.isOnlyChild()) {
             blockQuote.replaceWith(parent);
             cursorBlock = parent.firstContentInDescendant();
-        }
-        else if (parent.isFirstChild()) {
+        } else if (parent.isFirstChild()) {
             const cloneParagraph = parent.clone() as Paragraph;
             blockQuote.parent!.insertBefore(cloneParagraph, blockQuote);
             parent.remove();
@@ -638,36 +606,30 @@ class ParagraphContent extends Format {
         const listItem = parent.parent!;
         const list = listItem.parent!;
 
-        if (!parent.isFirstChild())
-            return this._handleBackspaceInParagraph();
+        if (!parent.isFirstChild()) return this._handleBackspaceInParagraph();
 
         if (listItem.isOnlyChild()) {
             listItem.forEach((node, i: number) => {
                 const paragraph = (node as Parent).clone() as Parent;
                 list.parent!.insertBefore(paragraph, list);
-                if (i === 0)
-                    paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
+                if (i === 0) paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
             });
 
             list.remove();
-        }
-        else if (listItem.isFirstChild()) {
+        } else if (listItem.isFirstChild()) {
             listItem.forEach((node, i: number) => {
                 const paragraph = (node as Parent).clone() as Parent;
                 list.parent!.insertBefore(paragraph, list);
-                if (i === 0)
-                    paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
+                if (i === 0) paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
             });
 
             listItem.remove();
-        }
-        else {
+        } else {
             const previousListItem = listItem.prev;
             listItem.forEach((node, i: number) => {
                 const paragraph = (node as Parent).clone() as Parent;
                 previousListItem!.append(paragraph, 'user');
-                if (i === 0)
-                    paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
+                if (i === 0) paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
             });
 
             listItem.remove();
@@ -675,8 +637,7 @@ class ParagraphContent extends Format {
     }
 
     private _getUnindentType(): Nullable<UnindentType> {
-        if (!this.isCollapsed)
-            return null;
+        if (!this.isCollapsed) return null;
 
         const { parent } = this;
         const listItem = parent!.parent;
@@ -684,9 +645,8 @@ class ParagraphContent extends Format {
         const listParent = list?.parent;
 
         if (
-            listParent
-            && (listParent.blockName === 'list-item'
-                || listParent.blockName === 'task-list-item')
+            listParent &&
+            (listParent.blockName === 'list-item' || listParent.blockName === 'task-list-item')
         ) {
             return list.prev ? UnindentType.INDENT : UnindentType.REPLACEMENT;
         }
@@ -696,20 +656,17 @@ class ParagraphContent extends Format {
 
     private _canIndentListItem() {
         const { parent } = this;
-        if (parent!.blockName !== 'paragraph' || !parent!.parent)
-            return false;
+        if (parent!.blockName !== 'paragraph' || !parent!.parent) return false;
 
         const listItem = parent?.parent;
         // Now we know it's a list item. Check whether we can indent the list item.
         const list = listItem?.parent;
 
-        if (listItem == null || list == null)
-            return false;
+        if (listItem == null || list == null) return false;
 
         if (
-            (listItem.blockName !== 'list-item'
-                && listItem.blockName !== 'task-list-item')
-            || !this.isCollapsed
+            (listItem.blockName !== 'list-item' && listItem.blockName !== 'task-list-item') ||
+            !this.isCollapsed
         ) {
             return false;
         }
@@ -729,11 +686,11 @@ class ParagraphContent extends Format {
         const cursor = this.getCursor();
 
         if (
-            parent == null
-            || listItem == null
-            || list == null
-            || listParent == null
-            || cursor == null
+            parent == null ||
+            listItem == null ||
+            list == null ||
+            listParent == null ||
+            cursor == null
         ) {
             return;
         }
@@ -746,14 +703,11 @@ class ParagraphContent extends Format {
             const paragraph = parent.clone() as Paragraph;
             listParent.insertBefore(paragraph, list);
 
-            if (listItem.isOnlyChild())
-                list.remove();
-            else
-                listItem.remove();
+            if (listItem.isOnlyChild()) list.remove();
+            else listItem.remove();
 
             this._placeCursorIn(paragraph, start.offset, end.offset);
-        }
-        else if (type === UnindentType.INDENT) {
+        } else if (type === UnindentType.INDENT) {
             const newListItem = listItem.clone() as Parent;
             listParent.parent!.insertAfter(newListItem, listParent);
 
@@ -763,18 +717,15 @@ class ParagraphContent extends Format {
             const listAsList = list as TListBlock;
 
             if (
-                (listItem.next || list.next)
-                && newListItem.lastChild!.blockName !== list.blockName
+                (listItem.next || list.next) &&
+                newListItem.lastChild!.blockName !== list.blockName
             ) {
                 const state = {
                     name: list.blockName,
                     meta: { ...listAsList.meta },
                     children: [],
                 };
-                const childList = ScrollPage.loadBlock(state.name).create(
-                    this.muya,
-                    state,
-                );
+                const childList = ScrollPage.loadBlock(state.name).create(this.muya, state);
                 newListItem.append(childList, 'user');
             }
 
@@ -783,10 +734,7 @@ class ParagraphContent extends Format {
 
                 list.forEachAt(offset + 1, undefined, (node) => {
                     if (node.isParent()) {
-                        (newListItem.lastChild as Parent).append(
-                            node.clone() as Parent,
-                            'user',
-                        );
+                        (newListItem.lastChild as Parent).append(node.clone() as Parent, 'user');
                     }
                     node.remove();
                 });
@@ -796,19 +744,14 @@ class ParagraphContent extends Format {
                 const offset = listParent.offset(list);
                 listParent.forEachAt(offset + 1, undefined, (node) => {
                     if (node.isParent()) {
-                        (newListItem.lastChild as Parent).append(
-                            node.clone() as Parent,
-                            'user',
-                        );
+                        (newListItem.lastChild as Parent).append(node.clone() as Parent, 'user');
                     }
                     node.remove();
                 });
             }
 
-            if (listItem.isOnlyChild())
-                list.remove();
-            else
-                listItem.remove();
+            if (listItem.isOnlyChild()) list.remove();
+            else listItem.remove();
 
             if (newListItem == null) {
                 debug.error('newListItem is null');
@@ -830,8 +773,7 @@ class ParagraphContent extends Format {
         const prevListItem = listItem?.prev;
         const { start, end } = this.getCursor()!;
 
-        if (parent == null || listItem == null || list == null)
-            return;
+        if (parent == null || listItem == null || list == null) return;
 
         // Remember the offset of cursor paragraph in listItem
         const offset = listItem.offset(parent);
@@ -847,8 +789,7 @@ class ParagraphContent extends Format {
             };
             newList = ScrollPage.loadBlock(state.name).create(muya, state);
             prevListItem!.append(newList as Parent, 'user');
-        }
-        else {
+        } else {
             (newList as Parent).append(listItem.clone() as Parent, 'user');
         }
 
@@ -858,7 +799,9 @@ class ParagraphContent extends Format {
         // runtime; find/firstContentInDescendant live on Parent. find()
         // returns the matched TreeNode (which is itself a Parent at runtime
         // for nested-list cases).
-        const matched = ((newList as Parent).lastChild as Parent).find(offset) as Parent | undefined;
+        const matched = ((newList as Parent).lastChild as Parent).find(offset) as
+            | Parent
+            | undefined;
         const cursorBlock = matched?.firstContentInDescendant();
         cursorBlock?.setCursor(start.offset, end.offset, true);
     }
@@ -870,10 +813,7 @@ class ParagraphContent extends Format {
         const { start, end } = this.getCursor()!;
 
         if (this.isCollapsed) {
-            this.text
-                = text.substring(0, start.offset)
-                    + tabCharacter
-                    + text.substring(end.offset);
+            this.text = text.substring(0, start.offset) + tabCharacter + text.substring(end.offset);
             const offset = start.offset + tabCharacter.length;
 
             this.setCursor(offset, offset, true);
@@ -895,11 +835,7 @@ class ParagraphContent extends Format {
                 const { type, range } = token;
                 const { start, end } = range;
 
-                if (
-                    BOTH_SIDES_FORMATS.includes(type)
-                    && offset > start
-                    && offset < end
-                ) {
+                if (BOTH_SIDES_FORMATS.includes(type) && offset > start && offset < end) {
                     const handler = END_FORMAT_HANDLERS[type];
                     const hit = handler ? handler(token, offset) : null;
                     if (hit) {
@@ -920,21 +856,18 @@ class ParagraphContent extends Format {
     }
 
     override tabHandler(event: Event) {
-    // disable tab focus
+        // disable tab focus
         event.preventDefault();
 
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const { start, end } = this.getCursor()!;
-        if (!start || !end)
-            return;
+        if (!start || !end) return;
 
         if (event.shiftKey) {
             const unindentType = this._getUnindentType();
 
-            if (unindentType != null)
-                this._unindentListItem(unindentType);
+            if (unindentType != null) this._unindentListItem(unindentType);
 
             return;
         }

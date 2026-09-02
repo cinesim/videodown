@@ -24,13 +24,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): MuyaType {
@@ -42,7 +39,10 @@ function bootMuya(markdown: string): MuyaType {
     return muya;
 }
 
-interface IFormatClick { formatType: string; data: { href: string | null; raw: string } }
+interface IFormatClick {
+    formatType: string;
+    data: { href: string | null; raw: string };
+}
 
 function captureFormatClick(muya: MuyaType): IFormatClick[] {
     const emits: IFormatClick[] = [];
@@ -102,8 +102,7 @@ describe('#2165 — autolinks are followable via Cmd/Ctrl-click', () => {
         const muya = bootMuya('<https://example.com>\n');
         const popoverEmits: unknown[] = [];
         muya.eventCenter.subscribe('muya-link-tools', (p: { reference: unknown }) => {
-            if (p.reference)
-                popoverEmits.push(p);
+            if (p.reference) popoverEmits.push(p);
         });
         const anchor = muya.domNode.querySelector<HTMLAnchorElement>('a.mu-auto-link')!;
 

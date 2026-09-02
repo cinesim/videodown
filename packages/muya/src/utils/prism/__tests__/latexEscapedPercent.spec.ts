@@ -4,9 +4,7 @@ import prism, { loadLanguage, patchLatexEscapedPercent } from '../index';
 
 function hasCommentToken(code: string): boolean {
     const tokens = prism.tokenize(code, prism.languages.latex);
-    return tokens.some(
-        t => typeof t === 'object' && (t as { type?: string }).type === 'comment',
-    );
+    return tokens.some((t) => typeof t === 'object' && (t as { type?: string }).type === 'comment');
 }
 
 describe('latex escaped percent highlighting (#3037)', () => {

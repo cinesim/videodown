@@ -48,8 +48,7 @@ export class EmojiSelector extends BaseScrollFloat {
         if (this.renderArray.length > 0) {
             this.activeItem = this.renderArray[0];
             const activeEle = this.getItemElement(this.activeItem);
-            if (activeEle)
-                this.activeEleScrollIntoView(activeEle);
+            if (activeEle) this.activeEleScrollIntoView(activeEle);
         }
     }
 
@@ -57,21 +56,18 @@ export class EmojiSelector extends BaseScrollFloat {
         super.listen();
         const { eventCenter } = this.muya;
         eventCenter.on('muya-emoji-picker', ({ reference, emojiText, block }) => {
-            if (!emojiText)
-                return this.hide();
+            if (!emojiText) return this.hide();
             const text = emojiText.trim();
             if (text) {
                 this.renderObj = this._emoji.search(text);
                 const cb: (item: EmojiType) => void = (item) => {
-                    if (block && block.setEmoji)
-                        block.setEmoji(item.aliases[0]);
+                    if (block && block.setEmoji) block.setEmoji(item.aliases[0]);
                 };
 
                 if (this.renderArray.length) {
                     this.show(reference, cb);
                     this.render();
-                }
-                else {
+                } else {
                     this.hide();
                 }
             }
@@ -107,10 +103,8 @@ export class EmojiSelector extends BaseScrollFloat {
 
         const vnode = h('div', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(scrollElement!, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(scrollElement!, vnode);
 
         this._oldVNode = vnode;
     }

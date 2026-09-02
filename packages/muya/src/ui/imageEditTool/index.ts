@@ -97,8 +97,7 @@ export class ImageEditTool extends BaseFloat {
     private _isFullMode = false;
 
     /** Container element for the image selector */
-    private _imageSelectorContainer: HTMLDivElement
-        = document.createElement('div');
+    private _imageSelectorContainer: HTMLDivElement = document.createElement('div');
 
     /**
      * Create image edit tool instance
@@ -148,12 +147,10 @@ export class ImageEditTool extends BaseFloat {
      */
     private _normalizeFileProtocol() {
         const { src } = this._state;
-        if (!src || !/^file:\/\//.test(src))
-            return;
+        if (!src || !/^file:\/\//.test(src)) return;
 
-        const protocolLen = isWin && /^file:\/\/\//.test(src)
-            ? FILE_PROTOCOL_WIN_LENGTH
-            : FILE_PROTOCOL_LENGTH;
+        const protocolLen =
+            isWin && /^file:\/\/\//.test(src) ? FILE_PROTOCOL_WIN_LENGTH : FILE_PROTOCOL_LENGTH;
 
         this._state.src = src.substring(protocolLen);
     }
@@ -178,8 +175,7 @@ export class ImageEditTool extends BaseFloat {
      * @param type - Which image field the input edits
      */
     private _inputHandler(event: Event, type: keyof IState) {
-        if (!isHTMLInputElement(event.target))
-            return;
+        if (!isHTMLInputElement(event.target)) return;
         this._state[type] = event.target.value;
     }
 
@@ -205,8 +201,7 @@ export class ImageEditTool extends BaseFloat {
      * @param event - Keyboard event
      */
     private _handleKeyDown(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
         if (event.key === EVENT_KEYS.Enter) {
             event.stopPropagation();
             this._handleConfirm();
@@ -222,8 +217,7 @@ export class ImageEditTool extends BaseFloat {
      */
     private _getOpenImagePathPicker(): ImagePathPicker | null {
         for (const tool of this.muya.ui.shownFloat) {
-            if (tool instanceof ImagePathPicker && tool.status)
-                return tool;
+            if (tool instanceof ImagePathPicker && tool.status) return tool;
         }
         return null;
     }
@@ -236,8 +230,7 @@ export class ImageEditTool extends BaseFloat {
      * @param event - Keyboard event
      */
     private _handleSrcKeyDown(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const picker = this._getOpenImagePathPicker();
         if (!picker) {
@@ -268,8 +261,7 @@ export class ImageEditTool extends BaseFloat {
             case EVENT_KEYS.Enter:
                 event.preventDefault();
                 event.stopPropagation();
-                if (picker.activeItem)
-                    picker.selectItem(picker.activeItem);
+                if (picker.activeItem) picker.selectItem(picker.activeItem);
                 break;
 
             default:
@@ -286,17 +278,16 @@ export class ImageEditTool extends BaseFloat {
      * @param event - Keyboard event
      */
     private async _handleSrcKeyUp(event: Event) {
-        if (!isKeyboardEvent(event) || !this.options.imagePathAutoComplete)
-            return;
+        if (!isKeyboardEvent(event) || !this.options.imagePathAutoComplete) return;
 
         const { key } = event;
         if (
-            key === EVENT_KEYS.ArrowUp
-            || key === EVENT_KEYS.ArrowDown
-            || key === EVENT_KEYS.Tab
-            || (key === EVENT_KEYS.Enter
-                && !this._state.src.endsWith('/')
-                && !this._state.src.endsWith('\\'))
+            key === EVENT_KEYS.ArrowUp ||
+            key === EVENT_KEYS.ArrowDown ||
+            key === EVENT_KEYS.Tab ||
+            (key === EVENT_KEYS.Enter &&
+                !this._state.src.endsWith('/') &&
+                !this._state.src.endsWith('\\'))
         ) {
             return;
         }
@@ -310,8 +301,7 @@ export class ImageEditTool extends BaseFloat {
         // Write the chosen suggestion back into the src input. The new value is
         // the directory portion of the current path plus the chosen basename.
         const cb = (item: IImagePathSuggestion) => {
-            if (!reference)
-                return;
+            if (!reference) return;
 
             const { text } = item;
             // Derive the directory prefix from the CURRENT input value — the
@@ -320,8 +310,7 @@ export class ImageEditTool extends BaseFloat {
             const current = reference.value;
             let basePath = '';
             const pathSep = current.match(/(?:\/|\\)[^/\\]*$/);
-            if (pathSep && pathSep[0])
-                basePath = current.substring(0, pathSep.index! + 1);
+            if (pathSep && pathSep[0]) basePath = current.substring(0, pathSep.index! + 1);
 
             const newValue = basePath + text;
             const len = newValue.length;
@@ -335,8 +324,7 @@ export class ImageEditTool extends BaseFloat {
         // a slower earlier request resolves, drop the stale response.
         const seq = ++this._autoCompleteSeq;
         const list = value ? await this.options.imagePathAutoComplete(value) : [];
-        if (seq !== this._autoCompleteSeq)
-            return;
+        if (seq !== this._autoCompleteSeq) return;
         eventCenter.emit('muya-image-picker', { reference, list, cb });
     }
 
@@ -414,10 +402,7 @@ export class ImageEditTool extends BaseFloat {
         }
 
         // Find and update the image element
-        const imageWrapper = query<HTMLElement>(
-            `span[data-id=${loadingId}]`,
-            this.muya.domNode,
-        );
+        const imageWrapper = query<HTMLElement>(`span[data-id=${loadingId}]`, this.muya.domNode);
 
         if (imageWrapper) {
             const imageInfo = getImageInfo(imageWrapper);
@@ -435,8 +420,7 @@ export class ImageEditTool extends BaseFloat {
      */
     override hide() {
         const picker = this._getOpenImagePathPicker();
-        if (picker)
-            picker.hide();
+        if (picker) picker.hide();
         super.hide();
     }
 
@@ -469,11 +453,7 @@ export class ImageEditTool extends BaseFloat {
         const children = tabs.map((tab) => {
             const selector = this._tab === tab.value ? 'li.active' : 'li';
             return h(selector, [
-                h(
-                    'span',
-                    { on: { click: () => this._tabClick(tab.value) } },
-                    tab.label,
-                ),
+                h('span', { on: { click: () => this._tabClick(tab.value) } }, tab.label),
             ]);
         });
 
@@ -558,14 +538,9 @@ export class ImageEditTool extends BaseFloat {
     private _render() {
         const { _oldVNode: oldVNode, _imageSelectorContainer: imageSelectorContainer } = this;
 
-        const body = this._tab === 'select'
-            ? this._renderSelectBody()
-            : this._renderLinkBody();
+        const body = this._tab === 'select' ? this._renderSelectBody() : this._renderLinkBody();
 
-        const vnode = h('div', [
-            this._renderHeader(),
-            h('div.image-select-body', body),
-        ]);
+        const vnode = h('div', [this._renderHeader(), h('div.image-select-body', body)]);
 
         patch(oldVNode || imageSelectorContainer, vnode);
         this._oldVNode = vnode;

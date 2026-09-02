@@ -7,7 +7,10 @@ import { MarkdownToState } from '../markdownToState';
 // any trailing space made it fall through to plain text. Fenced code blocks
 // already tolerate trailing spaces; math should too.
 
-interface IBlock { name: string; text?: string }
+interface IBlock {
+    name: string;
+    text?: string;
+}
 
 function parse(markdown: string): IBlock[] {
     return new MarkdownToState({
@@ -22,16 +25,16 @@ function parse(markdown: string): IBlock[] {
 describe('block math — closing $$ with trailing whitespace (#1931)', () => {
     it('parses a math block whose closing $$ has a trailing space', () => {
         const states = parse('$$\nx = 1\n$$ \n\nbar\n');
-        expect(states.some(s => s.name === 'math-block')).toBe(true);
+        expect(states.some((s) => s.name === 'math-block')).toBe(true);
     });
 
     it('parses a math block whose closing $$ has a trailing tab', () => {
         const states = parse('$$\nx = 1\n$$\t\n\nbar\n');
-        expect(states.some(s => s.name === 'math-block')).toBe(true);
+        expect(states.some((s) => s.name === 'math-block')).toBe(true);
     });
 
     it('still parses a math block with no trailing space (regression)', () => {
         const states = parse('$$\nx = 1\n$$\n\nbar\n');
-        expect(states.some(s => s.name === 'math-block')).toBe(true);
+        expect(states.some((s) => s.name === 'math-block')).toBe(true);
     });
 });

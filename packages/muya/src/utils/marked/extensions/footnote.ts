@@ -47,8 +47,7 @@ export default function footnoteExtension(): MarkedExtension {
                 },
                 tokenizer(src: string): IFootnoteToken | undefined {
                     const match = BLOCK_RULE.exec(src);
-                    if (!match)
-                        return;
+                    if (!match) return;
 
                     const [raw, identifier, rest] = match;
                     // Strip leading whitespace after the `:` marker (so both
@@ -88,8 +87,7 @@ export default function footnoteExtension(): MarkedExtension {
                     };
                 },
                 renderer(token) {
-                    if (token.type !== 'footnote')
-                        return false;
+                    if (token.type !== 'footnote') return false;
                     const t = token as IFootnoteToken;
                     // The parser is bound to `this` at render time.
                     const { parser } = this as IFootnoteRendererThis;
@@ -104,11 +102,16 @@ export default function footnoteExtension(): MarkedExtension {
 function escapeAttr(s: string): string {
     return s.replace(/[&<>"]/g, (c) => {
         switch (c) {
-            case '&': return '&amp;';
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '"': return '&quot;';
-            default: return c;
+            case '&':
+                return '&amp;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '"':
+                return '&quot;';
+            default:
+                return c;
         }
     });
 }

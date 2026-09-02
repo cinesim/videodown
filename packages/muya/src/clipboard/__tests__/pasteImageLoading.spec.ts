@@ -79,10 +79,7 @@ describe('pasteHandler image paste — loading placeholder then replace (sub-ite
         });
         const clipboardFilePath = vi.fn().mockResolvedValue('/abs/photo.png');
 
-        const clipboard = makeClipboard(
-            { clipboardFilePath, imageAction },
-            anchorBlock,
-        );
+        const clipboard = makeClipboard({ clipboardFilePath, imageAction }, anchorBlock);
 
         const done = clipboard.pasteHandler(makePasteEvent());
 

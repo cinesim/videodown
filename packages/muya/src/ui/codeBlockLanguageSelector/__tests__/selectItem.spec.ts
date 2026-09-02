@@ -18,10 +18,9 @@ import { CodeBlockLanguageSelector } from '../index';
 // untouched.
 
 function selectLanguage(fakeThis: unknown, name: string) {
-    CodeBlockLanguageSelector.prototype.selectItem.call(
-        fakeThis as CodeBlockLanguageSelector,
-        { name },
-    );
+    CodeBlockLanguageSelector.prototype.selectItem.call(fakeThis as CodeBlockLanguageSelector, {
+        name,
+    });
 }
 
 describe('codeBlockLanguageSelector.selectItem', () => {

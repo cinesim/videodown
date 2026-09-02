@@ -50,18 +50,15 @@ class HTMLPreview extends Parent {
     }
 
     update(html = this._html) {
-        if (this._html !== html)
-            this._html = html;
+        if (this._html !== html) this._html = html;
 
         const { disableHtml } = this.muya.options;
         const htmlContent = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, disableHtml) as string;
 
         // handle empty html bock
         if (isEmptyHtmlBlock(htmlContent)) {
-            this.domNode!.innerHTML
-                = `<div class="${CLASS_NAMES.MU_EMPTY}">&lt;Empty HTML Block&gt;</div>`;
-        }
-        else {
+            this.domNode!.innerHTML = `<div class="${CLASS_NAMES.MU_EMPTY}">&lt;Empty HTML Block&gt;</div>`;
+        } else {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlContent, 'text/html');
             const imgs = doc.documentElement.querySelectorAll('img');
@@ -72,8 +69,7 @@ class HTMLPreview extends Parent {
                 img.setAttribute('src', imageSrc.src);
             }
 
-            this.domNode!.innerHTML
-                = doc.documentElement!.querySelector('body')!.innerHTML;
+            this.domNode!.innerHTML = doc.documentElement!.querySelector('body')!.innerHTML;
         }
     }
 

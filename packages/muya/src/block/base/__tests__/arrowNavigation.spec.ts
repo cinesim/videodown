@@ -33,10 +33,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -66,11 +64,10 @@ function contentByText(muya: Muya, text: string): Content {
     }) => {
         if (block.constructor.blockName?.endsWith('.content') && block.text === text)
             target = block as unknown as Content;
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     return target;
 }
 
@@ -100,7 +97,7 @@ function arrowAt(
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 describe('content arrowHandler — cross-block navigation up', () => {
@@ -325,15 +322,17 @@ describe('content arrowHandler — trailing-paragraph creation at document end',
 // not cross it and the caret got stuck. Navigation must skip the empty container
 // and reach the content beyond it.
 function listWithChildlessMiddleItem(): TState[] {
-    return [{
-        name: 'bullet-list',
-        meta: { marker: '*', loose: false },
-        children: [
-            { name: 'list-item', children: [{ name: 'paragraph', text: 'A' }] },
-            { name: 'list-item', children: [] },
-            { name: 'list-item', children: [{ name: 'paragraph', text: 'B' }] },
-        ],
-    }];
+    return [
+        {
+            name: 'bullet-list',
+            meta: { marker: '*', loose: false },
+            children: [
+                { name: 'list-item', children: [{ name: 'paragraph', text: 'A' }] },
+                { name: 'list-item', children: [] },
+                { name: 'list-item', children: [{ name: 'paragraph', text: 'B' }] },
+            ],
+        },
+    ];
 }
 
 function allContentTexts(muya: Muya): string[] {
@@ -343,9 +342,8 @@ function allContentTexts(muya: Muya): string[] {
         constructor: { blockName?: string };
         children?: { forEach: (cb: (b: unknown) => void) => void };
     }) => {
-        if (block.constructor.blockName?.endsWith('.content'))
-            texts.push(block.text ?? '');
-        block.children?.forEach(b => visit(b as typeof block));
+        if (block.constructor.blockName?.endsWith('.content')) texts.push(block.text ?? '');
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
     return texts;

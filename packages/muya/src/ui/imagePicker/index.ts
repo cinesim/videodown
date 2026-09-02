@@ -73,8 +73,7 @@ export class ImagePathPicker extends BaseScrollFloat {
                 this.renderArray = list;
                 this.activeItem = list[0];
                 this.render();
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
@@ -86,9 +85,7 @@ export class ImagePathPicker extends BaseScrollFloat {
             const { text, iconClass } = item;
             // Icons are font-icon classes. When the host omits `iconClass` we
             // simply render the text without an icon.
-            const iconContent = iconClass
-                ? [h('div.icon-wrapper', h(`span.${iconClass}`))]
-                : [];
+            const iconContent = iconClass ? [h('div.icon-wrapper', h(`span.${iconClass}`))] : [];
             const textEle = h('div.text', text);
             const selector = activeItem === item ? 'li.item.active' : 'li.item';
 
@@ -113,18 +110,15 @@ export class ImagePathPicker extends BaseScrollFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(scrollElement!, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(scrollElement!, vnode);
 
         this._oldVNode = vnode;
     }
 
     getItemElement(item: IImagePathSuggestion): HTMLElement | null {
         const index = this.renderArray.indexOf(item);
-        if (index < 0)
-            return null;
+        if (index < 0) return null;
 
         return query<HTMLElement>(`[data-index="${index}"]`, this.floatBox!);
     }

@@ -7,19 +7,11 @@ import { sanitizeHyperlink } from '../../utils/url';
 
 export default function referenceLink(
     this: Renderer,
-    {
-        h,
-        cursor,
-        block,
-        token,
-        outerClass,
-    }: ISyntaxRenderOptions & { token: ReferenceLinkToken },
+    { h, cursor, block, token, outerClass }: ISyntaxRenderOptions & { token: ReferenceLinkToken },
 ) {
     const className = this.getClassName(outerClass, block, token, cursor);
-    const labelClass
-        = className === CLASS_NAMES.MU_GRAY
-            ? CLASS_NAMES.MU_REFERENCE_LABEL
-            : className;
+    const labelClass =
+        className === CLASS_NAMES.MU_GRAY ? CLASS_NAMES.MU_REFERENCE_LABEL : className;
 
     const { start, end } = token.range;
     const { anchor, children, backlash, isFullLink, label } = token;
@@ -43,13 +35,7 @@ export default function referenceLink(
     ];
 
     const { href, title } = this.parent.labels.get(key) ?? {};
-    const startMarker = this.highlight(
-        h,
-        block,
-        start,
-        start + MARKER.length,
-        token,
-    );
+    const startMarker = this.highlight(h, block, start, start + MARKER.length, token);
     const endMarker = this.highlight(
         h,
         block,
@@ -74,8 +60,7 @@ export default function referenceLink(
         },
     };
 
-    if (href)
-        Object.assign(data.props, { href: sanitizeHyperlink(href) });
+    if (href) Object.assign(data.props, { href: sanitizeHyperlink(href) });
 
     if (isFullLink) {
         const labelContent = this.highlight(
@@ -92,13 +77,7 @@ export default function referenceLink(
             start + 3 * MARKER.length + anchor.length + backlash.first.length,
             token,
         );
-        const lastMarker = this.highlight(
-            h,
-            block,
-            end - MARKER.length,
-            end,
-            token,
-        );
+        const lastMarker = this.highlight(h, block, end - MARKER.length, end, token);
         const secondBacklashStart = end - MARKER.length - backlash.second.length;
 
         return [
@@ -106,17 +85,10 @@ export default function referenceLink(
             h(anchorSelector, data, content),
             h(`span.${className}`, middleMarker),
             h(`span.${labelClass}`, labelContent),
-            ...this.backlashInToken(
-                h,
-                backlash.second,
-                className,
-                secondBacklashStart,
-                token,
-            ),
+            ...this.backlashInToken(h, backlash.second, className, secondBacklashStart, token),
             h(`span.${className}`, lastMarker),
         ];
-    }
-    else {
+    } else {
         return [
             h(`span.${className}`, startMarker),
             h(anchorSelector, data, content),

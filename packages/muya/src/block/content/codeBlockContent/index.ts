@@ -10,9 +10,17 @@ import type Code from '../../commonMark/codeBlock/code';
 import type HTMLPreview from '../../commonMark/html/htmlPreview';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import { adjustOffset, escapeHTML, firstWordOfInfo } from '../../../utils';
-import { computeLineCount, repositionLineNumberSpans, syncLineNumbersSpans } from '../../../utils/codeBlockLineNumbers';
+import {
+    computeLineCount,
+    repositionLineNumberSpans,
+    syncLineNumbersSpans,
+} from '../../../utils/codeBlockLineNumbers';
 import { getHighlightHtml, MARKER_HASH } from '../../../utils/highlightHTML';
-import prism, { loadedLanguages, transformAliasToOrigin, walkTokens } from '../../../utils/prism/index';
+import prism, {
+    loadedLanguages,
+    transformAliasToOrigin,
+    walkTokens,
+} from '../../../utils/prism/index';
 import Content from '../../base/content';
 import { ScrollPage } from '../../scrollPage';
 
@@ -25,8 +33,7 @@ function checkAutoIndent(text: string, offset: number) {
 function getIndentSpace(text: string, offset: number) {
     const lineStart = text.lastIndexOf('\n', offset - 1) + 1;
     let lineEnd = text.indexOf('\n', lineStart);
-    if (lineEnd === -1)
-        lineEnd = text.length;
+    if (lineEnd === -1) lineEnd = text.length;
     const match = /^(\s*)\S/.exec(text.slice(lineStart, lineEnd));
 
     return match ? match[1] : '';
@@ -46,13 +53,9 @@ function parseSelector(str = '') {
     let cap;
 
     for (const tagName of HTML_TAGS) {
-        if (
-            str.startsWith(tagName)
-            && (!str[tagName.length] || /#|\./.test(str[tagName.length]))
-        ) {
+        if (str.startsWith(tagName) && (!str[tagName.length] || /#|\./.test(str[tagName.length]))) {
             tag = tagName;
-            if ((VOID_HTML_TAGS as readonly string[]).includes(tagName))
-                isVoid = true;
+            if ((VOID_HTML_TAGS as readonly string[]).includes(tagName)) isVoid = true;
 
             str = str.substring(tagName.length);
         }
@@ -61,10 +64,8 @@ function parseSelector(str = '') {
     if (tag !== '') {
         cap = REG_EXP.exec(str);
         while (cap && str.length) {
-            if (cap[1] === '#')
-                id = cap[2];
-            else
-                className = cap[2];
+            if (cap[1] === '#') id = cap[2];
+            else className = cap[2];
 
             str = str.substring(cap[0].length);
             cap = REG_EXP.exec(str);
@@ -131,10 +132,8 @@ class CodeBlockContent extends Content {
     constructor(muya: Muya, state: CodeContentState) {
         super(muya, state.text);
         this._lastPreviewText = state.text;
-        if (hasStateMeta(state))
-            this._initialLang = state.meta.lang;
-        else
-            this._initialLang = LANG_HASH[state.name];
+        if (hasStateMeta(state)) this._initialLang = state.meta.lang;
+        else this._initialLang = LANG_HASH[state.name];
 
         this.classList = [...this.classList, 'mu-codeblock-content'];
         // Used for empty status prompts
@@ -151,14 +150,12 @@ class CodeBlockContent extends Content {
     private _updatePreviewIfHave(text: string) {
         // update() runs during the initial create pass before this block is
         // attached, when outContainer cannot resolve its parent chain.
-        if (!this._codeContainer)
-            return;
+        if (!this._codeContainer) return;
         // Only re-render when the text actually changed. update() is called on
         // every render pass; without this guard a diagram's create-pass render
         // and update()'s render race (DiagramPreview.update is async), leaving
         // the SVG unmounted.
-        if (text === this._lastPreviewText)
-            return;
+        if (text === this._lastPreviewText) return;
         this._lastPreviewText = text;
         if (this.outContainer?.attachments?.length)
             (this.outContainer?.attachments?.head as HTMLPreview).update(text);
@@ -173,21 +170,16 @@ class CodeBlockContent extends Content {
             .replace(new RegExp(MARKER_HASH['<'], 'g'), '<')
             .replace(new RegExp(MARKER_HASH['>'], 'g'), '>')
             .replace(new RegExp(MARKER_HASH['"'], 'g'), '"')
-            .replace(new RegExp(MARKER_HASH['\''], 'g'), '\'');
+            .replace(new RegExp(MARKER_HASH["'"], 'g'), "'");
 
-        if (
-            fullLengthLang
-            && /\S/.test(code)
-            && loadedLanguages.has(fullLengthLang)
-        ) {
+        if (fullLengthLang && /\S/.test(code) && loadedLanguages.has(fullLengthLang)) {
             const wrapper = document.createElement('div');
             wrapper.classList.add(`language-${fullLengthLang}`);
             wrapper.innerHTML = code;
             prism.highlightElement(wrapper, false, function (this: HTMLElement) {
                 domNode.innerHTML = this.innerHTML;
             });
-        }
-        else {
+        } else {
             domNode.innerHTML = code;
         }
 
@@ -201,11 +193,9 @@ class CodeBlockContent extends Content {
     private _lineNumberResizeObserver: ResizeObserver | null = null;
 
     private _updateLineNumbers(text: string) {
-        if (!this.muya.options.codeBlockLineNumbers)
-            return;
+        if (!this.muya.options.codeBlockLineNumbers) return;
         const wrapper = this.parent?.lineNumbersWrapper;
-        if (wrapper == null)
-            return;
+        if (wrapper == null) return;
         const count = computeLineCount(text);
         if (count !== this._lastLineCount) {
             syncLineNumbersSpans(wrapper, count);
@@ -218,21 +208,18 @@ class CodeBlockContent extends Content {
     // wrap change, content edit, viewport resize). Fires post-layout, so it
     // can't read stale positions; owns all repositioning.
     private _observeLineNumberResize(wrapper: HTMLElement) {
-        if (this._lineNumberResizeObserver != null || typeof ResizeObserver === 'undefined')
-            return;
+        if (this._lineNumberResizeObserver != null || typeof ResizeObserver === 'undefined') return;
         const codeEl = this.domNode!;
         this._lineNumberResizeObserver = new ResizeObserver(() => {
             if (codeEl.isConnected && wrapper.isConnected)
                 repositionLineNumberSpans(wrapper, codeEl);
-            else
-                this._lineNumberResizeObserver?.disconnect();
+            else this._lineNumberResizeObserver?.disconnect();
         });
         this._lineNumberResizeObserver.observe(codeEl);
     }
 
     override inputHandler(event: Event): void {
-        if (this.isComposed)
-            return;
+        if (this.isComposed) return;
 
         const textContent = this.domNode!.textContent!;
         const { start, end } = this.getCursor()!;
@@ -251,8 +238,7 @@ class CodeBlockContent extends Content {
 
         if (needRender) {
             this.setCursor(start!.offset, end!.offset, true);
-        }
-        else {
+        } else {
             // TODO: throttle render
             this.setCursor(start!.offset, end!.offset, true);
         }
@@ -267,8 +253,7 @@ class CodeBlockContent extends Content {
             const nextContentBlock = this.nextContentInContext();
             if (nextContentBlock) {
                 cursorBlock = nextContentBlock;
-            }
-            else {
+            } else {
                 const newNodeState = {
                     name: 'paragraph',
                     text: '',
@@ -292,17 +277,13 @@ class CodeBlockContent extends Content {
         const autoIndent = checkAutoIndent(text, start.offset);
         const indent = getIndentSpace(text, start.offset);
 
-        this.text
-            = `${text.substring(0, start.offset)
-            }\n${
-                autoIndent ? `${indent + ' '.repeat(tabSize)}\n` : ''
-            }${indent
-            }${text.substring(start.offset)}`;
+        this.text = `${text.substring(0, start.offset)}\n${
+            autoIndent ? `${indent + ' '.repeat(tabSize)}\n` : ''
+        }${indent}${text.substring(start.offset)}`;
 
         let offset = start.offset + 1 + indent.length;
 
-        if (autoIndent)
-            offset += tabSize;
+        if (autoIndent) offset += tabSize;
 
         this.setCursor(offset, offset, true);
     }
@@ -314,16 +295,11 @@ class CodeBlockContent extends Content {
         const isMarkupCodeContent = /markup|html|xml|svg|mathml/.test(lang);
 
         if (isMarkupCodeContent) {
-            const lastWordBeforeCursor
-                = text.substring(0, start.offset).split(/\s+/).pop() ?? '';
-            const { tag, isVoid, id, className }
-                = parseSelector(lastWordBeforeCursor);
+            const lastWordBeforeCursor = text.substring(0, start.offset).split(/\s+/).pop() ?? '';
+            const { tag, isVoid, id, className } = parseSelector(lastWordBeforeCursor);
 
             if (tag) {
-                const preText = text.substring(
-                    0,
-                    start.offset - lastWordBeforeCursor.length,
-                );
+                const preText = text.substring(0, start.offset - lastWordBeforeCursor.length);
                 const postText = text.substring(end.offset);
                 let html = `<${tag}`;
                 let startOffset = 0;
@@ -352,32 +328,22 @@ class CodeBlockContent extends Content {
                         break;
                 }
 
-                if (id)
-                    html += ` id="${id}"`;
+                if (id) html += ` id="${id}"`;
 
-                if (className)
-                    html += ` class="${className}"`;
+                if (className) html += ` class="${className}"`;
 
                 html += '>';
 
-                if (startOffset === 0 && endOffset === 0)
-                    startOffset = endOffset = html.length;
+                if (startOffset === 0 && endOffset === 0) startOffset = endOffset = html.length;
 
-                if (!isVoid)
-                    html += `</${tag}>`;
+                if (!isVoid) html += `</${tag}>`;
 
                 this.text = preText + html + postText;
-                this.setCursor(
-                    startOffset + preText.length,
-                    endOffset + preText.length,
-                    true,
-                );
-            }
-            else {
+                this.setCursor(startOffset + preText.length, endOffset + preText.length, true);
+            } else {
                 this.insertTab();
             }
-        }
-        else {
+        } else {
             this.insertTab();
         }
     }
@@ -402,10 +368,7 @@ class CodeBlockContent extends Content {
         // The following code should fix a certain bug:
         // when there is one newline(\n) character before cursor.
         // pressing the backspace key should work properly.(compatibility with Firefox)
-        if (
-            start.offset === end.offset
-            && this.text[start.offset - 1] === '\n'
-        ) {
+        if (start.offset === end.offset && this.text[start.offset - 1] === '\n') {
             event.preventDefault();
             const { text } = this;
             this.text = text.substring(0, start.offset - 1) + text.substring(start.offset);
@@ -428,11 +391,18 @@ class CodeBlockContent extends Content {
                 let needRender = false;
 
                 walkTokens(tokens, (token) => {
-                    if (offset === 1 && token.type === 'temp-text' && typeof token.content === 'string') {
+                    if (
+                        offset === 1 &&
+                        token.type === 'temp-text' &&
+                        typeof token.content === 'string'
+                    ) {
                         token.content = token.content.substring(1);
                         needRender = true;
-                    }
-                    else if (offset === token.length && token.type !== 'temp-text' && typeof token.content === 'string') {
+                    } else if (
+                        offset === token.length &&
+                        token.type !== 'temp-text' &&
+                        typeof token.content === 'string'
+                    ) {
                         token.content = token.content.substring(0, token.length - 1);
                         needRender = true;
                     }
@@ -452,17 +422,13 @@ class CodeBlockContent extends Content {
     }
 
     override keyupHandler(): void {
-        if (this.isComposed)
-            return;
+        if (this.isComposed) return;
 
         const { anchor, focus } = this.getCursor()!;
         // TODO: @JOCS remove use this.selection directly
         const { anchor: oldAnchor, focus: oldFocus } = this.selection;
 
-        if (
-            anchor.offset !== oldAnchor?.offset
-            || focus.offset !== oldFocus?.offset
-        ) {
+        if (anchor.offset !== oldAnchor?.offset || focus.offset !== oldFocus?.offset) {
             this.setCursor(anchor.offset, focus.offset);
         }
     }

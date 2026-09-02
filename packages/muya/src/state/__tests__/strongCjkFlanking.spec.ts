@@ -58,11 +58,7 @@ const CJK_CASES = [
 // Cases that already work — they lock in the pre-existing behavior so the fix
 // can't regress them. Each emphasised run is bounded by a CJK ideograph or
 // whitespace on the inner side, satisfying flanking without the CJK widening.
-const SANITY_CASES = [
-    'before **"normal"** after',
-    'before**normal**after',
-    '中文**加粗**中文',
-];
+const SANITY_CASES = ['before **"normal"** after', 'before**normal**after', '中文**加粗**中文'];
 
 // Cases that MUST NOT bold — the additive CJK widening must leave these as
 // CommonMark rejects them.
@@ -83,8 +79,7 @@ function rendersEm(src: string): boolean {
 function collectTypes(tokens: Token[], out: string[] = []): string[] {
     for (const token of tokens) {
         out.push(token.type);
-        if ('children' in token && Array.isArray(token.children))
-            collectTypes(token.children, out);
+        if ('children' in token && Array.isArray(token.children)) collectTypes(token.children, out);
     }
     return out;
 }

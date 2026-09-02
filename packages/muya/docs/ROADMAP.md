@@ -7,7 +7,7 @@ Optimization:
 Support TypeScript
 
 - [x] Convert JS code to TS code.**(P0)**
-- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error).**(P0)**
+- [ ] Complete all missing types (no `any`) and support strict mode for TS compilation and linting. **(P0)**
 
 Better Code Design
 

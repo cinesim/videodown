@@ -38,10 +38,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -79,7 +77,10 @@ function selectInFirstBlock(muya: Muya, start: number, end: number): Format {
 // `format('image')` will render, so the rAF emit branch finds it.
 function stubSelectionAtEmptyImage(content: Format): void {
     vi.spyOn(Selection, 'getSelectionStart').mockImplementation(
-        () => (content as unknown as { domNode: HTMLElement }).domNode.querySelector('.mu-empty-image') as never,
+        () =>
+            (content as unknown as { domNode: HTMLElement }).domNode.querySelector(
+                '.mu-empty-image',
+            ) as never,
     );
 }
 
@@ -89,7 +90,7 @@ interface IImageSelectorPayload {
     imageInfo: { imageId: string; token: { attrs: { src: string; alt: string; title: string } } };
 }
 
-describe('format.format(\'image\') emits muya-image-selector for the new empty image', () => {
+describe("format.format('image') emits muya-image-selector for the new empty image", () => {
     it('rewrites the run to `![abc]()` synchronously', () => {
         // The text surgery is synchronous and the robust half of the contract.
         const content = selectInFirstBlock(bootMuya('abc\n'), 0, 3);
@@ -100,8 +101,10 @@ describe('format.format(\'image\') emits muya-image-selector for the new empty i
     it('renders a `.mu-empty-image` wrapper carrying the raw `![abc]()`', async () => {
         const content = selectInFirstBlock(bootMuya('abc\n'), 0, 3);
         content.format('image');
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        const wrapper = (content as unknown as { domNode: HTMLElement }).domNode.querySelector('.mu-empty-image');
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        const wrapper = (content as unknown as { domNode: HTMLElement }).domNode.querySelector(
+            '.mu-empty-image',
+        );
         expect(wrapper).not.toBeNull();
         expect(wrapper!.getAttribute('data-raw')).toBe('![abc]()');
     });
@@ -120,7 +123,7 @@ describe('format.format(\'image\') emits muya-image-selector for the new empty i
         });
     });
 
-    it('carries the empty image\'s imageInfo (empty src, alt from the selection)', async () => {
+    it("carries the empty image's imageInfo (empty src, alt from the selection)", async () => {
         const muya = bootMuya('abc\n');
         const handler = vi.fn();
         muya.eventCenter.on('muya-image-selector', handler);
@@ -174,8 +177,8 @@ describe('format.format(\'image\') emits muya-image-selector for the new empty i
         );
         content.format('image');
 
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await new Promise((resolve) => requestAnimationFrame(resolve));
         expect(handler).not.toHaveBeenCalled();
         // The text rewrite still happened — only the selector pop-up is gated.
         expect(content.text).toBe('![abc]()');

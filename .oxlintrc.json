@@ -1,0 +1,79 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "node", "promise", "vue"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "MARKTEXT_VERSION_STRING": "readonly",
+    "MARKTEXT_VERSION": "readonly",
+    "__static": "readonly"
+  },
+  "ignorePatterns": [
+    ".claude/**",
+    ".context/**",
+    "**/out/**",
+    "**/dist/**",
+    "**/.next/**",
+    "**/.open-next/**",
+    "**/.wrangler/**",
+    "packages/muyajs/lib/assets/libs/**",
+    "packages/muyajs/lib/parser/marked/urlify.js",
+    "packages/desktop/src/renderer/src/assets/symbolIcon/index.js",
+    "**/*.min.json",
+    "test-results/**",
+    "playwright-report/**"
+  ],
+  "rules": {
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "no-console": "off",
+    "no-debugger": "error",
+    "no-new": "error",
+    "no-prototype-builtins": "off",
+    "no-return-assign": "error",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "prefer-const": "off",
+    "typescript/consistent-type-imports": [
+      "error",
+      { "prefer": "type-imports", "fixStyle": "inline-type-imports" }
+    ],
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "warn",
+    "vue/require-default-prop": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.vue"],
+      "rules": {
+        "no-unused-expressions": "off",
+        "typescript/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["packages/desktop/test/**/*.js", "packages/desktop/test/**/*.ts"],
+      "env": { "vitest": true }
+    },
+    {
+      "files": ["packages/muyajs/lib/**/*.js"],
+      "rules": {
+        "eqeqeq": "warn",
+        "no-return-assign": "off",
+        "no-sequences": "off",
+        "no-unused-expressions": "off",
+        "no-var": "warn"
+      }
+    }
+  ]
+}

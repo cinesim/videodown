@@ -12,7 +12,10 @@ import { SelectionType } from './types';
 class ImageSelection {
     selected: IImageSelectionData | null = null;
 
-    constructor(private _muya: Muya, private _selection: Selection) {}
+    constructor(
+        private _muya: Muya,
+        private _selection: Selection,
+    ) {}
 
     attach(): void {
         const { eventCenter, domNode } = this._muya;
@@ -31,22 +34,18 @@ class ImageSelection {
 
     private _handleClick = (event: Event): void => {
         const { target } = event;
-        if (!isHTMLElement(target))
-            return;
+        if (!isHTMLElement(target)) return;
         const imageWrapper = target.closest<HTMLElement>(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
         this.selected = null;
-        if (imageWrapper)
-            this._handleClickInlineImage(event, imageWrapper);
+        if (imageWrapper) this._handleClickInlineImage(event, imageWrapper);
     };
 
     private _handleKeydown = (event: Event): void => {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const { key } = event;
         const { selected } = this;
-        if (!selected)
-            return;
+        if (!selected) return;
 
         if (key === ' ') {
             event.preventDefault();
@@ -65,8 +64,8 @@ class ImageSelection {
     private _previewSelectedImage(selected: IImageSelectionData) {
         const { token, imageId } = selected;
         const tokenSrc = token.src || token.attrs.src || '';
-        const imgSrc
-            = this._muya.domNode
+        const imgSrc =
+            this._muya.domNode
                 .querySelector<HTMLImageElement>(`#${imageId} img`)
                 ?.getAttribute('src') ?? '';
         const src = getImageSrc(tokenSrc).src || imgSrc;
@@ -84,15 +83,13 @@ class ImageSelection {
         const { eventCenter } = this._muya;
         const imageInfo = getImageInfo(imageWrapper);
         const { target } = event;
-        if (!(target instanceof Node))
-            return;
+        if (!(target instanceof Node)) return;
         const deleteContainer = isHTMLElement(target)
             ? target.closest('.mu-image-icon-close')
             : null;
         const contentDom = findContentDOM(target);
 
-        if (!contentDom)
-            return;
+        if (!contentDom) return;
 
         const contentBlock = contentDom[BLOCK_DOM_PROPERTY] as Format;
 
@@ -110,9 +107,9 @@ class ImageSelection {
             // linkMouseEvents' selector so every link variant is covered (plain,
             // reference, autolink, raw-HTML anchor), not just `mu-link`.
             if (
-                event instanceof MouseEvent
-                && (event.metaKey || event.ctrlKey)
-                && !imageWrapper.closest(LINK_SELECTOR)
+                event instanceof MouseEvent &&
+                (event.metaKey || event.ctrlKey) &&
+                !imageWrapper.closest(LINK_SELECTOR)
             ) {
                 const tokenSrc = imageInfo.token.src || imageInfo.token.attrs.src || '';
                 const src = getImageSrc(tokenSrc).src || target.getAttribute('src') || '';
@@ -145,9 +142,7 @@ class ImageSelection {
             // duplicate DOM ids, so a `document.querySelector('#id ...')` lookup
             // would resolve to the first occurrence and place the resize bar on
             // the wrong image.
-            const imageContainer = imageWrapper.querySelector(
-                `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-            );
+            const imageContainer = imageWrapper.querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`);
 
             eventCenter.emit('muya-transformer', {
                 block: contentBlock,
@@ -161,8 +156,8 @@ class ImageSelection {
         }
 
         if (
-            imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE)
-            || imageWrapper.classList.contains(CLASS_NAMES.MU_IMAGE_FAIL)
+            imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE) ||
+            imageWrapper.classList.contains(CLASS_NAMES.MU_IMAGE_FAIL)
         ) {
             const rect = imageWrapper.getBoundingClientRect();
             const reference = {

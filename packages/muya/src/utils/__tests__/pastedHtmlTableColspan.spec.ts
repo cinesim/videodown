@@ -26,7 +26,7 @@ async function pasteHtmlToState(html: string) {
 }
 
 function rowTexts(row: IStateLike) {
-    return row.children?.map(cell => cell.text ?? '') ?? [];
+    return row.children?.map((cell) => cell.text ?? '') ?? [];
 }
 
 describe('normalizePastedHTML - table colspan paste', () => {

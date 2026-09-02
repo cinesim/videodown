@@ -33,12 +33,9 @@ afterEach(() => {
     // `destroy()` detaches the engine's DOM listeners — including the
     // `document`-level handlers registered during init — and removes the host
     // node, so listeners don't leak across tests.
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -52,59 +49,48 @@ function bootMuya(markdown: string): Muya {
 
 // The legacy affordance class was `ag-copy-header-link`; the rewrite would use
 // the `mu-` prefix. Match either so this test survives the exact class choice.
-const COPY_LINK_SELECTOR
-    = '.ag-copy-header-link, .mu-copy-header-link, [class*="copy-header-link"]';
+const COPY_LINK_SELECTOR =
+    '.ag-copy-header-link, .mu-copy-header-link, [class*="copy-header-link"]';
 
 describe('parity PG11: heading hover-to-copy-anchor affordance', () => {
-    it(
-        'PG11: a heading renders a copy-link affordance',
-        () => {
-            const muya = bootMuya('# Getting Started\n');
-            const affordance = muya.domNode.querySelector(COPY_LINK_SELECTOR);
+    it('PG11: a heading renders a copy-link affordance', () => {
+        const muya = bootMuya('# Getting Started\n');
+        const affordance = muya.domNode.querySelector(COPY_LINK_SELECTOR);
 
-            expect(affordance).toBeTruthy();
-        },
-    );
+        expect(affordance).toBeTruthy();
+    });
 
-    it(
-        'PG11: activating the heading copy affordance emits heading-copy-link with the block key',
-        () => {
-            const muya = bootMuya('# Getting Started\n');
+    it('PG11: activating the heading copy affordance emits heading-copy-link with the block key', () => {
+        const muya = bootMuya('# Getting Started\n');
 
-            const handler = vi.fn();
-            muya.on('heading-copy-link', handler);
+        const handler = vi.fn();
+        muya.on('heading-copy-link', handler);
 
-            const affordance = muya.domNode.querySelector<HTMLElement>(COPY_LINK_SELECTOR);
-            // The affordance must exist to drive the click; its absence is the
-            // gap. Guard so the assertion below fails with a clear message
-            // rather than a null-deref.
-            affordance?.dispatchEvent(
-                new MouseEvent('click', { bubbles: true, cancelable: true }),
-            );
+        const affordance = muya.domNode.querySelector<HTMLElement>(COPY_LINK_SELECTOR);
+        // The affordance must exist to drive the click; its absence is the
+        // gap. Guard so the assertion below fails with a clear message
+        // rather than a null-deref.
+        affordance?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
-            // Desired: clicking the affordance emits heading-copy-link carrying
-            // the heading's block key so the host can copy its anchor/slug.
-            expect(handler).toHaveBeenCalledTimes(1);
-            const payload = handler.mock.calls[0]?.[0];
-            expect(payload?.key).toBeTruthy();
-        },
-    );
+        // Desired: clicking the affordance emits heading-copy-link carrying
+        // the heading's block key so the host can copy its anchor/slug.
+        expect(handler).toHaveBeenCalledTimes(1);
+        const payload = handler.mock.calls[0]?.[0];
+        expect(payload?.key).toBeTruthy();
+    });
 
-    it(
-        'PG11: the affordance is an accessible, keyboard-focusable button',
-        () => {
-            const muya = bootMuya('# Getting Started\n');
-            const affordance = muya.domNode.querySelector<HTMLElement>(COPY_LINK_SELECTOR)!;
+    it('PG11: the affordance is an accessible, keyboard-focusable button', () => {
+        const muya = bootMuya('# Getting Started\n');
+        const affordance = muya.domNode.querySelector<HTMLElement>(COPY_LINK_SELECTOR)!;
 
-            expect(affordance.getAttribute('role')).toBe('button');
-            expect(affordance.getAttribute('tabindex')).toBe('0');
-            expect(affordance.getAttribute('aria-label')).toBeTruthy();
-            // The icon image is decorative — the button carries the label — so
-            // it must expose an (empty) alt to satisfy the image-alt a11y rule.
-            const img = affordance.querySelector('img')!;
-            expect(img.getAttribute('alt')).toBe('');
-        },
-    );
+        expect(affordance.getAttribute('role')).toBe('button');
+        expect(affordance.getAttribute('tabindex')).toBe('0');
+        expect(affordance.getAttribute('aria-label')).toBeTruthy();
+        // The icon image is decorative — the button carries the label — so
+        // it must expose an (empty) alt to satisfy the image-alt a11y rule.
+        const img = affordance.querySelector('img')!;
+        expect(img.getAttribute('alt')).toBe('');
+    });
 
     it.each(['Enter', ' '])(
         'PG11: pressing %s on the focused affordance emits heading-copy-link',

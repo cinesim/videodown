@@ -25,10 +25,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -108,7 +106,7 @@ describe('muya.updateParagraph()', () => {
         expect(firstBlock(muya).name).toBe('atx-heading');
         expect(firstBlock(muya).meta.level).toBe(1);
         muya.updateParagraph('upgrade heading');
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(firstBlock(muya).name).toBe('atx-heading');
         expect(firstBlock(muya).meta.level).toBe(1);
         expect(muya.getMarkdown()).toContain('# one');
@@ -240,7 +238,7 @@ describe('muya.updateParagraph()', () => {
         await vi.waitFor(() => {
             const state = muya.getState();
             expect(state.length).toBe(2);
-            expect(state.every(b => b.name === 'paragraph')).toBe(true);
+            expect(state.every((b) => b.name === 'paragraph')).toBe(true);
         });
         expect(muya.getMarkdown()).toContain('one');
         expect(muya.getMarkdown()).toContain('two');
@@ -253,7 +251,7 @@ describe('muya.updateParagraph()', () => {
         await vi.waitFor(() => {
             const state = muya.getState();
             expect(state.length).toBe(2);
-            expect(state.every(b => b.name === 'paragraph')).toBe(true);
+            expect(state.every((b) => b.name === 'paragraph')).toBe(true);
         });
     });
 
@@ -261,7 +259,7 @@ describe('muya.updateParagraph()', () => {
         const muya = bootMuya('keep me\n');
         placeCursorOnFirstBlock(muya);
         muya.updateParagraph('hr');
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(firstBlock(muya).name).toBe('paragraph');
         expect(muya.getMarkdown()).toContain('keep me');
     });
@@ -301,12 +299,12 @@ describe('muya.updateParagraph()', () => {
     // muyajs treated this as a no-op inside a container; the migrated engine used
     // to fall through to replaceBlockByLabel on the whole container and silently
     // lose every item but the first.
-    it('\'paragraph\' on a 2-item bullet list is a no-op, preserving both items', async () => {
+    it("'paragraph' on a 2-item bullet list is a no-op, preserving both items", async () => {
         const muya = bootMuya('- one\n- two\n');
         placeCursorOnFirstBlock(muya);
         expect(firstBlock(muya).name).toBe('bullet-list');
         muya.updateParagraph('paragraph');
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         const state = muya.getState();
         expect(state.length).toBe(1);
         expect(state[0].name).toBe('bullet-list');
@@ -315,12 +313,12 @@ describe('muya.updateParagraph()', () => {
         expect(md).toContain('two');
     });
 
-    it('\'paragraph\' on a 2-line blockquote is a no-op, preserving both lines', async () => {
+    it("'paragraph' on a 2-line blockquote is a no-op, preserving both lines", async () => {
         const muya = bootMuya('> a\n>\n> b\n');
         placeCursorOnFirstBlock(muya);
         expect(firstBlock(muya).name).toBe('block-quote');
         muya.updateParagraph('paragraph');
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         const state = muya.getState();
         expect(state.length).toBe(1);
         expect(state[0].name).toBe('block-quote');
@@ -329,7 +327,7 @@ describe('muya.updateParagraph()', () => {
         expect(md).toContain('b');
     });
 
-    it('\'paragraph\' still converts a leaf block (heading) back to a paragraph', async () => {
+    it("'paragraph' still converts a leaf block (heading) back to a paragraph", async () => {
         const muya = bootMuya('## a heading\n');
         placeCursorOnFirstBlock(muya);
         muya.updateParagraph('paragraph');
@@ -343,7 +341,7 @@ describe('muya.updateParagraph()', () => {
     // target. A heading nested in a list item must convert to a paragraph in
     // place, leaving the list (and the rest of its items) untouched. The earlier
     // "no-op on any list/blockquote container" guard wrongly suppressed this.
-    it('\'paragraph\' converts a heading inside a list item, leaving the list intact', async () => {
+    it("'paragraph' converts a heading inside a list item, leaving the list intact", async () => {
         const muya = bootMuya('- # heading in item\n- second item\n');
         // Cursor lands on the heading's content inside the first list item.
         placeCursorOnFirstBlock(muya);

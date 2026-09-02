@@ -24,8 +24,7 @@ interface IDefer<T> {
 export function* uniqueIdGenerator() {
     let id = 0;
 
-    while (true)
-        yield id++;
+    while (true) yield id++;
 }
 
 const ID_PREFIX = 'mu-';
@@ -34,7 +33,7 @@ const uniqueIdIterator = uniqueIdGenerator();
 export const getUniqueId = () => `${ID_PREFIX}${uniqueIdIterator.next().value}`;
 
 export function getLongUniqueId() {
-    return `${getUniqueId()}-${(Date.now()).toString(32)}`;
+    return `${getUniqueId()}-${Date.now().toString(32)}`;
 }
 
 export function noop() {}
@@ -65,7 +64,10 @@ export function conflict(arr1: [number, number], arr2: [number, number]) {
     return !(arr1[1] < arr2[0] || arr2[1] < arr1[0]);
 }
 
-export function union({ start: tStart, end: tEnd }: IUnion, { start: lStart, end: lEnd, active }: IUnion) {
+export function union(
+    { start: tStart, end: tEnd }: IUnion,
+    { start: lStart, end: lEnd, active }: IUnion,
+) {
     if (!(tEnd <= lStart || lEnd <= tStart)) {
         if (lStart < tStart) {
             return {
@@ -73,8 +75,7 @@ export function union({ start: tStart, end: tEnd }: IUnion, { start: lStart, end
                 end: tEnd < lEnd ? tEnd : lEnd,
                 active,
             };
-        }
-        else {
+        } else {
             return {
                 start: lStart,
                 end: tEnd < lEnd ? tEnd : lEnd,
@@ -130,8 +131,7 @@ export function throttle<TArgs extends unknown[], TReturn>(
                 context = null;
                 pendingArgs = null;
             }
-        }
-        else if (!timeout) {
+        } else if (!timeout) {
             timeout = setTimeout(later, remaining);
         }
 
@@ -146,28 +146,28 @@ export function deepClone<T>(value: T): T {
 export function escapeHTML(str: string) {
     return str.replace(
         /[&<>'"]/g,
-        tag =>
+        (tag) =>
             ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
-                '\'': '&#39;',
+                "'": '&#39;',
                 '"': '&quot;',
-            }[tag] || tag),
+            })[tag] || tag,
     );
 }
 
 export function unescapeHTML(str: string) {
     return str.replace(
         /&amp;|&lt;|&gt;|&quot;|&#39;/g,
-        tag =>
+        (tag) =>
             ({
                 '&amp;': '&',
                 '&lt;': '<',
                 '&gt;': '>',
-                '&#39;': '\'',
+                '&#39;': "'",
                 '&quot;': '"',
-            }[tag] || tag),
+            })[tag] || tag,
     );
 }
 
@@ -181,13 +181,13 @@ export function escapeInBlockHtml(html: string) {
 }
 
 export function wordCount(markdown: string) {
-    const paragraph = markdown.split(/\n{2,}/).filter(line => line).length;
+    const paragraph = markdown.split(/\n{2,}/).filter((line) => line).length;
     let word = 0;
     let character = 0;
     let all = 0;
 
     const removedChinese = markdown.replace(/[\u4E00-\u9FA5]/g, '');
-    const tokens = removedChinese.split(/\s+/).filter(t => t);
+    const tokens = removedChinese.split(/\s+/).filter((t) => t);
     const chineseWordLength = markdown.length - removedChinese.length;
     word += chineseWordLength + tokens.length;
     character += tokens.reduce((acc, t) => acc + t.length, 0) + chineseWordLength;
@@ -197,10 +197,8 @@ export function wordCount(markdown: string) {
 }
 
 export function sanitize(html: string, purifyOptions: Config, disableHtml: boolean) {
-    if (disableHtml)
-        return runSanitize(escapeHTML(html), purifyOptions);
-    else
-        return runSanitize(escapeInBlockHtml(html), purifyOptions);
+    if (disableHtml) return runSanitize(escapeHTML(html), purifyOptions);
+    else return runSanitize(escapeInBlockHtml(html), purifyOptions);
 }
 
 /**
@@ -226,7 +224,7 @@ function visibleLength(str: string) {
     return [...new Intl.Segmenter().segment(str)].length;
 }
 
-export type TDiff = (string | number | { d: string });
+export type TDiff = string | number | { d: string };
 
 /**
  * transform diff to text-unicode op
@@ -265,13 +263,9 @@ export function diffToTextOp(diffs: Diff[]) {
 
 // If the next block is header, put cursor after the `#{1,6} *`
 export function adjustOffset<T extends Content>(offset: number, block: T, event: KeyboardEvent) {
-    if (
-        block.parent?.blockName === 'atx-heading'
-        && event.key === EVENT_KEYS.ArrowDown
-    ) {
+    if (block.parent?.blockName === 'atx-heading' && event.key === EVENT_KEYS.ArrowDown) {
         const match = /^\s{0,3}#{1,6}(?:\s+|$)/.exec(block.text);
-        if (match)
-            return match[0].length;
+        if (match) return match[0].length;
     }
 
     return offset;
@@ -329,14 +323,13 @@ export function mixins(...constructors: Constructor[]) {
         constructors.forEach((baseCtor) => {
             Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
                 // Do not rewrite the constructor of derivedCtor.
-                if (name === 'constructor')
-                    return;
+                if (name === 'constructor') return;
 
                 Object.defineProperty(
                     derivedCtor.prototype,
                     name,
-                    Object.getOwnPropertyDescriptor(baseCtor.prototype, name)
-                    || Object.create(null),
+                    Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
+                        Object.create(null),
                 );
             });
         });

@@ -19,9 +19,7 @@ class OrderList extends Parent {
         const orderList = new OrderList(muya, state);
 
         orderList.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock(child.name).create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock(child.name).create(muya, child)),
         );
 
         return orderList;
@@ -41,8 +39,7 @@ class OrderList extends Parent {
         this.attributes = { start: String(meta.start) };
         this.datasets = { delimiter: meta.delimiter };
         this.classList = [CLASS_NAMES.MU_ORDER_LIST];
-        if (!meta.loose)
-            this.classList.push('mu-tight-list');
+        if (!meta.loose) this.classList.push('mu-tight-list');
 
         this.createDomNode();
     }
@@ -51,7 +48,7 @@ class OrderList extends Parent {
         const state: IOrderListState = {
             name: 'order-list',
             meta: { ...this.meta },
-            children: this.children.map(child => (child as ListItem).getState()),
+            children: this.children.map((child) => (child as ListItem).getState()),
         };
 
         return state;

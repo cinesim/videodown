@@ -13,8 +13,8 @@ export default function emoji(
     const className = this.getClassName(outerClass, block, token, cursor);
     const validation = validEmoji(token.content);
     const finalClass = validation ? className : CLASS_NAMES.MU_WARN;
-    const contentSelector
-        = finalClass !== CLASS_NAMES.MU_GRAY
+    const contentSelector =
+        finalClass !== CLASS_NAMES.MU_GRAY
             ? `span.${finalClass}.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`
             : `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`;
 
@@ -40,39 +40,31 @@ export default function emoji(
                 end--;
             }
 
-            if (pos < start)
-                content.push(block.text.substring(pos, start));
+            if (pos < start) content.push(block.text.substring(pos, start));
 
             if (start < end) {
-                content.push(
-                    h(`span.${HIGHLIGHT_CLASS_NAME}`, block.text.substring(start, end)),
-                );
+                content.push(h(`span.${HIGHLIGHT_CLASS_NAME}`, block.text.substring(start, end)));
             }
             pos = end;
         }
 
-        if (pos < rEnd - token.marker.length)
-            content.push(block.text.substring(pos, rEnd - 1));
+        if (pos < rEnd - token.marker.length) content.push(block.text.substring(pos, rEnd - 1));
     }
 
     const emojiVNode = validation
         ? h(
-                contentSelector,
-                {
-                    attrs: {
-                        spellcheck: 'false',
-                    },
-                    dataset: {
-                        emoji: validation.emoji,
-                    },
-                },
-                content,
-            )
+              contentSelector,
+              {
+                  attrs: {
+                      spellcheck: 'false',
+                  },
+                  dataset: {
+                      emoji: validation.emoji,
+                  },
+              },
+              content,
+          )
         : h(contentSelector, content);
 
-    return [
-        h(startMarkerSelector, token.marker),
-        emojiVNode,
-        h(endMarkerSelector, token.marker),
-    ];
+    return [h(startMarkerSelector, token.marker), emojiVNode, h(endMarkerSelector, token.marker)];
 }

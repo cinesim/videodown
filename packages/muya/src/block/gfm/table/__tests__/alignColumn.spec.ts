@@ -34,10 +34,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -53,19 +51,17 @@ function findTable(muya: Muya): Table {
     let table: Table | null = null;
     // eslint-disable-next-line ts/no-explicit-any
     const visit = (block: any) => {
-        if (block.constructor?.blockName === 'table')
-            table = block;
+        if (block.constructor?.blockName === 'table') table = block;
         // eslint-disable-next-line ts/no-explicit-any
         block.children?.forEach((c: any) => visit(c));
     };
     visit(muya.editor.scrollPage);
-    if (!table)
-        throw new Error('no table found');
+    if (!table) throw new Error('no table found');
     return table;
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 // Collect every cell in a given column (header + body) off the live block tree.
@@ -96,8 +92,7 @@ describe('table.alignColumn', () => {
             expect(cell.domNode!.dataset.align).toBe('center');
         }
         // Column 1 is untouched.
-        for (const cell of cellsInColumn(table, 1))
-            expect(cell.meta.align).toBe('none');
+        for (const cell of cellsInColumn(table, 1)) expect(cell.meta.align).toBe('none');
     });
 
     it('reflects the requested alignment in the getState() per-cell meta', async () => {
@@ -108,8 +103,7 @@ describe('table.alignColumn', () => {
 
         await flush();
         const state = table.getState();
-        for (const row of state.children)
-            expect(row.children[0].meta.align).toBe('center');
+        for (const row of state.children) expect(row.children[0].meta.align).toBe('center');
     });
 
     it('serializes a center-aligned column as a :---: delimiter', async () => {
@@ -152,8 +146,7 @@ describe('table.alignColumn', () => {
         table.alignColumn(1, 'right');
 
         await flush();
-        for (const cell of cellsInColumn(table, 1))
-            expect(cell.meta.align).toBe('right');
+        for (const cell of cellsInColumn(table, 1)) expect(cell.meta.align).toBe('right');
 
         const markdown = muya.getMarkdown();
         expect(markdown).toContain('---:');
@@ -168,8 +161,7 @@ describe('table.alignColumn', () => {
         table.alignColumn(0, 'left');
 
         await flush();
-        for (const cell of cellsInColumn(table, 0))
-            expect(cell.meta.align).toBe('left');
+        for (const cell of cellsInColumn(table, 0)) expect(cell.meta.align).toBe('left');
 
         expect(muya.getMarkdown()).toContain(':---');
     });
@@ -184,8 +176,7 @@ describe('table.alignColumn', () => {
         table.alignColumn(0, 'right');
         await flush();
 
-        for (const cell of cellsInColumn(table, 0))
-            expect(cell.meta.align).toBe('right');
+        for (const cell of cellsInColumn(table, 0)) expect(cell.meta.align).toBe('right');
     });
 
     it('is a no-op for an out-of-range column offset', async () => {
@@ -198,8 +189,7 @@ describe('table.alignColumn', () => {
         await flush();
         // Nothing changed: both columns stay 'none'.
         for (let col = 0; col < table.columnCount; col++) {
-            for (const cell of cellsInColumn(table, col))
-                expect(cell.meta.align).toBe('none');
+            for (const cell of cellsInColumn(table, col)) expect(cell.meta.align).toBe('none');
         }
     });
 });

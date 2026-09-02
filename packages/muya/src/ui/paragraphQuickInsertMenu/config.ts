@@ -336,8 +336,7 @@ export const MENU_CONFIG: IQuickInsertMenuItem[] = [
 ];
 
 export function getLabelFromEvent(event: Event) {
-    if (!isKeyboardEvent(event))
-        return null;
+    if (!isKeyboardEvent(event)) return null;
     const ALL_MENU_CONFIG = MENU_CONFIG.reduce(
         (acc, section) => [...acc, ...section.children],
         [] as IQuickInsertMenuItem['children'],
@@ -345,16 +344,16 @@ export function getLabelFromEvent(event: Event) {
 
     const result = ALL_MENU_CONFIG.find((menu) => {
         const { code, metaKey, shiftKey, altKey } = event;
-        const { shortKeyMap = {} as IQuickInsertMenuItem['children'][number]['shortKeyMap'] } = menu;
+        const { shortKeyMap = {} as IQuickInsertMenuItem['children'][number]['shortKeyMap'] } =
+            menu;
 
         return (
-            code === shortKeyMap?.code
-            && metaKey === shortKeyMap.metaKey
-            && shiftKey === shortKeyMap.shiftKey
-            && altKey === shortKeyMap.altKey
+            code === shortKeyMap?.code &&
+            metaKey === shortKeyMap.metaKey &&
+            shiftKey === shortKeyMap.shiftKey &&
+            altKey === shortKeyMap.altKey
         );
     });
 
-    if (result)
-        return result.label;
+    if (result) return result.label;
 }

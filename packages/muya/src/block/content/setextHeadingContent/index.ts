@@ -28,8 +28,7 @@ class SetextHeadingContent extends Format {
     }
 
     override enterHandler(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         if (event.shiftKey) {
             event.preventDefault();
@@ -63,18 +62,15 @@ class SetextHeadingContent extends Format {
             );
             this.parent!.parent!.insertBefore(newParagraphBlock, this.parent);
             this.setCursor(start.offset, end.offset, true);
-        }
-        else {
+        } else {
             super.enterHandler(event);
         }
     }
 
     override backspaceHandler(event: Event) {
         const { start, end } = this.getCursor()!;
-        if (start.offset === 0 && end.offset === 0)
-            this.convertToParagraph(true);
-        else
-            super.backspaceHandler(event);
+        if (start.offset === 0 && end.offset === 0) this.convertToParagraph(true);
+        else super.backspaceHandler(event);
     }
 }
 

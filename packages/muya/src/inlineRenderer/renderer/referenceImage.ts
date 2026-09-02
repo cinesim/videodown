@@ -6,13 +6,7 @@ import { getImageSrc } from '../../utils/image';
 // reference_image
 export default function referenceImage(
     this: Renderer,
-    {
-        h,
-        cursor,
-        block,
-        token,
-        outerClass,
-    }: ISyntaxRenderOptions & { token: ReferenceImageToken },
+    { h, cursor, block, token, outerClass }: ISyntaxRenderOptions & { token: ReferenceImageToken },
 ) {
     const className = this.getClassName(outerClass, block, token, cursor);
     const imageClass = CLASS_NAMES.MU_IMAGE_MARKED_TEXT;
@@ -32,12 +26,11 @@ export default function referenceImage(
     let resolvedSrc: string | undefined;
     let selector;
     if (src) {
-        ({ id, isSuccess, url: resolvedSrc } = this.loadImageAsync(
-            imageSrc,
-            { alt },
-            className,
-            CLASS_NAMES.MU_COPY_REMOVE,
-        ));
+        ({
+            id,
+            isSuccess,
+            url: resolvedSrc,
+        } = this.loadImageAsync(imageSrc, { alt }, className, CLASS_NAMES.MU_COPY_REMOVE));
     }
     // `loadImageMap` keys by `src`, so two reference images sharing the same
     // `href` share the same cached `id`.
@@ -50,18 +43,18 @@ export default function referenceImage(
         ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${imageClass}`
         : `span.${imageClass}`;
     selector += `.${CLASS_NAMES.MU_OUTPUT_REMOVE}`;
-    if (isSuccess)
-        selector += `.${className}`;
-    else
-        selector += `.${CLASS_NAMES.MU_IMAGE_FAIL}`;
+    if (isSuccess) selector += `.${className}`;
+    else selector += `.${CLASS_NAMES.MU_IMAGE_FAIL}`;
 
     return isSuccess
         ? [
-                h(selector, tag),
-                // Prefer the resolved URL from the loadImageAsync cache; fall
-                // back to the raw src if the cache hasn't been populated for
-                // some reason.
-                h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, { props: { alt, src: resolvedSrc ?? src, title } }),
-            ]
+              h(selector, tag),
+              // Prefer the resolved URL from the loadImageAsync cache; fall
+              // back to the raw src if the cache hasn't been populated for
+              // some reason.
+              h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, {
+                  props: { alt, src: resolvedSrc ?? src, title },
+              }),
+          ]
         : [h(selector, tag)];
 }

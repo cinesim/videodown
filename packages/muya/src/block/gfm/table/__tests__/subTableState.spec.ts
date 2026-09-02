@@ -25,10 +25,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 // A 3-row × 3-column table: header (a1/b1/c1) plus two body rows.
@@ -55,7 +53,7 @@ function firstTable(muya: Muya): Table {
 }
 
 function cellTexts(state: ITableState): string[][] {
-    return state.children.map(row => row.children.map(cell => cell.text));
+    return state.children.map((row) => row.children.map((cell) => cell.text));
 }
 
 describe('table.cellAt', () => {
@@ -106,12 +104,7 @@ describe('table.getSubTableState', () => {
     });
 
     it('preserves per-column alignment in the extracted cells', () => {
-        const aligned = [
-            '| h1 | h2 |',
-            '| :--- | ---: |',
-            '| x | y |',
-            '',
-        ].join('\n');
+        const aligned = ['| h1 | h2 |', '| :--- | ---: |', '| x | y |', ''].join('\n');
         const table = firstTable(bootMuya(aligned));
         const state = table.getSubTableState(0, 0, 1, 1);
         expect(state.children[0].children[0].meta.align).toBe('left');

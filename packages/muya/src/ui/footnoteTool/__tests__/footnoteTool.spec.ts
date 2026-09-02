@@ -49,7 +49,11 @@ function makeFakeFootnote(identifier: string, definitionText: string): IFakeFoot
     };
 }
 
-function makeFakeMuya(): { muya: Muya; eventCenter: EventCenter; appendSpy: ReturnType<typeof vi.fn> } {
+function makeFakeMuya(): {
+    muya: Muya;
+    eventCenter: EventCenter;
+    appendSpy: ReturnType<typeof vi.fn>;
+} {
     const eventCenter = new EventCenter();
     const editorDomNode = document.createElement('div');
     const editorWrapper = document.createElement('div');
@@ -103,7 +107,7 @@ async function nextTick() {
     // The tool defers `show()` + `render()` through `setTimeout(fn, 0)` to
     // let the originating click event finish propagating before BaseFloat's
     // document-click hide handler can race the float open.
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 describe('footnoteTool — render on muya-footnote-tool event', () => {
@@ -119,7 +123,17 @@ describe('footnoteTool — render on muya-footnote-tool event', () => {
         // BaseFloat uses computePosition off the reference; happy-dom doesn't
         // populate layout, so a stubbed rect keeps autoUpdate from throwing.
         reference.getBoundingClientRect = () =>
-            ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+            ({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: 0,
+                height: 0,
+                x: 0,
+                y: 0,
+                toJSON: () => '',
+            }) as DOMRect;
         document.body.appendChild(reference);
     });
 
@@ -157,7 +171,17 @@ describe('footnoteTool — click actions', () => {
         const tool = new FootnoteTool(muya);
         const reference = document.createElement('sup');
         reference.getBoundingClientRect = () =>
-            ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+            ({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: 0,
+                height: 0,
+                x: 0,
+                y: 0,
+                toJSON: () => '',
+            }) as DOMRect;
         document.body.appendChild(reference);
 
         const target = makeFakeFootnote('bar', 'hello there');
@@ -165,7 +189,7 @@ describe('footnoteTool — click actions', () => {
         footnotes.set('bar', target);
 
         eventCenter.emit('muya-footnote-tool', { reference, identifier: 'bar', footnotes });
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         const button = tool.container!.querySelector('a.btn') as HTMLAnchorElement;
         button.click();
@@ -179,7 +203,17 @@ describe('footnoteTool — click actions', () => {
         const tool = new FootnoteTool(muya);
         const reference = document.createElement('sup');
         reference.getBoundingClientRect = () =>
-            ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+            ({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: 0,
+                height: 0,
+                x: 0,
+                y: 0,
+                toJSON: () => '',
+            }) as DOMRect;
         document.body.appendChild(reference);
 
         eventCenter.emit('muya-footnote-tool', {
@@ -187,7 +221,7 @@ describe('footnoteTool — click actions', () => {
             identifier: 'fresh',
             footnotes: new Map(),
         });
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         const button = tool.container!.querySelector('a.btn') as HTMLAnchorElement;
         button.click();

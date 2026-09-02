@@ -37,10 +37,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -73,7 +71,7 @@ describe('muya.getTOC()', () => {
         const md = `# Alpha\n\n## Beta\n\n### Gamma\n\n# Delta`;
         const muya = bootMuya(md);
         const toc = muya.getTOC();
-        expect(toc.map(item => [item.lvl, item.content])).toEqual([
+        expect(toc.map((item) => [item.lvl, item.content])).toEqual([
             [1, 'Alpha'],
             [2, 'Beta'],
             [3, 'Gamma'],

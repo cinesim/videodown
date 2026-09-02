@@ -21,7 +21,13 @@ interface IFakeRenderer {
     loadImageAsync: (
         info: { isUnknownType: boolean; src: string },
         attrs: Record<string, string>,
-    ) => { id: string; isSuccess: boolean | undefined; width?: number; height?: number; url?: string };
+    ) => {
+        id: string;
+        isSuccess: boolean | undefined;
+        width?: number;
+        height?: number;
+        url?: string;
+    };
     urlMap: Map<string, string>;
     muya: {
         editor: { selection: { image: null | unknown } };
@@ -76,15 +82,13 @@ function findImgSrc(vnodes: VNode | VNode[]): string | undefined {
     const arr = Array.isArray(vnodes) ? vnodes : [vnodes];
     let found: string | undefined;
     const walk = (node: unknown) => {
-        if (!node || typeof node !== 'object')
-            return;
+        if (!node || typeof node !== 'object') return;
         const vnode = node as VNode;
         if (vnode.sel === 'img') {
-            found = (vnode.data?.props?.src as string | undefined);
+            found = vnode.data?.props?.src as string | undefined;
             return;
         }
-        if (Array.isArray(vnode.children))
-            vnode.children.forEach(walk);
+        if (Array.isArray(vnode.children)) vnode.children.forEach(walk);
     };
     arr.forEach(walk);
     return found;
@@ -110,10 +114,12 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(getWrapperSelector(out)).toContain('.mu-small-image');
     });
@@ -127,10 +133,12 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(getWrapperSelector(out)).toContain('.mu-small-image');
     });
@@ -144,10 +152,12 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');
     });
@@ -159,10 +169,12 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');
     });
@@ -174,10 +186,12 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');
     });
@@ -200,10 +214,12 @@ describe('image renderer — uses the cache-busted url for local files', () => {
         });
         const token = makeImageToken({ src: 'file:///tmp/pic.png' });
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(findImgSrc(out)).toBe('file:///tmp/pic.png?mucache=mu-6');
     });
@@ -217,10 +233,12 @@ describe('image renderer — uses the cache-busted url for local files', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         expect(findImgSrc(out)).toBe('https://example.com/x.png');
     });
@@ -239,10 +257,12 @@ describe('image renderer — fail / empty wrapper classes', () => {
         });
         const token = makeImageToken();
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         const selector = getWrapperSelector(out);
         expect(selector).toContain('.mu-image-fail');
@@ -259,10 +279,12 @@ describe('image renderer — fail / empty wrapper classes', () => {
         token.src = '';
         token.srcAndTitle = '';
 
-        const out = image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        const out = image.call(asRenderer(renderer), {
+            h,
+            block: fakeBlock,
+            token,
+            cursor: fakeCursor,
+        });
 
         const selector = getWrapperSelector(out);
         expect(selector).toContain('.mu-empty-image');
@@ -279,10 +301,7 @@ describe('image renderer — fail / empty wrapper classes', () => {
         token.src = '';
         token.srcAndTitle = '';
 
-        image.call(
-            asRenderer(renderer),
-            { h, block: fakeBlock, token, cursor: fakeCursor },
-        );
+        image.call(asRenderer(renderer), { h, block: fakeBlock, token, cursor: fakeCursor });
 
         expect(renderer.loadImageAsync).not.toHaveBeenCalled();
     });

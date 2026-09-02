@@ -67,8 +67,7 @@ Muya.use(CodeBlockLanguageSelector);
 Muya.use(LinkTools, {
     jumpClick: (linkInfo) => {
         const href = linkInfo?.href;
-        if (href && /^https?:\/\//.test(href))
-            window.open(href, '_blank', 'noopener,noreferrer');
+        if (href && /^https?:\/\//.test(href)) window.open(href, '_blank', 'noopener,noreferrer');
     },
 });
 Muya.use(ParagraphFrontButton);
@@ -100,36 +99,36 @@ A complete example, including a Vite project setup, lives under [`examples/`](./
 
 The `Muya` instance returned from `new Muya(el, options)` exposes:
 
-| Method | Purpose |
-| --- | --- |
-| `init()` | Mount the editor and instantiate registered UI plugins. |
-| `locale(localeObject)` | Switch the UI locale. Use one of the bundled exports (`en`, `zhCN`, `zhTW`, `ja`, `ko`, `es`, `fr`, `de`, `pt`) or supply your own. |
-| `getMarkdown()` | Serialize the current document to Markdown. |
-| `getState()` | Return the underlying JSON state (the source of truth). |
-| `setContent(content, autoFocus?)` | Replace the document with Markdown (`string`) or `TState[]`. |
-| `undo()` / `redo()` | Step through the history stack. |
-| `search(value, opts?)` | Run a search; `opts` includes `{ isRegexp, isCaseSensitive, isWholeWord, selectHighlight }`. |
-| `find('previous' \| 'next')` | Move the active match. |
-| `replace(value, { isSingle, isRegexp })` | Replace the active match or all matches. |
-| `selectAll()` | Select the entire document. |
-| `getTOC()` | Snapshot the current heading outline as `Array<{ level, text, slug }>`. |
-| `on(event, fn)` / `off(event, fn)` / `once(event, fn)` | Subscribe to editor events. |
-| `destroy()` | Tear down the editor and free DOM listeners. |
+| Method                                                 | Purpose                                                                                                                             |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `init()`                                               | Mount the editor and instantiate registered UI plugins.                                                                             |
+| `locale(localeObject)`                                 | Switch the UI locale. Use one of the bundled exports (`en`, `zhCN`, `zhTW`, `ja`, `ko`, `es`, `fr`, `de`, `pt`) or supply your own. |
+| `getMarkdown()`                                        | Serialize the current document to Markdown.                                                                                         |
+| `getState()`                                           | Return the underlying JSON state (the source of truth).                                                                             |
+| `setContent(content, autoFocus?)`                      | Replace the document with Markdown (`string`) or `TState[]`.                                                                        |
+| `undo()` / `redo()`                                    | Step through the history stack.                                                                                                     |
+| `search(value, opts?)`                                 | Run a search; `opts` includes `{ isRegexp, isCaseSensitive, isWholeWord, selectHighlight }`.                                        |
+| `find('previous' \| 'next')`                           | Move the active match.                                                                                                              |
+| `replace(value, { isSingle, isRegexp })`               | Replace the active match or all matches.                                                                                            |
+| `selectAll()`                                          | Select the entire document.                                                                                                         |
+| `getTOC()`                                             | Snapshot the current heading outline as `Array<{ level, text, slug }>`.                                                             |
+| `on(event, fn)` / `off(event, fn)` / `once(event, fn)` | Subscribe to editor events.                                                                                                         |
+| `destroy()`                                            | Tear down the editor and free DOM listeners.                                                                                        |
 
 Standalone utilities exported from the package root:
 
-| Export | Purpose |
-| --- | --- |
-| `MarkdownToHtml` | Server-safe Markdown → HTML class (`new MarkdownToHtml(md).generate()`). |
+| Export                                       | Purpose                                                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `MarkdownToHtml`                             | Server-safe Markdown → HTML class (`new MarkdownToHtml(md).generate()`).                                              |
 | `renderToStaticHTML(stateOrMarkdown, opts?)` | One-shot static HTML renderer; pass `{ sanitize: false }` only for trusted input (parser conformance tests use this). |
 
 Useful events emitted on the editor:
 
-| Event | Payload |
-| --- | --- |
-| `json-change` | OT operations describing the latest document mutation. The full state can be read back via `muya.getState()` or serialized to Markdown via `muya.getMarkdown()`. |
-| `selection-change` | New selection (`{ anchor, focus, path }`). |
-| `focus` / `blur` | Fired when the contenteditable surface gains or loses focus. |
+| Event              | Payload                                                                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json-change`      | OT operations describing the latest document mutation. The full state can be read back via `muya.getState()` or serialized to Markdown via `muya.getMarkdown()`. |
+| `selection-change` | New selection (`{ anchor, focus, path }`).                                                                                                                       |
+| `focus` / `blur`   | Fired when the contenteditable surface gains or loses focus.                                                                                                     |
 
 The full set of constructor options (font size, list defaults, math/footnote toggles, front matter delimiters, Mermaid/Vega themes, etc.) is described by `IMuyaOptions` in [`packages/core/src/types.ts`](./packages/core/src/types.ts); defaults live in `MUYA_DEFAULT_OPTIONS` in [`packages/core/src/config/index.ts`](./packages/core/src/config/index.ts).
 
@@ -137,18 +136,18 @@ The full set of constructor options (font size, list defaults, math/footnote tog
 
 Plugins are floating tools/menus that you opt into with `Muya.use(Plugin, options?)`. They live under `packages/core/src/ui/` and are exported from the package root:
 
-| Plugin | What it does |
-| --- | --- |
-| `InlineFormatToolbar` | Bold / italic / link / etc. toolbar that follows the selection. |
-| `EmojiSelector` | `:` trigger emoji picker. |
-| `CodeBlockLanguageSelector` | Language picker inside fenced code blocks. |
-| `ImageToolBar`, `ImageResizeBar`, `ImageEditTool` | Image-related affordances; `ImageEditTool` accepts `imagePathPicker` and `imageAction` callbacks for upload flows. |
-| `LinkTools` | Hover toolbar over native `<a>`, markdown links, and reference links. Takes a `jumpClick` callback to control jump-out behavior. |
-| `FootnoteTool` | Floating popover for editing footnote definitions; requires the `footnote: true` editor option. |
-| `ParagraphFrontButton`, `ParagraphFrontMenu` | The handle and menu that appear to the left of the active block. |
-| `ParagraphQuickInsertMenu` | The `/` slash-command menu for inserting blocks. |
-| `TableColumnToolbar`, `TableDragBar`, `TableRowColumMenu` | Table editing affordances. |
-| `PreviewToolBar` | Tools shown over previewable blocks (math, Mermaid, etc.). |
+| Plugin                                                    | What it does                                                                                                                     |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `InlineFormatToolbar`                                     | Bold / italic / link / etc. toolbar that follows the selection.                                                                  |
+| `EmojiSelector`                                           | `:` trigger emoji picker.                                                                                                        |
+| `CodeBlockLanguageSelector`                               | Language picker inside fenced code blocks.                                                                                       |
+| `ImageToolBar`, `ImageResizeBar`, `ImageEditTool`         | Image-related affordances; `ImageEditTool` accepts `imagePathPicker` and `imageAction` callbacks for upload flows.               |
+| `LinkTools`                                               | Hover toolbar over native `<a>`, markdown links, and reference links. Takes a `jumpClick` callback to control jump-out behavior. |
+| `FootnoteTool`                                            | Floating popover for editing footnote definitions; requires the `footnote: true` editor option.                                  |
+| `ParagraphFrontButton`, `ParagraphFrontMenu`              | The handle and menu that appear to the left of the active block.                                                                 |
+| `ParagraphQuickInsertMenu`                                | The `/` slash-command menu for inserting blocks.                                                                                 |
+| `TableColumnToolbar`, `TableDragBar`, `TableRowColumMenu` | Table editing affordances.                                                                                                       |
+| `PreviewToolBar`                                          | Tools shown over previewable blocks (math, Mermaid, etc.).                                                                       |
 
 `examples/src/main.ts` is the canonical reference for which plugins to register for a fully-featured editor.
 
@@ -202,16 +201,17 @@ bun run --cwd packages/muya/examples dev:demo
 
 Useful local commands (Turbo fans these out across packages):
 
-| Command | What it runs |
-| --- | --- |
-| `bun run --cwd packages/muya build` | `tsc && vite build` — emits `lib/{es,umd,cjs,types}`. |
-| `bun run --cwd packages/muya test` / `bun run --cwd packages/muya coverage` | Vitest unit tests and coverage. |
-| `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` | ESLint (antfu config). |
-| `bun run --cwd packages/muya lint:types` | `tsc --noEmit`. |
-| `bun run --cwd packages/muya lint:css` | Stylelint over all CSS. |
-| `bun run --cwd packages/muya check-circular` | `madge --circular` against the public entry — CI enforces this. |
+| Command                                                                           | What it runs                                                    |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `bun run --cwd packages/muya format` / `bun run --cwd packages/muya format:check` | Oxfmt write/check.                                              |
+| `bun run --cwd packages/muya build`                                               | `tsc && vite build` — emits `lib/{es,umd,cjs,types}`.           |
+| `bun run --cwd packages/muya test` / `bun run --cwd packages/muya coverage`       | Vitest unit tests and coverage.                                 |
+| `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix`       | Oxlint.                                                         |
+| `bun run --cwd packages/muya lint:types`                                          | `tsc --noEmit`.                                                 |
+| `bun run --cwd packages/muya lint:css`                                            | Stylelint over all CSS.                                         |
+| `bun run --cwd packages/muya check-circular`                                      | `madge --circular` against the public entry — CI enforces this. |
 
-Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/) (`build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test`); husky and commitlint enforce this. Pre-commit, lint-staged auto-fixes ESLint and Stylelint findings on touched files.
+Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/) (`build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test`); husky and commitlint enforce this. Pre-commit, lint-staged auto-fixes Oxlint and Oxfmt findings on touched files.
 
 ## Build
 

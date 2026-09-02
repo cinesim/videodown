@@ -42,15 +42,14 @@ export class PreviewToolBar extends BaseFloat {
         super.listen();
 
         const handler = throttle((event: Event) => {
-            if (!isMouseEvent(event))
-                return;
+            if (!isMouseEvent(event)) return;
 
             const { x, y } = event;
             const eles = [...document.elementsFromPoint(x, y)];
             const container = [...eles].find(
-                ele =>
-                    ele[BLOCK_DOM_PROPERTY]
-                    && /html-block|math-block/.test((ele[BLOCK_DOM_PROPERTY] as HTMLBlock).blockName),
+                (ele) =>
+                    ele[BLOCK_DOM_PROPERTY] &&
+                    /html-block|math-block/.test((ele[BLOCK_DOM_PROPERTY] as HTMLBlock).blockName),
             );
             if (container && !(container[BLOCK_DOM_PROPERTY] as HTMLBlock).active) {
                 const block = container[BLOCK_DOM_PROPERTY] as HTMLBlock;
@@ -60,8 +59,7 @@ export class PreviewToolBar extends BaseFloat {
                 this._block = block;
                 this.show(container);
                 this.render();
-            }
-            else {
+            } else {
                 this.hide();
             }
         }, 300);
@@ -79,7 +77,7 @@ export class PreviewToolBar extends BaseFloat {
                     'i.icon-inner',
                     {
                         style: {
-                            'background': `url(${i.icon}) no-repeat`,
+                            background: `url(${i.icon}) no-repeat`,
                             'background-size': '100%',
                         },
                     },
@@ -108,15 +106,13 @@ export class PreviewToolBar extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(iconContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(iconContainer, vnode);
 
         this._oldVNode = vnode;
     }
 
-    selectItem(event: Event, i: typeof ICONS[number]) {
+    selectItem(event: Event, i: (typeof ICONS)[number]) {
         event.preventDefault();
         const { _block: block } = this;
         let cursorBlock = null;
@@ -132,18 +128,14 @@ export class PreviewToolBar extends BaseFloat {
                     text: '',
                 };
 
-                const newBlock = ScrollPage.loadBlock('paragraph').create(
-                    this.muya,
-                    state,
-                );
+                const newBlock = ScrollPage.loadBlock('paragraph').create(this.muya, state);
                 block!.replaceWith(newBlock);
                 cursorBlock = newBlock.firstContentInDescendant();
                 break;
             }
         }
 
-        if (cursorBlock)
-            cursorBlock.setCursor(0, 0);
+        if (cursorBlock) cursorBlock.setCursor(0, 0);
 
         this.hide();
     }

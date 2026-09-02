@@ -22,7 +22,9 @@ describe('renderToStaticHTML — footnote backref list (PR-8c)', () => {
         expect(html).toMatch(/<section class="footnotes">[\s\S]*<\/section>/);
         expect(html).toMatch(/<li id="fn-1">[\s\S]*<\/li>/);
         // Inline ref must point to that li.
-        expect(html).toMatch(/<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/);
+        expect(html).toMatch(
+            /<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/,
+        );
         // Backref arrow on the definition points back to the fnref.
         expect(html).toMatch(/<a href="#fnref-1" class="footnote-backref">/);
         // Body of the definition is preserved.
@@ -66,10 +68,10 @@ describe('renderToStaticHTML — footnote backref list (PR-8c)', () => {
         const html = renderToStaticHTML(md, PROFILE);
 
         // All three inline refs must share fn-1.
-        const refs = html.match(/<sup class="footnote-ref"><a href="#fn-\d+"[^>]*>\d+<\/a><\/sup>/g) ?? [];
+        const refs =
+            html.match(/<sup class="footnote-ref"><a href="#fn-\d+"[^>]*>\d+<\/a><\/sup>/g) ?? [];
         expect(refs).toHaveLength(3);
-        for (const r of refs)
-            expect(r).toContain('href="#fn-1"');
+        for (const r of refs) expect(r).toContain('href="#fn-1"');
         // Only one entry in the list.
         const items = html.match(/<li id="fn-\d+">/g) ?? [];
         expect(items).toEqual(['<li id="fn-1">']);

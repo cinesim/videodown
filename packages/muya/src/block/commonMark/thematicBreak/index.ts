@@ -13,9 +13,7 @@ class ThematicBreak extends Parent {
     static create(muya: Muya, state: IThematicBreakState) {
         const heading = new ThematicBreak(muya);
 
-        heading.append(
-            ScrollPage.loadBlock('thematicbreak.content').create(muya, state.text),
-        );
+        heading.append(ScrollPage.loadBlock('thematicbreak.content').create(muya, state.text));
 
         return heading;
     }

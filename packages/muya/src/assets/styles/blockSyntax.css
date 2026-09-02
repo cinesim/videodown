@@ -1,6 +1,14 @@
 .mu-editor {
     font-size: var(--mu-font-size, 16px);
-    font-family: var(--mu-font-family, 'Open Sans', 'Clear Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif);
+    font-family: var(
+        --mu-font-family,
+        'Open Sans',
+        'Clear Sans',
+        'Helvetica Neue',
+        Helvetica,
+        Arial,
+        sans-serif
+    );
     line-height: var(--mu-line-height, 1.6);
 
     outline: none;
@@ -100,9 +108,9 @@
     width: 18px;
     height: 18px;
 
-    cursor: pointer;
-
     transform: translateY(calc(0.7em - 9px));
+
+    cursor: pointer;
     opacity: 0;
 
     transition: opacity 0.2s ease;
@@ -245,8 +253,8 @@
 
 .mu-code-block .mu-code::-webkit-scrollbar {
     display: block;
-    height: 6px;
     width: 3px;
+    height: 6px;
 }
 
 .mu-code-block .mu-content {
@@ -345,6 +353,7 @@ code.mu-code .mu-code-copy:hover {
 .mu-line-numbers-rows > span {
     position: absolute;
     left: 0;
+
     width: 100%;
 
     counter-increment: mu-linenumber;
@@ -621,7 +630,6 @@ li.mu-task-list-item > span.mu-checkbox-checked::before {
 .mu-table-inner tr th::before,
 .mu-table-inner tr td::before {
     position: absolute;
-    inset: 0;
 
     box-sizing: border-box;
     width: calc(100% + 1px);
@@ -631,6 +639,7 @@ li.mu-task-list-item > span.mu-checkbox-checked::before {
 
     content: '';
     pointer-events: none;
+    inset: 0;
 }
 
 .mu-table-inner tr th:first-child,
@@ -942,6 +951,7 @@ pre.mu-active.mu-fenced-code::after {
 }
 
 /* content */
+/* stylelint-disable-next-line no-descending-specificity -- base content follows block-specific variants by design. */
 .mu-content {
     display: block;
 
@@ -963,7 +973,9 @@ pre.mu-active.mu-fenced-code::after {
     content: attr(placeholder);
 }
 
-.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
+.mu-show-quick-insert-hint
+    .mu-paragraph.mu-active
+    > .mu-paragraph-content:first-of-type:empty::after {
     color: var(--editor-color-30);
 
     content: attr(empty-hint);

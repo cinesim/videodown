@@ -42,10 +42,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, options: Record<string, unknown> = {}): Muya {
@@ -68,11 +66,10 @@ function contentByText(muya: Muya, text: string): Content {
     }) => {
         if (block.constructor.blockName?.endsWith('.content') && block.text === text)
             target = block as unknown as Content;
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     return target;
 }
 
@@ -92,7 +89,7 @@ function tabAt(muya: Muya, content: Content, offset: number, shiftKey = false): 
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function blockText(state: ReturnType<Muya['getState']>, index: number): string {
@@ -113,7 +110,7 @@ describe('paragraphContent.tabHandler — insertTab in a plain paragraph', () =>
         expect(text).toBe(`hello${SPACE.repeat(4)}`);
         expect(text.length).toBe(9);
         // The inserted run is ordinary spaces (U+0020), not non-breaking spaces.
-        expect([...text.slice(5)].every(ch => ch.charCodeAt(0) === 32)).toBe(true);
+        expect([...text.slice(5)].every((ch) => ch.charCodeAt(0) === 32)).toBe(true);
 
         const cursor = content.getCursor();
         expect(cursor).not.toBeNull();
@@ -132,7 +129,7 @@ describe('paragraphContent.tabHandler — insertTab in a plain paragraph', () =>
         await flush();
         const markdown = muya.getMarkdown();
         expect(markdown).toContain(`hello${SPACE.repeat(4)}`);
-        expect([...markdown].some(ch => ch.charCodeAt(0) === 160)).toBe(false);
+        expect([...markdown].some((ch) => ch.charCodeAt(0) === 160)).toBe(false);
     });
 
     it('honors a custom tabSize of 2 (narrower insert, caret advances by 2)', async () => {

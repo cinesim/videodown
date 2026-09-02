@@ -38,10 +38,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -63,8 +61,7 @@ function placeCursorOnFirstBlock(muya: Muya, offset = 0): Format {
 // Pull the `(...)` target out of the first `![alt](src)` in the serialized markdown.
 function srcFromMarkdown(markdown: string): string {
     const match = /!\[[^\]]*\]\(([^)]*)\)/.exec(markdown);
-    if (!match)
-        throw new Error(`no inline image found in markdown: ${JSON.stringify(markdown)}`);
+    if (!match) throw new Error(`no inline image found in markdown: ${JSON.stringify(markdown)}`);
     return match[1];
 }
 

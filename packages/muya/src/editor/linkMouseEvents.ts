@@ -50,8 +50,7 @@ export const LINK_SELECTOR = [
 const ANCHOR_CLICK_SELECTOR = `a.${CLASS_NAMES.MU_INLINE_RULE}`;
 
 function findLinkWrapper(target: EventTarget | null): HTMLElement | null {
-    if (!(target instanceof HTMLElement))
-        return null;
+    if (!(target instanceof HTMLElement)) return null;
 
     return target.closest<HTMLElement>(LINK_SELECTOR);
 }
@@ -68,15 +67,14 @@ function isPopoverTarget(wrapper: HTMLElement): boolean {
     // popover doesn't apply — there is no `[text](url)` source to rewrite, and
     // the URL re-autolinks on the next render anyway.
     if (
-        wrapper.classList.contains(CLASS_NAMES.MU_AUTO_LINK)
-        || wrapper.classList.contains(CLASS_NAMES.MU_AUTO_LINK_EXTENSION)
+        wrapper.classList.contains(CLASS_NAMES.MU_AUTO_LINK) ||
+        wrapper.classList.contains(CLASS_NAMES.MU_AUTO_LINK_EXTENSION)
     ) {
         return false;
     }
 
     // HTML `<a>` is always a popover target — no source markers to hide.
-    if (wrapper.classList.contains(CLASS_NAMES.MU_RAW_HTML))
-        return true;
+    if (wrapper.classList.contains(CLASS_NAMES.MU_RAW_HTML)) return true;
 
     // Markdown link / reference link: only show in preview mode (the
     // preceding `[` marker is hidden via `.mu-hide`).
@@ -93,16 +91,13 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         // on `!hideLinkPopup`: when the user sets `hideLinkPopup: true`, the
         // hover popover is suppressed entirely. Read it live so a runtime
         // `setOptions({ hideLinkPopup })` toggle takes effect immediately.
-        if (muya.options?.hideLinkPopup)
-            return;
+        if (muya.options?.hideLinkPopup) return;
 
         const wrapper = findLinkWrapper(event.target);
-        if (!wrapper || !isPopoverTarget(wrapper))
-            return;
+        if (!wrapper || !isPopoverTarget(wrapper)) return;
 
         const linkInfo = getLinkInfo(wrapper);
-        if (!linkInfo)
-            return;
+        if (!linkInfo) return;
 
         // The unlink path needs the containing block so it can rewrite the
         // block's source text. Resolve it via the DOM-attached block ref
@@ -119,8 +114,7 @@ export function attachLinkMouseHandlers(muya: Muya): void {
 
     const outHandler = (event: Event) => {
         const wrapper = findLinkWrapper(event.target);
-        if (!wrapper)
-            return;
+        if (!wrapper) return;
 
         // Ignore mouseout when the pointer is still inside the same wrapper
         // (e.g. crossing between a `<strong>` and the surrounding text child).
@@ -128,26 +122,24 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         // an internal element boundary.
         if (event instanceof MouseEvent) {
             const { relatedTarget } = event;
-            if (relatedTarget instanceof Node && wrapper.contains(relatedTarget))
-                return;
+            if (relatedTarget instanceof Node && wrapper.contains(relatedTarget)) return;
         }
 
         eventCenter.emit('muya-link-tools', { reference: null });
     };
 
     const clickHandler = (event: Event) => {
-        if (!(event.target instanceof HTMLElement))
-            return;
+        if (!(event.target instanceof HTMLElement)) return;
 
         // Suppress in-editor navigation for every real anchor variant. Place
         // the cursor instead of opening a tab (standard contenteditable
         // rich-text pattern). This runs for plain clicks too. Anchors inside a
         // raw HTML block preview (`.mu-html-preview a`) have no wrapper class,
         // so match them explicitly too.
-        const anchor = event.target.closest<HTMLElement>(ANCHOR_CLICK_SELECTOR)
-            ?? event.target.closest<HTMLElement>(`.${CLASS_NAMES.MU_HTML_PREVIEW} a[href]`);
-        if (anchor)
-            event.preventDefault();
+        const anchor =
+            event.target.closest<HTMLElement>(ANCHOR_CLICK_SELECTOR) ??
+            event.target.closest<HTMLElement>(`.${CLASS_NAMES.MU_HTML_PREVIEW} a[href]`);
+        if (anchor) event.preventDefault();
 
         // Cmd/Ctrl-click a link → ask the host to open it. marktext's
         // `clickCtrl.js` dispatched `format-click` with `{ event, formatType:
@@ -158,8 +150,7 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         // their cursor-placement-only behavior. `getLinkInfo` resolves the
         // wrapper that hosts the href even when the IMG/text descendant was
         // clicked, and returns a superset (`{ href, raw, text, range }`).
-        if (!isModifierClick(event))
-            return;
+        if (!isModifierClick(event)) return;
 
         const wrapper = findLinkWrapper(event.target);
         if (!wrapper) {
@@ -186,8 +177,7 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         }
 
         const linkInfo = getLinkInfo(wrapper);
-        if (!linkInfo || !linkInfo.href)
-            return;
+        if (!linkInfo || !linkInfo.href) return;
 
         eventCenter.emit('format-click', {
             event,

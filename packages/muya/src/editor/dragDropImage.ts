@@ -46,10 +46,7 @@ function verticalPosition(event: DragEvent, rect: DOMRect): 'up' | 'down' {
 
 // A single dragged image FILE: exactly one item, of an image MIME type.
 function isImageFileDrag(dataTransfer: DataTransfer): boolean {
-    return (
-        dataTransfer.items.length === 1
-        && dataTransfer.items[0].type.includes('image')
-    );
+    return dataTransfer.items.length === 1 && dataTransfer.items[0].type.includes('image');
 }
 
 // The "image dragged from a browser" signature: a `text/uri-list` item that
@@ -58,9 +55,9 @@ function isImageFileDrag(dataTransfer: DataTransfer): boolean {
 // browser instead of being intercepted and swallowed.
 function isWebImageDrag(dataTransfer: DataTransfer): boolean {
     const items = Array.from(dataTransfer.items);
-    const hasUri = items.some(i => i.type === 'text/uri-list');
-    const hasHtml = items.some(i => i.type === 'text/html');
-    const hasText = items.some(i => i.type === 'text/plain');
+    const hasUri = items.some((i) => i.type === 'text/uri-list');
+    const hasHtml = items.some((i) => i.type === 'text/html');
+    const hasText = items.some((i) => i.type === 'text/plain');
 
     return hasUri && hasHtml && !hasText;
 }
@@ -69,13 +66,11 @@ function isWebImageDrag(dataTransfer: DataTransfer): boolean {
 // `null` when the pointer is not over an editor content block.
 function resolveDropTarget(event: DragEvent): IDropTarget | null {
     const contentDom = findContentDOM(event.target as Node | null);
-    if (!contentDom)
-        return null;
+    if (!contentDom) return null;
 
     const block = getBlock(contentDom);
     const anchor = block?.outMostBlock;
-    if (!anchor || !anchor.domNode)
-        return null;
+    if (!anchor || !anchor.domNode) return null;
 
     const rect = anchor.domNode.getBoundingClientRect();
 
@@ -104,19 +99,13 @@ function drawGhost(target: IDropTarget): void {
 
 // Insert a `![alt](src)` image as a new paragraph block above/below the
 // target anchor, place the cursor inside it, and return the new block.
-function insertImageParagraph(
-    muya: Muya,
-    target: IDropTarget,
-    text: string,
-): Parent {
+function insertImageParagraph(muya: Muya, target: IDropTarget, text: string): Parent {
     const state = { name: 'paragraph', text };
     const imageBlock = ScrollPage.loadBlock('paragraph').create(muya, state);
     const { anchor, position } = target;
 
-    if (position === 'up')
-        anchor.parent!.insertBefore(imageBlock, anchor);
-    else
-        anchor.parent!.insertAfter(imageBlock, anchor);
+    if (position === 'up') anchor.parent!.insertBefore(imageBlock, anchor);
+    else anchor.parent!.insertAfter(imageBlock, anchor);
 
     imageBlock.firstContentInDescendant()?.setCursor(0, 0, true);
 
@@ -131,8 +120,8 @@ function firstUri(uriList: string): string {
     return (
         uriList
             .split(/[\r\n]+/)
-            .map(line => line.trim())
-            .find(line => line.length > 0 && !line.startsWith('#')) ?? ''
+            .map((line) => line.trim())
+            .find((line) => line.length > 0 && !line.startsWith('#')) ?? ''
     );
 }
 
@@ -141,30 +130,20 @@ function firstUri(uriList: string): string {
 // (inside the drop handler), so every item is kicked off before the first
 // `await`; the callback merely resolves later.
 function readItem(item: DataTransferItem | undefined): Promise<string> {
-    if (!item)
-        return Promise.resolve('');
-    return new Promise(resolve => item.getAsString(resolve));
+    if (!item) return Promise.resolve('');
+    return new Promise((resolve) => item.getAsString(resolve));
 }
 
 // Drop path 1 — a web-link image carried as `text/uri-list`. A browser image
 // drag also carries a `text/html` `<img>` payload, which is a definitive image
 // signal and needs no network round-trip; fall back to the URL extension and a
 // content-type HEAD sniff only when that payload is absent.
-function handleWebLinkImage(
-    muya: Muya,
-    event: DragEvent,
-    target: IDropTarget,
-): boolean {
+function handleWebLinkImage(muya: Muya, event: DragEvent, target: IDropTarget): boolean {
     const items = Array.from(event.dataTransfer?.items ?? []);
-    const uriItem = items.find(
-        item => item.kind === 'string' && item.type === 'text/uri-list',
-    );
-    if (!uriItem)
-        return false;
+    const uriItem = items.find((item) => item.kind === 'string' && item.type === 'text/uri-list');
+    if (!uriItem) return false;
 
-    const htmlItem = items.find(
-        item => item.kind === 'string' && item.type === 'text/html',
-    );
+    const htmlItem = items.find((item) => item.kind === 'string' && item.type === 'text/html');
 
     // Both reads are initiated synchronously, before any await, so the data
     // store is still in read-only (not protected) mode.
@@ -173,16 +152,12 @@ function handleWebLinkImage(
 
     void (async () => {
         const url = firstUri(await uriPromise);
-        if (!URL_REG.test(url))
-            return;
+        if (!URL_REG.test(url)) return;
 
         const html = await htmlPromise;
-        const isImage
-            = /<img\b/i.test(html)
-                || IMAGE_EXT_REG.test(url)
-                || (await checkImageContentType(url));
-        if (!isImage)
-            return;
+        const isImage =
+            /<img\b/i.test(html) || IMAGE_EXT_REG.test(url) || (await checkImageContentType(url));
+        if (!isImage) return;
 
         insertImageParagraph(muya, target, `![](${url})`);
     })();
@@ -199,28 +174,20 @@ async function persistDroppedImage(
     loadingId: string,
 ): Promise<void> {
     const { imageAction } = muya.options;
-    if (!imageAction)
-        return;
+    if (!imageAction) return;
 
     try {
         const newSrc = await imageAction({ src: path, alt: name, title: '' });
         const { src } = getImageSrc(path);
-        if (src)
-            muya.editor.inlineRenderer.renderer.urlMap.set(newSrc, src);
+        if (src) muya.editor.inlineRenderer.renderer.urlMap.set(newSrc, src);
 
-        const imageWrapper = query<HTMLElement>(
-            `span[data-id=${loadingId}]`,
-            muya.domNode,
-        );
+        const imageWrapper = query<HTMLElement>(`span[data-id=${loadingId}]`, muya.domNode);
         if (imageWrapper) {
             const imageInfo = getImageInfo(imageWrapper);
-            const block = getBlock(
-                findContentDOM(imageWrapper),
-            ) as Format | undefined;
+            const block = getBlock(findContentDOM(imageWrapper)) as Format | undefined;
             block?.replaceImage(imageInfo, { alt: name, src: newSrc });
         }
-    }
-    catch (error) {
+    } catch (error) {
         debug.warn(`Unexpected error on image action: ${String(error)}`);
     }
 }
@@ -235,19 +202,13 @@ async function persistDroppedImage(
 // matching the documented `imageAction` contract and the imageEditTool's
 // direct-replacement behaviour (a permanent `loading-*` alt would otherwise be
 // left behind).
-function handleFileImage(
-    muya: Muya,
-    event: DragEvent,
-    target: IDropTarget,
-): boolean {
+function handleFileImage(muya: Muya, event: DragEvent, target: IDropTarget): boolean {
     const files = Array.from(event.dataTransfer?.files ?? []);
-    const image = files.find(file => /image/.test(file.type));
-    if (!image)
-        return false;
+    const image = files.find((file) => /image/.test(file.type));
+    if (!image) return false;
 
     const path = muya.options.getPathForFile?.(image);
-    if (!path)
-        return false;
+    if (!path) return false;
 
     const { name } = image;
 
@@ -270,21 +231,18 @@ export function attachDragDropImageHandlers(muya: Muya): void {
     // Prevent the browser from starting its own image drag inside the editor;
     // it would otherwise open the dragged image as a navigation.
     const dragStartHandler = (event: Event) => {
-        if ((event.target as HTMLElement)?.tagName === 'IMG')
-            event.preventDefault();
+        if ((event.target as HTMLElement)?.tagName === 'IMG') event.preventDefault();
     };
 
     const dragOverHandler = (event: Event) => {
         const dragEvent = event as DragEvent;
         const { dataTransfer } = dragEvent;
-        if (!dataTransfer)
-            return;
+        if (!dataTransfer) return;
 
         // Only intercept a single image file or a likely web-image drag; leave
         // everything else (plain hyperlinks, tab reordering, text) to the
         // browser so we never suppress an unrelated default drop.
-        if (!isImageFileDrag(dataTransfer) && !isWebImageDrag(dataTransfer))
-            return;
+        if (!isImageFileDrag(dataTransfer) && !isWebImageDrag(dataTransfer)) return;
 
         const target = resolveDropTarget(dragEvent);
         if (!target) {
@@ -300,13 +258,11 @@ export function attachDragDropImageHandlers(muya: Muya): void {
     const dropHandler = (event: Event) => {
         const dragEvent = event as DragEvent;
         const { dataTransfer } = dragEvent;
-        if (!dataTransfer)
-            return;
+        if (!dataTransfer) return;
 
         hideGhost();
         const target = resolveDropTarget(dragEvent);
-        if (!target)
-            return;
+        if (!target) return;
 
         // Try the file path first (a dropped image file also exposes a
         // synthetic `text/uri-list`, but the file branch is the intended one).
@@ -317,8 +273,7 @@ export function attachDragDropImageHandlers(muya: Muya): void {
         if (!inserted && isWebImageDrag(dataTransfer))
             inserted = handleWebLinkImage(muya, dragEvent, target);
 
-        if (inserted)
-            event.preventDefault();
+        if (inserted) event.preventDefault();
     };
 
     const dragLeaveHandler = () => hideGhost();

@@ -3,12 +3,7 @@ import type Content from '../../block/base/content';
 import type Parent from '../../block/base/parent';
 import type AtxHeading from '../../block/commonMark/atxHeading';
 import type { Muya } from '../../index';
-import type {
-    IBulletListState,
-    IOrderListState,
-    ITaskListState,
-    TState,
-} from '../../state/types';
+import type { IBulletListState, IOrderListState, ITaskListState, TState } from '../../state/types';
 import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
 import { replaceBlockByLabel } from '../../block/blockTransforms';
 import { ScrollPage } from '../../block/scrollPage';
@@ -28,7 +23,7 @@ function renderIcon({ label, icon }: { label: string; icon: string }) {
             `i.icon-${label.replace(/\s/g, '-')}`,
             {
                 style: {
-                    'background': `url(${icon}) no-repeat`,
+                    background: `url(${icon}) no-repeat`,
                     'background-size': '100%',
                 },
             },
@@ -111,13 +106,12 @@ export class ParagraphFrontMenu extends BaseFloat {
             let itemSelector = `div.turn-into-item.${label}`;
             if (block?.blockName === 'atx-heading') {
                 if (
-                    label.startsWith(block.blockName)
-                    && label.endsWith(String((block as AtxHeading).meta.level))
+                    label.startsWith(block.blockName) &&
+                    label.endsWith(String((block as AtxHeading).meta.level))
                 ) {
                     itemSelector += '.active';
                 }
-            }
-            else if (label === block?.blockName) {
+            } else if (label === block?.blockName) {
                 itemSelector += '.active';
             }
 
@@ -139,7 +133,11 @@ export class ParagraphFrontMenu extends BaseFloat {
     }
 
     render() {
-        const { _oldVNode: oldVNode, _frontMenuContainer: frontMenuContainer, _block: block } = this;
+        const {
+            _oldVNode: oldVNode,
+            _frontMenuContainer: frontMenuContainer,
+            _block: block,
+        } = this;
         const { i18n } = this.muya;
         const { blockName } = block!;
         const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
@@ -164,8 +162,7 @@ export class ParagraphFrontMenu extends BaseFloat {
         });
 
         // Frontmatter can not be duplicated
-        if (blockName === 'frontmatter')
-            children.splice(0, 1);
+        if (blockName === 'frontmatter') children.splice(0, 1);
 
         const subMenu = canTurnIntoMenu(block!);
         if (subMenu.length) {
@@ -176,8 +173,7 @@ export class ParagraphFrontMenu extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
         else patch(frontMenuContainer, vnode);
 
         this._oldVNode = vnode;
@@ -195,8 +191,7 @@ export class ParagraphFrontMenu extends BaseFloat {
         // below assumes `block.parent` (#4686).
         const block = this._block;
         this._block = null;
-        if (!block?.parent)
-            return;
+        if (!block?.parent) return;
 
         const oldState = block.getState();
 
@@ -224,10 +219,7 @@ export class ParagraphFrontMenu extends BaseFloat {
 
             case 'new': {
                 const state = deepClone(emptyStates.paragraph);
-                const newBlock = ScrollPage.loadBlock('paragraph').create(
-                    muya,
-                    state,
-                );
+                const newBlock = ScrollPage.loadBlock('paragraph').create(muya, state);
                 block.parent!.insertAfter(newBlock, block);
                 return newBlock.lastContentInDescendant();
             }
@@ -236,16 +228,11 @@ export class ParagraphFrontMenu extends BaseFloat {
                 let cursorBlock = null;
                 if (block.prev) {
                     cursorBlock = block.prev.lastContentInDescendant();
-                }
-                else if (block.next) {
+                } else if (block.next) {
                     cursorBlock = block.next.firstContentInDescendant();
-                }
-                else {
+                } else {
                     const state = deepClone(emptyStates.paragraph);
-                    const newBlock = ScrollPage.loadBlock('paragraph').create(
-                        muya,
-                        state,
-                    );
+                    const newBlock = ScrollPage.loadBlock('paragraph').create(muya, state);
                     block.parent!.insertAfter(newBlock, block);
                     cursorBlock = newBlock.lastContentInDescendant();
                 }
@@ -263,23 +250,22 @@ export class ParagraphFrontMenu extends BaseFloat {
         const { muya } = this;
         switch (block.blockName) {
             case 'paragraph':
-                // fall through
+            // fall through
             case 'atx-heading': {
-                if (block.blockName === 'paragraph' && block.blockName === label)
-                    return null;
+                if (block.blockName === 'paragraph' && block.blockName === label) return null;
 
                 const headingLevel = isAtxHeadingState(oldState) ? oldState.meta.level : null;
                 if (
-                    block.blockName === 'atx-heading'
-                    && headingLevel !== null
-                    && label.split(' ')[1] === String(headingLevel)
+                    block.blockName === 'atx-heading' &&
+                    headingLevel !== null &&
+                    label.split(' ')[1] === String(headingLevel)
                 ) {
                     return null;
                 }
 
                 const rawText = 'text' in oldState ? oldState.text : '';
-                const text
-                    = block.blockName === 'paragraph'
+                const text =
+                    block.blockName === 'paragraph'
                         ? rawText
                         : rawText.replace(/^ {0,3}#{1,6}(?:\s+|$)/, '');
                 replaceBlockByLabel({
@@ -293,9 +279,9 @@ export class ParagraphFrontMenu extends BaseFloat {
             }
 
             case 'order-list':
-                // fall through
+            // fall through
             case 'bullet-list':
-                // fall through
+            // fall through
             case 'task-list':
                 return this._turnIntoList(label, block, oldState);
 
@@ -309,8 +295,7 @@ export class ParagraphFrontMenu extends BaseFloat {
         const { editor } = muya;
         const { bulletListMarker, orderListDelimiter } = muya.options;
 
-        if (!isAnyListState(oldState))
-            return null;
+        if (!isAnyListState(oldState)) return null;
 
         // Clicking the active list type toggles the list off,
         // unwrapping every item back into plain paragraphs (matches
@@ -328,56 +313,46 @@ export class ParagraphFrontMenu extends BaseFloat {
         // discriminant-changing casts that TS can't track.
         const sourceMeta = oldState.meta;
         const loose = sourceMeta.loose;
-        const delimiter = 'delimiter' in sourceMeta
-            ? sourceMeta.delimiter
-            : orderListDelimiter;
-        const marker = 'marker' in sourceMeta
-            ? sourceMeta.marker
-            : bulletListMarker;
+        const delimiter = 'delimiter' in sourceMeta ? sourceMeta.delimiter : orderListDelimiter;
+        const marker = 'marker' in sourceMeta ? sourceMeta.marker : bulletListMarker;
 
-        const childContents: TState[][] = oldState.children.map(
-            li => deepClone(li.children),
-        );
+        const childContents: TState[][] = oldState.children.map((li) => deepClone(li.children));
 
         let state: ITaskListState | IOrderListState | IBulletListState;
         if (label === 'task-list') {
             state = {
                 name: 'task-list',
                 meta: { marker: marker ?? bulletListMarker, loose: !!loose },
-                children: childContents.map(children => ({
+                children: childContents.map((children) => ({
                     name: 'task-list-item',
                     meta: { checked: false },
                     children,
                 })),
             };
-        }
-        else if (label === 'order-list') {
+        } else if (label === 'order-list') {
             state = {
                 name: 'order-list',
                 meta: { delimiter, loose: !!loose, start: 1 },
-                children: childContents.map(children => ({
+                children: childContents.map((children) => ({
                     name: 'list-item',
                     children,
                 })),
             };
-        }
-        else {
+        } else {
             state = {
                 name: 'bullet-list',
                 meta: { marker: marker ?? bulletListMarker, loose: !!loose },
-                children: childContents.map(children => ({
+                children: childContents.map((children) => ({
                     name: 'list-item',
                     children,
                 })),
             };
         }
         // TODO: @JOCS, remove use this.selection directly.
-        const { anchorPath, anchor, focus, isSelectionInSameBlock }
-            = editor.selection;
+        const { anchorPath, anchor, focus, isSelectionInSameBlock } = editor.selection;
         const listBlock = ScrollPage.loadBlock(label).create(muya, state);
         block.replaceWith(listBlock);
-        const guessCursorBlock
-            = muya.editor.scrollPage?.queryBlock(anchorPath);
+        const guessCursorBlock = muya.editor.scrollPage?.queryBlock(anchorPath);
         if (guessCursorBlock && isSelectionInSameBlock) {
             const begin = Math.min(anchor!.offset, focus!.offset);
             const end = Math.max(anchor!.offset, focus!.offset);

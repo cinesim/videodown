@@ -168,33 +168,38 @@ export interface IFootnoteBlockState {
     children: TState[];
 }
 
-export type TLeafState
-    = | IParagraphState
-        | IAtxHeadingState
-        | ISetextHeadingState
-        | IThematicBreakState
-        | ICodeBlockState
-        | IHtmlBlockState
-        | ILinkReferenceDefinitionState
-        | IMathBlockState
-        | IFrontmatterState
-        | IDiagramState
-        | ITableCellState;
+export type TLeafState =
+    | IParagraphState
+    | IAtxHeadingState
+    | ISetextHeadingState
+    | IThematicBreakState
+    | ICodeBlockState
+    | IHtmlBlockState
+    | ILinkReferenceDefinitionState
+    | IMathBlockState
+    | IFrontmatterState
+    | IDiagramState
+    | ITableCellState;
 
-export type TContainerState
-    = | IBlockQuoteState
-        | IOrderListState
-        | IBulletListState
-        | ITableState
-        | ITaskListState
-        | ITaskListItemState
-        | IListItemState
-        | ITableRowState
-        | IFootnoteBlockState;
+export type TContainerState =
+    | IBlockQuoteState
+    | IOrderListState
+    | IBulletListState
+    | ITableState
+    | ITaskListState
+    | ITaskListItemState
+    | IListItemState
+    | ITableRowState
+    | IFootnoteBlockState;
 
 export type TState = TLeafState | TContainerState;
 
-export type CodeContentState = ICodeBlockState | IHtmlBlockState | IDiagramState | IMathBlockState | IFrontmatterState;
+export type CodeContentState =
+    | ICodeBlockState
+    | IHtmlBlockState
+    | IDiagramState
+    | IMathBlockState
+    | IFrontmatterState;
 
 // Discriminated-union type guards. `TState` is keyed by `name`, so consumers can
 // narrow without `as I<X>State` casts. Use `isStateOfName(state, 'atx-heading')`
@@ -208,11 +213,14 @@ export function isStateOfName<N extends TState['name']>(
 
 export const isParagraphState = (s: TState): s is IParagraphState => s.name === 'paragraph';
 export const isAtxHeadingState = (s: TState): s is IAtxHeadingState => s.name === 'atx-heading';
-export const isSetextHeadingState = (s: TState): s is ISetextHeadingState => s.name === 'setext-heading';
-export const isThematicBreakState = (s: TState): s is IThematicBreakState => s.name === 'thematic-break';
+export const isSetextHeadingState = (s: TState): s is ISetextHeadingState =>
+    s.name === 'setext-heading';
+export const isThematicBreakState = (s: TState): s is IThematicBreakState =>
+    s.name === 'thematic-break';
 export const isCodeBlockState = (s: TState): s is ICodeBlockState => s.name === 'code-block';
 export const isHtmlBlockState = (s: TState): s is IHtmlBlockState => s.name === 'html-block';
-export const isLinkReferenceDefinitionState = (s: TState): s is ILinkReferenceDefinitionState => s.name === 'link-reference-definition';
+export const isLinkReferenceDefinitionState = (s: TState): s is ILinkReferenceDefinitionState =>
+    s.name === 'link-reference-definition';
 export const isMathBlockState = (s: TState): s is IMathBlockState => s.name === 'math-block';
 export const isFrontmatterState = (s: TState): s is IFrontmatterState => s.name === 'frontmatter';
 export const isDiagramState = (s: TState): s is IDiagramState => s.name === 'diagram';
@@ -223,12 +231,15 @@ export const isOrderListState = (s: TState): s is IOrderListState => s.name === 
 export const isBulletListState = (s: TState): s is IBulletListState => s.name === 'bullet-list';
 export const isTableState = (s: TState): s is ITableState => s.name === 'table';
 export const isTaskListState = (s: TState): s is ITaskListState => s.name === 'task-list';
-export const isTaskListItemState = (s: TState): s is ITaskListItemState => s.name === 'task-list-item';
+export const isTaskListItemState = (s: TState): s is ITaskListItemState =>
+    s.name === 'task-list-item';
 export const isListItemState = (s: TState): s is IListItemState => s.name === 'list-item';
 export const isTableRowState = (s: TState): s is ITableRowState => s.name === 'table.row';
 export const isFootnoteBlockState = (s: TState): s is IFootnoteBlockState => s.name === 'footnote';
 
-export function isAnyListState(s: TState): s is IOrderListState | IBulletListState | ITaskListState {
+export function isAnyListState(
+    s: TState,
+): s is IOrderListState | IBulletListState | ITaskListState {
     return s.name === 'order-list' || s.name === 'bullet-list' || s.name === 'task-list';
 }
 

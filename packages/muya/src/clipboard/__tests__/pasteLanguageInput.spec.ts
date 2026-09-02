@@ -32,12 +32,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -63,7 +60,11 @@ function pasteEvent(text: string) {
     return {
         preventDefault() {},
         stopPropagation() {},
-        clipboardData: { getData: (t: string) => (t === 'text/plain' ? text : ''), files: [], items: [] },
+        clipboardData: {
+            getData: (t: string) => (t === 'text/plain' ? text : ''),
+            files: [],
+            items: [],
+        },
     } as unknown as ClipboardEvent;
 }
 
@@ -78,14 +79,14 @@ async function pasteInto(muya: Muya, block: Content, text: string): Promise<stri
         type: SelectionCaretType.RANGE,
     });
     await muya.editor.clipboard.pasteHandler(pasteEvent(text), text, '');
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
     return muya.getMarkdown();
 }
 
 describe('paste — into a code block language input (muyajs parity)', () => {
     it('uses only the first line as the language and propagates it', async () => {
         const muya = bootMuya('```\ncode line\n```\n');
-        const langInput = contentBlocks(muya).find(b => b.blockName === 'language-input')!;
+        const langInput = contentBlocks(muya).find((b) => b.blockName === 'language-input')!;
 
         const md = await pasteInto(muya, langInput, 'js\nignored second line');
 

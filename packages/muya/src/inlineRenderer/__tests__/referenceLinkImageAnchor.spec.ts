@@ -45,7 +45,7 @@ describe('reference link with an image anchor (#4865)', () => {
         // stays a standalone image, never a fabricated link.
         const result = tokenizer('[![alt](https://example.com/badge.svg)][missing]');
 
-        expect(result.some(t => t.type === 'reference_link')).toBe(false);
-        expect(result.some(t => t.type === 'image')).toBe(true);
+        expect(result.some((t) => t.type === 'reference_link')).toBe(false);
+        expect(result.some((t) => t.type === 'image')).toBe(true);
     });
 });

@@ -5,29 +5,26 @@ import TurndownService, { usePluginsAddRules } from '../utils/turndownService';
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
 function turnSoftBreakToSpan(html: string) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(
-        `<x-mt id="turn-root">${html}</x-mt>`,
-        'text/html',
-    );
+    const doc = parser.parseFromString(`<x-mt id="turn-root">${html}</x-mt>`, 'text/html');
     const root = doc.querySelector('#turn-root');
     const travel = (childNodes: NodeListOf<ChildNode>) => {
         for (const node of childNodes) {
             if (node.nodeType === Node.TEXT_NODE && node.parentElement?.tagName !== 'CODE') {
                 let startLen = 0;
                 let endLen = 0;
-                const text
-                    = node.nodeValue
-                        ?? ''
-                            .replace(/^(\n+)/, (_, p) => {
-                                startLen = p.length;
+                const text =
+                    node.nodeValue ??
+                    ''
+                        .replace(/^(\n+)/, (_, p) => {
+                            startLen = p.length;
 
-                                return '';
-                            })
-                            .replace(/(\n+)$/, (_, p) => {
-                                endLen = p.length;
+                            return '';
+                        })
+                        .replace(/(\n+)$/, (_, p) => {
+                            endLen = p.length;
 
-                                return '';
-                            });
+                            return '';
+                        });
                 if (/\n/.test(text)) {
                     const tokens = text.split('\n');
                     const params = [];
@@ -36,10 +33,8 @@ function turnSoftBreakToSpan(html: string) {
 
                     for (; i < len; i++) {
                         let text = tokens[i];
-                        if (i === 0 && startLen !== 0)
-                            text = '\n'.repeat(startLen) + text;
-                        else if (i === len - 1 && endLen !== 0)
-                            text = text + '\n'.repeat(endLen);
+                        if (i === 0 && startLen !== 0) text = '\n'.repeat(startLen) + text;
+                        else if (i === len - 1 && endLen !== 0) text = text + '\n'.repeat(endLen);
 
                         params.push(document.createTextNode(text));
                         if (i !== len - 1) {
@@ -50,8 +45,7 @@ function turnSoftBreakToSpan(html: string) {
                     }
                     node.replaceWith(...params);
                 }
-            }
-            else if (node.nodeType === Node.ELEMENT_NODE) {
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
                 travel(node.childNodes);
             }
         }
@@ -65,11 +59,7 @@ export default class HtmlToMarkdown {
     private _options: ITurnoverOptions;
 
     constructor(options = {}) {
-        this._options = Object.assign(
-            {},
-            DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions,
-            options,
-        );
+        this._options = Object.assign({}, DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions, options);
     }
 
     generate(html: string): string {

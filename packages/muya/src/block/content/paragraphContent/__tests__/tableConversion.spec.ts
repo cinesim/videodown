@@ -32,10 +32,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -48,7 +46,7 @@ function bootMuya(markdown: string): Muya {
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 // The first content leaf of the document — for these specs always the single
@@ -63,9 +61,8 @@ function findTable(muya: Muya): Table | null {
         constructor: { blockName?: string };
         children?: { forEach: (cb: (b: unknown) => void) => void };
     }) => {
-        if (block.constructor.blockName === 'table')
-            table = block as unknown as Table;
-        block.children?.forEach(b => visit(b as typeof block));
+        if (block.constructor.blockName === 'table') table = block as unknown as Table;
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
     return table;
@@ -128,7 +125,7 @@ describe('paragraphContent.enterHandler — pipe-table conversion', () => {
         expect(cell!.columnOffset).toBe(0);
     });
 
-    it('keeps the header text in the first row\'s cells', async () => {
+    it("keeps the header text in the first row's cells", async () => {
         const muya = bootMuya('placeholder');
 
         enterWithText(muya, '| a | b |');
@@ -143,7 +140,7 @@ describe('paragraphContent.enterHandler — pipe-table conversion', () => {
         expect(headerRow.children[1].text).toBe(' b ');
         // The body row is empty.
         const bodyRow = tableState.children[1];
-        expect(bodyRow.children.every(c => c.text === '')).toBe(true);
+        expect(bodyRow.children.every((c) => c.text === '')).toBe(true);
     });
 
     it('converts `| a | b | c |` into a 3-column table', async () => {
@@ -172,7 +169,7 @@ describe('paragraphContent.enterHandler — pipe-table conversion', () => {
         // branch is skipped and the default super.enterHandler splits the
         // paragraph instead (no table is created).
         expect(findTable(muya)).toBeNull();
-        expect(state.every(block => block.name === 'paragraph')).toBe(true);
+        expect(state.every((block) => block.name === 'paragraph')).toBe(true);
         // The original content leaf survives as a paragraph content block.
         expect(content.blockName).toBe('paragraph.content');
     });

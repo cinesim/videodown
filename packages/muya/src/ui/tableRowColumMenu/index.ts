@@ -44,24 +44,24 @@ export class TableRowColumMenu extends BaseFloat {
     override listen() {
         super.listen();
         const { eventCenter } = this.muya;
-        eventCenter.subscribe(
-            'muya-table-bar',
-            ({ reference, tableInfo, block }) => {
-                if (reference) {
-                    this._tableInfo = tableInfo;
-                    this._block = block;
-                    this.show(reference);
-                    this.render();
-                }
-                else {
-                    this.hide();
-                }
-            },
-        );
+        eventCenter.subscribe('muya-table-bar', ({ reference, tableInfo, block }) => {
+            if (reference) {
+                this._tableInfo = tableInfo;
+                this._block = block;
+                this.show(reference);
+                this.render();
+            } else {
+                this.hide();
+            }
+        });
     }
 
     render() {
-        const { _tableInfo: tableInfo, _oldVNode: oldVNode, _tableBarContainer: tableBarContainer } = this;
+        const {
+            _tableInfo: tableInfo,
+            _oldVNode: oldVNode,
+            _tableBarContainer: tableBarContainer,
+        } = this;
         const { i18n } = this.muya;
         const renderArray: MenuItem[] = toolList[tableInfo!.barType];
         const children = renderArray.map((item) => {
@@ -87,10 +87,8 @@ export class TableRowColumMenu extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(tableBarContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(tableBarContainer, vnode);
 
         this._oldVNode = vnode;
     }
@@ -110,26 +108,21 @@ export class TableRowColumMenu extends BaseFloat {
             if (target === 'row') {
                 const offset = location === 'previous' ? rowCount : rowCount + 1;
                 cursorBlock = table.insertRow(offset);
-            }
-            else {
+            } else {
                 const offset = location === 'left' ? columnCount : columnCount + 1;
                 cursorBlock = table.insertColumn(offset);
             }
 
-            if (cursorBlock)
-                cursorBlock.setCursor(0, 0);
-        }
-        else {
+            if (cursorBlock) cursorBlock.setCursor(0, 0);
+        } else {
             // After a row/column delete, the caret used to live inside a
             // now-detached cell. The table
             // mutators now return a surviving neighbour cell's content so we
             // can re-anchor the caret on a still-attached cell.
-            const cursorBlock = target === 'row'
-                ? table.removeRow(rowCount)
-                : table.removeColumn(columnCount);
+            const cursorBlock =
+                target === 'row' ? table.removeRow(rowCount) : table.removeColumn(columnCount);
 
-            if (cursorBlock)
-                cursorBlock.setCursor(0, 0);
+            if (cursorBlock) cursorBlock.setCursor(0, 0);
         }
 
         this.hide();

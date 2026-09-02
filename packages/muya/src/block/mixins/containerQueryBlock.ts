@@ -11,8 +11,7 @@ class IContainerQueryBlock {
         if (typeof path[0] === 'string' && /children|meta|align|type|lang/.test(path[0]))
             path.shift();
 
-        if (path.length === 0)
-            return this;
+        if (path.length === 0) return this;
 
         const p = path.shift() as number;
         // `find(p)` returns either a Parent (which the mixin extends with
@@ -20,11 +19,11 @@ class IContainerQueryBlock {
         // path segments remain — by that point the runtime contract is
         // that the block is a Parent. Express the queryable shape directly
         // instead of casting to `any`.
-        const block = this.find(p) as (Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined }) | Content;
+        const block = this.find(p) as
+            | (Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined })
+            | Content;
 
-        return block && path.length && 'queryBlock' in block
-            ? block.queryBlock(path)
-            : block;
+        return block && path.length && 'queryBlock' in block ? block.queryBlock(path) : block;
     }
 }
 

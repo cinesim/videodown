@@ -15,35 +15,27 @@ class DiagramBlock extends Parent {
     static create(muya: Muya, state: IDiagramState) {
         const diagramBlock = new DiagramBlock(muya, state);
         const { lang } = state.meta;
-        const diagramPreview = ScrollPage.loadBlock('diagram-preview').create(
-            muya,
-            state,
-        );
-        const diagramContainer = ScrollPage.loadBlock('diagram-container').create(
-            muya,
-            state,
-        );
+        const diagramPreview = ScrollPage.loadBlock('diagram-preview').create(muya, state);
+        const diagramContainer = ScrollPage.loadBlock('diagram-container').create(muya, state);
 
         diagramBlock.appendAttachment(diagramPreview);
         diagramBlock.append(diagramContainer);
 
-        !!lang
-        && loadLanguage(lang)
-            .then((infoList) => {
-                if (!Array.isArray(infoList))
-                    return;
-                // There are three status `loaded`, `noexist` and `cached`.
-                // if the status is `loaded`, indicated that it's a new loaded language
-                const needRender = infoList.some(
-                    ({ status }) => status === 'loaded' || status === 'cached',
-                );
-                if (needRender)
-                    diagramBlock.lastContentInDescendant()?.update();
-            })
-            .catch((err) => {
-                // if no parameter provided, will cause error.
-                debug.warn(err);
-            });
+        !!lang &&
+            loadLanguage(lang)
+                .then((infoList) => {
+                    if (!Array.isArray(infoList)) return;
+                    // There are three status `loaded`, `noexist` and `cached`.
+                    // if the status is `loaded`, indicated that it's a new loaded language
+                    const needRender = infoList.some(
+                        ({ status }) => status === 'loaded' || status === 'cached',
+                    );
+                    if (needRender) diagramBlock.lastContentInDescendant()?.update();
+                })
+                .catch((err) => {
+                    // if no parameter provided, will cause error.
+                    debug.warn(err);
+                });
 
         return diagramBlock;
     }
@@ -64,17 +56,14 @@ class DiagramBlock extends Parent {
     }
 
     queryBlock(path: TBlockPath) {
-        return path.length && path[0] === 'text'
-            ? this.firstContentInDescendant()
-            : this;
+        return path.length && path[0] === 'text' ? this.firstContentInDescendant() : this;
     }
 
     override getState(): IDiagramState {
         const { meta } = this;
         const text = this.firstContentInDescendant()?.text;
 
-        if (text == null)
-            throw new Error('text is null when getState in diagram block.');
+        if (text == null) throw new Error('text is null when getState in diagram block.');
 
         return {
             name: 'diagram',

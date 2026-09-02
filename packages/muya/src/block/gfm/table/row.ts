@@ -17,7 +17,7 @@ class TableRow extends Parent {
         const row = new TableRow(muya);
 
         row.append(
-            ...state.children.map(child =>
+            ...state.children.map((child) =>
                 ScrollPage.loadBlock('table.cell').create(muya, child),
             ),
         );
@@ -43,7 +43,7 @@ class TableRow extends Parent {
     override getState(): ITableRowState {
         const state: ITableRowState = {
             name: 'table.row',
-            children: this.map(node => (node as TableBodyCell).getState()),
+            children: this.map((node) => (node as TableBodyCell).getState()),
         };
 
         return state;

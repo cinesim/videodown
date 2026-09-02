@@ -14,10 +14,7 @@ export default function hardLineBreak(
             h(`span.${className}`, h(`span.${spaceClass}`, spaces)),
             h(`span.${CLASS_NAMES.MU_LINE_END}`, lineBreak),
         ];
-    }
-    else {
-        return [
-            h(`span.${className}`, [h(`span.${spaceClass}`, spaces), lineBreak]),
-        ];
+    } else {
+        return [h(`span.${className}`, [h(`span.${spaceClass}`, spaces), lineBreak])];
     }
 }

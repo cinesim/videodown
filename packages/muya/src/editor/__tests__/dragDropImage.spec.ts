@@ -61,12 +61,10 @@ interface IMockMuya {
 function makeAnchor(anchorDom: HTMLElement): Parent {
     const parent = {
         insertBefore: (newBlock: { record?: { insertedBefore: boolean } }) => {
-            if (newBlock.record)
-                newBlock.record.insertedBefore = true;
+            if (newBlock.record) newBlock.record.insertedBefore = true;
         },
         insertAfter: (newBlock: { record?: { insertedAfter: boolean } }) => {
-            if (newBlock.record)
-                newBlock.record.insertedAfter = true;
+            if (newBlock.record) newBlock.record.insertedAfter = true;
         },
     };
     return {
@@ -201,8 +199,7 @@ function webImageDataTransfer(url: string, html = `<img src="${url}">`): DataTra
 // Drain the microtask queue so the chained getAsString → checkImageContentType
 // promise in `handleWebLinkImage` settles before assertions.
 async function flushMicrotasks(): Promise<void> {
-    for (let i = 0; i < 5; i++)
-        await Promise.resolve();
+    for (let i = 0; i < 5; i++) await Promise.resolve();
 }
 
 describe('attachDragDropImageHandlers — web-link image', () => {

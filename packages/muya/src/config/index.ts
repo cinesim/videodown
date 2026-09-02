@@ -58,15 +58,7 @@ export const FORMAT_TAG_MAP: Record<string, ITag> = {
     },
 };
 
-export const FORMAT_TYPES = [
-    'strong',
-    'em',
-    'del',
-    'inline_code',
-    'link',
-    'image',
-    'inline_math',
-];
+export const FORMAT_TYPES = ['strong', 'em', 'del', 'inline_code', 'link', 'image', 'inline_math'];
 
 export const PARAGRAPH_STATE = {
     name: 'paragraph',
@@ -287,10 +279,10 @@ export const BRACKET_HASH: Record<string, string> = {
     '[': ']',
     '(': ')',
     '*': '*',
-    '_': '_',
+    _: '_',
     '"': '"',
-    '\'': '\'',
-    '$': '$',
+    "'": "'",
+    $: '$',
     '~': '~',
 };
 
@@ -299,10 +291,10 @@ export const BACK_HASH: Record<string, string> = {
     ']': '[',
     ')': '(',
     '*': '*',
-    '_': '_',
+    _: '_',
     '"': '"',
-    '\'': '\'',
-    '$': '$',
+    "'": "'",
+    $: '$',
     '~': '~',
 };
 
@@ -361,7 +353,7 @@ export const punctuation = [
     '$',
     '%',
     '&',
-    '\'',
+    "'",
     '(',
     ')',
     '*',
@@ -390,24 +382,21 @@ export const punctuation = [
 ];
 // Electron detection (kept for reference; renderer-process check).
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
-export const isFirefox
-    = typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox');
-export const isOsx
-    = typeof window !== 'undefined'
-        && window.navigator
-        && /Mac/.test(window.navigator.userAgent);
-export const isWin
-    = typeof window !== 'undefined'
-        && window.navigator
-        && /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
+export const isFirefox =
+    typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox');
+export const isOsx =
+    typeof window !== 'undefined' && window.navigator && /Mac/.test(window.navigator.userAgent);
+export const isWin =
+    typeof window !== 'undefined' &&
+    window.navigator &&
+    /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
 // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
-export const URL_REG
-    = /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
+export const URL_REG =
+    /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
 // A fully-formed base64/percent-encoded image data URL, e.g.
 // `data:image/png;base64,iVBORw0KGg...`. A bare `data:image/` prefix is not
 // treated as a safe-to-embed source.
-export const DATA_URL_REG
-    = /^data:image\/[\w+-]+(?:;[\w-]+=[\w-]+|;base64)*,[a-zA-Z0-9+/]+={0,2}$/;
+export const DATA_URL_REG = /^data:image\/[\w+-]+(?:;[\w-]+=[\w-]+|;base64)*,[a-zA-Z0-9+/]+={0,2}$/;
 export const PREVIEW_DOMPURIFY_CONFIG = {
     // do not forbid `class` because `code` element use class to present language.
     // `style` is allowed (matching EXPORT_DOMPURIFY_CONFIG) so inline-styled HTML
@@ -436,7 +425,7 @@ export const EXPORT_DOMPURIFY_CONFIG = {
     RETURN_TRUSTED_TYPE: false,
     // Allow "file" protocol to export images on Windows (#1997).
     ALLOWED_URI_REGEXP:
-    /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
+        /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
 };
 export const DEFAULT_SEARCH_OPTIONS = {
     isCaseSensitive: false,
@@ -465,13 +454,10 @@ export const DEFAULT_TURNDOWN_CONFIG = {
         node: Element & { isBlock?: boolean },
         _options: unknown,
     ) {
-        if (node && node.classList.contains(CLASS_NAMES.MU_SOFT_LINE_BREAK))
-            return LINE_BREAK;
+        if (node && node.classList.contains(CLASS_NAMES.MU_SOFT_LINE_BREAK)) return LINE_BREAK;
         else if (node && node.classList.contains(CLASS_NAMES.MU_HARD_LINE_BREAK))
             return `  ${LINE_BREAK}`;
-        else if (node && node.classList.contains(CLASS_NAMES.MU_HARD_LINE_BREAK_SPACE))
-            return '';
-        else
-            return node.isBlock ? '\n\n' : '';
+        else if (node && node.classList.contains(CLASS_NAMES.MU_HARD_LINE_BREAK_SPACE)) return '';
+        else return node.isBlock ? '\n\n' : '';
     },
 };

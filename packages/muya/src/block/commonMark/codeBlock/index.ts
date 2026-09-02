@@ -19,10 +19,7 @@ class CodeBlock extends Parent {
         const codeBlock = new CodeBlock(muya, state);
         const { lang } = state.meta;
 
-        const langInput = ScrollPage.loadBlock('language-input').create(
-            muya,
-            state,
-        );
+        const langInput = ScrollPage.loadBlock('language-input').create(muya, state);
         const code = ScrollPage.loadBlock('code').create(muya, state);
 
         codeBlock.append(langInput);
@@ -74,23 +71,21 @@ class CodeBlock extends Parent {
 
         // `value` is the full info string; load Prism for its first word only.
         const language = firstWordOfInfo(value);
-        !!language
-        && loadLanguage(language)
-            .then((infoList) => {
-                if (!Array.isArray(infoList))
-                    return;
-                // There are three status `loaded`, `noexist` and `cached`.
-                // if the status is `loaded`, indicated that it's a new loaded language
-                const needRender = infoList.some(
-                    ({ status }) => status === 'loaded' || status === 'cached',
-                );
-                if (needRender)
-                    this.lastContentInDescendant()?.update();
-            })
-            .catch((err) => {
-                // if no parameter provided, will cause error.
-                debug.warn(err);
-            });
+        !!language &&
+            loadLanguage(language)
+                .then((infoList) => {
+                    if (!Array.isArray(infoList)) return;
+                    // There are three status `loaded`, `noexist` and `cached`.
+                    // if the status is `loaded`, indicated that it's a new loaded language
+                    const needRender = infoList.some(
+                        ({ status }) => status === 'loaded' || status === 'cached',
+                    );
+                    if (needRender) this.lastContentInDescendant()?.update();
+                })
+                .catch((err) => {
+                    // if no parameter provided, will cause error.
+                    debug.warn(err);
+                });
     }
 
     override get path(): TBlockPath {
@@ -105,22 +100,17 @@ class CodeBlock extends Parent {
         this.tagName = 'pre';
         this.meta = meta;
         this.classList = ['mu-code-block', `mu-${meta.type}-code`];
-        if (muya.options.codeBlockLineNumbers)
-            this.classList.push('mu-line-numbers');
+        if (muya.options.codeBlockLineNumbers) this.classList.push('mu-line-numbers');
         this.createDomNode();
     }
 
     queryBlock(path: TBlockPath) {
         if (path.length === 0) {
             return this;
-        }
-        else {
-            if (path[0] === 'meta' || path[0] === 'type')
-                return this;
-            else if (path[0] === 'lang')
-                return this.firstContentInDescendant();
-            else
-                return this.lastContentInDescendant();
+        } else {
+            if (path[0] === 'meta' || path[0] === 'type') return this;
+            else if (path[0] === 'lang') return this.firstContentInDescendant();
+            else return this.lastContentInDescendant();
         }
     }
 

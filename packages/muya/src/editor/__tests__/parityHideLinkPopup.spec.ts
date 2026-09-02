@@ -30,12 +30,9 @@ afterEach(() => {
     // `destroy()` detaches the engine's DOM listeners — including the
     // `document`-level handlers registered during init — and removes the host
     // node, so listeners don't leak across tests.
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, options: Record<string, unknown> = {}): Muya {
@@ -65,7 +62,7 @@ function hover(link: HTMLElement): void {
 // A `muya-link-tools` payload with a truthy `reference` opens the popover; a
 // null reference hides it. Count only the popover-opening emits.
 function countOpenEmits(handler: ReturnType<typeof vi.fn>): number {
-    return handler.mock.calls.filter(c => c[0]?.reference).length;
+    return handler.mock.calls.filter((c) => c[0]?.reference).length;
 }
 
 describe('parity PG12: hideLinkPopup gates the link hover popover', () => {
@@ -80,17 +77,14 @@ describe('parity PG12: hideLinkPopup gates the link hover popover', () => {
         expect(countOpenEmits(handler)).toBe(1);
     });
 
-    it(
-        'PG12: with hideLinkPopup=true, hovering a preview link does NOT open the popover',
-        () => {
-            const muya = bootMuya('[hello](https://example.com)\n', { hideLinkPopup: true });
-            const link = previewLink(muya);
+    it('PG12: with hideLinkPopup=true, hovering a preview link does NOT open the popover', () => {
+        const muya = bootMuya('[hello](https://example.com)\n', { hideLinkPopup: true });
+        const link = previewLink(muya);
 
-            const handler = vi.fn();
-            muya.on('muya-link-tools', handler);
-            hover(link);
+        const handler = vi.fn();
+        muya.on('muya-link-tools', handler);
+        hover(link);
 
-            expect(countOpenEmits(handler)).toBe(0);
-        },
-    );
+        expect(countOpenEmits(handler)).toBe(0);
+    });
 });

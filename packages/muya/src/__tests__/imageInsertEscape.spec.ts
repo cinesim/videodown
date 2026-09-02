@@ -22,13 +22,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -53,9 +50,8 @@ function insertImageAtStart(muya: Muya, src: string): Format {
 // no image token is produced or its src stops short.
 function roundTripImageSrc(text: string): string {
     const tokens = tokenizer(text, { options: {} as never });
-    const image = tokens.find(t => t.type === 'image');
-    if (!image)
-        throw new Error(`no image token parsed from ${JSON.stringify(text)}`);
+    const image = tokens.find((t) => t.type === 'image');
+    if (!image) throw new Error(`no image token parsed from ${JSON.stringify(text)}`);
     return decodeURIComponent((image as { src: string }).src);
 }
 

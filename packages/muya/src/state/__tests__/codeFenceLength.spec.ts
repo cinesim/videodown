@@ -35,7 +35,7 @@ describe('code fence length (#1841)', () => {
         // Re-parsing must still yield a single code block whose body keeps the
         // inner ``` — i.e. the round trip did not corrupt the document.
         const reparsed = gen(md) as Array<{ name: string; text?: string }>;
-        const codeBlocks = reparsed.filter(b => b.name === 'code-block');
+        const codeBlocks = reparsed.filter((b) => b.name === 'code-block');
         expect(codeBlocks).toHaveLength(1);
         expect(codeBlocks[0].text).toContain('```');
     });

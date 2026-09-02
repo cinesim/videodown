@@ -41,9 +41,10 @@ root holds only shared tooling and CI-facing scripts.
                             proxies to packages/desktop via `bun run --filter
                             marktext ...`. CI invocations are unchanged.
   bun.lock                  Single lockfile, shared across all packages.
-  eslint.config.js          Root ESLint v9 flat config (covers desktop +
-                            muyajs; website has its own ESLint v8 config
-                            and is ignored here).
+  .oxlintrc.json            Root Oxlint config. Package-local configs cover
+                            muya and the website.
+  .oxfmtrc.json             Root Oxfmt config (muya overrides its 4-space,
+                            semicolon style in a nested config).
   scripts/                  Workspace-level scripts. postinstall.ts,
                             minify-locales.ts, generateThirdPartyLicense.ts,
                             validateLicenses.ts, thirdPartyChecker.ts all
@@ -114,8 +115,8 @@ root holds only shared tooling and CI-facing scripts.
                             (name: "@muyajs/core"; upstream:
                             https://github.com/marktext/muya). Built on
                             ot-json1 + ot-text-unicode + snabbdom + marked@16
-                            + rxjs. Self-contained: own eslint config
-                            (antfu), own stylelint, own madge, own vitest
+                            + rxjs. Self-contained: own Oxlint/Oxfmt configs,
+                            own stylelint, own madge, own vitest
                             spec suites (CommonMark + GFM). Now the editor
                             engine the desktop renderer consumes; legacy
                             packages/muyajs is being retired. See
@@ -161,7 +162,7 @@ bun run start
 # Build without packaging — fast path for verifying the renderer/main compile
 bun run build:unpack
 
-# Auto-format the repo with Prettier (separate from `lint`, which only checks)
+# Auto-format the repo with Oxfmt (separate from `lint`, which only checks)
 bun run format
 
 # Minify locale files (required for production builds, skip during dev)
@@ -195,7 +196,7 @@ All platform build scripts automatically run `minify-locales` and `electron-rebu
 bun run test          # All unit tests (Vitest)
 bun run test:unit     # Unit tests only
 bun run test:e2e      # End-to-end tests (Playwright)
-bun run lint          # ESLint (run before committing; CI enforces)
+bun run lint          # Oxlint (run before committing; CI enforces)
 bun run typecheck     # vue-tsc --noEmit (CI enforces)
 
 # Run a single spec — paths are relative to packages/desktop.
@@ -209,7 +210,7 @@ bun run --cwd packages/desktop playwright test -g 'partial test name'
 
 ## Code Style
 
-Enforced by ESLint + Prettier. Run `bun run lint` and `bun run typecheck` before committing.
+Enforced by Oxlint + Oxfmt. Run `bun run check` before committing.
 
 - 2-space indentation
 - No semicolons

@@ -60,11 +60,10 @@ class TreeNode implements ILinkedNode {
         // subclass — but the base-class type signature is `TreeNode`. The
         // `this as Parent` widening can't be expressed without a cast.
         // eslint-disable-next-line no-restricted-syntax
-        let node = this.isContent() ? this.parent : this as unknown as Parent;
+        let node = this.isContent() ? this.parent : (this as unknown as Parent);
 
         while (node) {
-            if (node.isOutMostBlock)
-                return node;
+            if (node.isOutMostBlock) return node;
 
             node = node.parent;
         }
@@ -115,8 +114,7 @@ class TreeNode implements ILinkedNode {
 
     // Get previous content block in block tree.
     previousContentInContext(): Nullable<Content> {
-        if (this.isScrollPage || !this.parent)
-            return null;
+        if (this.isScrollPage || !this.parent) return null;
 
         const { parent } = this;
 
@@ -128,10 +126,8 @@ class TreeNode implements ILinkedNode {
         while (sibling) {
             if (sibling.isParent()) {
                 const content = sibling.lastContentInDescendant();
-                if (content)
-                    return content;
-            }
-            else {
+                if (content) return content;
+            } else {
                 return sibling; // language input
             }
             sibling = sibling.prev;
@@ -142,13 +138,11 @@ class TreeNode implements ILinkedNode {
 
     // Get next content block in block tree.
     nextContentInContext(): Nullable<Content> {
-        if (this.isScrollPage || !this.parent)
-            return null;
+        if (this.isScrollPage || !this.parent) return null;
 
         const { parent } = this;
 
-        if (this.blockName === 'language-input')
-            return parent.lastContentInDescendant();
+        if (this.blockName === 'language-input') return parent.lastContentInDescendant();
 
         // Walk next siblings, skipping empty containers with no content
         // descendant so the caret can cross them instead of getting stuck (#4644).
@@ -156,10 +150,8 @@ class TreeNode implements ILinkedNode {
         while (sibling) {
             if (sibling.isParent()) {
                 const content = sibling.firstContentInDescendant();
-                if (content)
-                    return content;
-            }
-            else {
+                if (content) return content;
+            } else {
                 return sibling; // language input
             }
             sibling = sibling.next;
@@ -196,8 +188,7 @@ class TreeNode implements ILinkedNode {
     isInBlock(block: Parent) {
         let parent = this.parent;
         while (parent) {
-            if (parent === block)
-                return true;
+            if (parent === block) return true;
 
             parent = parent.parent;
         }
@@ -210,14 +201,12 @@ class TreeNode implements ILinkedNode {
      * @param {string} blockName
      */
     closestBlock(blockName: string): Nullable<TreeNode> {
-        if (this.blockName === blockName)
-            return this;
+        if (this.blockName === blockName) return this;
 
         let parent = this.parent;
 
         while (parent) {
-            if (parent.blockName === blockName)
-                return parent;
+            if (parent.blockName === blockName) return parent;
 
             parent = parent.parent;
         }
@@ -227,14 +216,12 @@ class TreeNode implements ILinkedNode {
 
     farthestBlock(blockName: string): Nullable<TreeNode> {
         const results: TreeNode[] = [];
-        if (this.blockName === blockName)
-            results.push(this);
+        if (this.blockName === blockName) results.push(this);
 
         let parent = this.parent;
 
         while (parent) {
-            if (parent.blockName === blockName)
-                results.push(parent);
+            if (parent.blockName === blockName) results.push(parent);
 
             parent = parent.parent;
         }
@@ -244,11 +231,9 @@ class TreeNode implements ILinkedNode {
     }
 
     insertInto(parent: Parent, refBlock: Nullable<Parent> = null) {
-        if (this.parent === parent && this.next === refBlock)
-            return;
+        if (this.parent === parent && this.next === refBlock) return;
 
-        if (this.parent)
-            this.parent.removeChild(this);
+        if (this.parent) this.parent.removeChild(this);
 
         // `parent.insertBefore` takes a Parent (the tree's internal linked
         // list operates on Parent), but TreeNode.insertInto is also called
@@ -261,8 +246,7 @@ class TreeNode implements ILinkedNode {
      * Remove the current block in the block tree.
      */
     remove(_source = 'user') {
-        if (!this.parent)
-            return;
+        if (!this.parent) return;
 
         this.parent.children.remove(this);
         this.parent = null;

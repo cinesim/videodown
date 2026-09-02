@@ -17,15 +17,7 @@ import icons from '../config';
 // platform-dependent) or the `image`/`inline_math`/`clear` entries
 // (which are out of scope for the highlight + underline backports).
 
-const REQUIRED_TYPES = [
-    'strong',
-    'em',
-    'u',
-    'del',
-    'mark',
-    'inline_code',
-    'link',
-] as const;
+const REQUIRED_TYPES = ['strong', 'em', 'u', 'del', 'mark', 'inline_code', 'link'] as const;
 
 describe('inlineFormatToolbar config — required inline format types', () => {
     it('exports an array of icon entries', () => {
@@ -34,14 +26,14 @@ describe('inlineFormatToolbar config — required inline format types', () => {
     });
 
     it.each(REQUIRED_TYPES)('contains an entry for type %s with an icon', (type) => {
-        const entry = icons.find(i => i.type === type);
+        const entry = icons.find((i) => i.type === type);
         expect(entry, `missing config entry for type=${type}`).toBeTruthy();
         expect(entry!.icon, `type=${type} entry has no icon`).toBeTruthy();
     });
 
     it('does not duplicate any required type', () => {
         for (const type of REQUIRED_TYPES) {
-            const matches = icons.filter(i => i.type === type);
+            const matches = icons.filter((i) => i.type === type);
             expect(matches.length, `type=${type} appears ${matches.length} times`).toBe(1);
         }
     });
@@ -53,13 +45,13 @@ describe('inlineFormatToolbar config — required inline format types', () => {
 // match the actual keybinding.
 describe('inlineFormatToolbar config — shortcut labels match default keybindings (#3630)', () => {
     it('inline_code advertises the backtick key, not E', () => {
-        const entry = icons.find(i => i.type === 'inline_code')!;
+        const entry = icons.find((i) => i.type === 'inline_code')!;
         expect(entry.shortcut).toContain('`');
         expect(entry.shortcut).not.toMatch(/\+E$/i);
     });
 
     it('inline_math advertises the M key, not E', () => {
-        const entry = icons.find(i => i.type === 'inline_math')!;
+        const entry = icons.find((i) => i.type === 'inline_math')!;
         expect(entry.shortcut).toMatch(/\+M$/);
         expect(entry.shortcut).not.toMatch(/\+E$/i);
     });

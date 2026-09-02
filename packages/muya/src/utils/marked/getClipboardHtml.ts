@@ -12,8 +12,7 @@ import walkTokens from './walkTokens';
 
 export function getClipBoardHtml(src: string, options: ILexOption = {}) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
-    const { footnote, frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
-        = options;
+    const { footnote, frontMatter, math, isGitlabCompatibilityEnabled, superSubScript } = options;
     let html = '';
 
     // Use a fresh Marked instance per call to avoid polluting the global
@@ -39,11 +38,9 @@ export function getClipBoardHtml(src: string, options: ILexOption = {}) {
         );
     }
 
-    if (superSubScript)
-        marked.use(superSubScriptExtension());
+    if (superSubScript) marked.use(superSubScriptExtension());
 
-    if (footnote)
-        marked.use(footnoteExtension());
+    if (footnote) marked.use(footnoteExtension());
 
     if (frontMatter) {
         const { token, src: newSrc } = fm(src);

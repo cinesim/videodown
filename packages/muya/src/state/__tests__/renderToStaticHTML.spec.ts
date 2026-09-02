@@ -55,9 +55,7 @@ describe('renderToStaticHTML', () => {
     });
 
     it('renders mermaid code blocks as inert <pre><code> placeholders', () => {
-        const html = renderToStaticHTML(
-            '```mermaid\ngraph LR; A-->B\n```',
-        );
+        const html = renderToStaticHTML('```mermaid\ngraph LR; A-->B\n```');
         // Mermaid renderer must not be invoked synchronously; the output
         // should remain a static `<pre><code class="language-mermaid">` with
         // the mermaid source as plain text (escaped, not parsed as HTML).
@@ -70,29 +68,21 @@ describe('renderToStaticHTML', () => {
     });
 
     it('renders vega-lite and plantuml code blocks as inert placeholders', () => {
-        const vega = renderToStaticHTML(
-            '```vega-lite\n{"mark":"bar"}\n```',
-        );
+        const vega = renderToStaticHTML('```vega-lite\n{"mark":"bar"}\n```');
         expect(vega).toMatch(/class="[^"]*language-vega-lite[^"]*"/);
 
-        const puml = renderToStaticHTML(
-            '```plantuml\n@startuml\nA -> B\n@enduml\n```',
-        );
+        const puml = renderToStaticHTML('```plantuml\n@startuml\nA -> B\n@enduml\n```');
         expect(puml).toMatch(/class="[^"]*language-plantuml[^"]*"/);
     });
 
     it('strips inline event-handler attributes via DOMPurify', () => {
-        const html = renderToStaticHTML(
-            '<a href="x" onclick="alert(1)">x</a>',
-        );
+        const html = renderToStaticHTML('<a href="x" onclick="alert(1)">x</a>');
         expect(html).not.toContain('onclick');
         expect(html).not.toContain('alert(1)');
     });
 
     it('strips <script> tags via DOMPurify', () => {
-        const html = renderToStaticHTML(
-            'before\n\n<script>alert(1)</script>\n\nafter',
-        );
+        const html = renderToStaticHTML('before\n\n<script>alert(1)</script>\n\nafter');
         expect(html).not.toMatch(/<script/i);
         expect(html).toContain('before');
         expect(html).toContain('after');
@@ -187,9 +177,7 @@ describe('renderToStaticHTML', () => {
         });
 
         it('honours footnote option (off by default)', () => {
-            const off = renderToStaticHTML(
-                'See [^1].\n\n[^1]: footnote body',
-            );
+            const off = renderToStaticHTML('See [^1].\n\n[^1]: footnote body');
             // With footnote disabled the definition is parsed as a regular
             // paragraph / link-reference and the inline `[^1]` stays literal.
             // No backref section.
@@ -200,11 +188,10 @@ describe('renderToStaticHTML', () => {
             // output into the GFM/pandoc shape: numbered `<sup>` inline +
             // bottom `<section class="footnotes">` with backref arrows. The
             // raw `<div class="footnote-block">` wrapper is lifted away.
-            const on = renderToStaticHTML(
-                'See [^1].\n\n[^1]: footnote body',
-                { footnote: true },
+            const on = renderToStaticHTML('See [^1].\n\n[^1]: footnote body', { footnote: true });
+            expect(on).toMatch(
+                /<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/,
             );
-            expect(on).toMatch(/<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/);
             expect(on).toMatch(/<section class="footnotes">[\s\S]*<\/section>/);
             expect(on).toMatch(/<li id="fn-1">/);
             expect(on).toMatch(/<a href="#fnref-1" class="footnote-backref">/);
@@ -244,20 +231,14 @@ describe('renderToStaticHTML', () => {
         });
 
         it('does NOT strip <script> when sanitize=false', () => {
-            const html = renderToStaticHTML(
-                '<script>alert(1)</script>',
-                { sanitize: false },
-            );
+            const html = renderToStaticHTML('<script>alert(1)</script>', { sanitize: false });
             // marked emits raw HTML blocks as-is — the danger is exactly the
             // point of this mode, hence the docstring warning.
             expect(html).toMatch(/<script>/);
         });
 
         it('still strips <script> when sanitize=true (default)', () => {
-            const html = renderToStaticHTML(
-                '<script>alert(1)</script>',
-                { sanitize: true },
-            );
+            const html = renderToStaticHTML('<script>alert(1)</script>', { sanitize: true });
             expect(html).not.toMatch(/<script/i);
         });
     });

@@ -35,12 +35,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -66,11 +63,21 @@ function pasteEvent(text: string) {
     return {
         preventDefault() {},
         stopPropagation() {},
-        clipboardData: { getData: (t: string) => (t === 'text/plain' ? text : ''), files: [], items: [] },
+        clipboardData: {
+            getData: (t: string) => (t === 'text/plain' ? text : ''),
+            files: [],
+            items: [],
+        },
     } as unknown as ClipboardEvent;
 }
 
-async function paste(muya: Muya, block: Content, start: number, end: number, text: string): Promise<string> {
+async function paste(
+    muya: Muya,
+    block: Content,
+    start: number,
+    end: number,
+    text: string,
+): Promise<string> {
     const path = block.path;
     muya.editor.selection.getSelection = () => ({
         anchor: { offset: start, block, path },
@@ -81,7 +88,7 @@ async function paste(muya: Muya, block: Content, start: number, end: number, tex
         type: SelectionCaretType.RANGE,
     });
     await muya.editor.clipboard.pasteHandler(pasteEvent(text), text, '');
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
     return muya.getMarkdown();
 }
 
@@ -119,7 +126,7 @@ describe('paste — same-type list merges into the enclosing list (A5, muyajs pa
         // Loose item with two paragraphs; cursor in the SECOND ("second"@2).
         const muya = bootMuya('- a\n\n  second\n');
         const blocks = contentBlocks(muya);
-        const second = blocks.find(b => b.text === 'second')!;
+        const second = blocks.find((b) => b.text === 'second')!;
         // 'a' must survive; 'second'@2 -> 'se' + 'x', tail 'cond' sews to 'y'.
         expect(await paste(muya, second, 2, 2, '- x\n- y')).toBe('- a\n\n  sex\n\n- ycond\n');
     });
@@ -138,7 +145,7 @@ describe('paste — same-type list merges into the enclosing list (A5, muyajs pa
     // right after the anchor item, not append them to the end of the list.
     it('inserts pasted items after the anchor item, not at the list end', async () => {
         const muya = bootMuya('- Item A\n- \n- Item B\n');
-        const empty = contentBlocks(muya).find(b => b.text === '')!;
+        const empty = contentBlocks(muya).find((b) => b.text === '')!;
         expect(await paste(muya, empty, 0, 0, '- Item 1\n- Item 2\n- Item 3')).toBe(
             '- Item A\n- Item 1\n- Item 2\n- Item 3\n- Item B\n',
         );
@@ -146,7 +153,7 @@ describe('paste — same-type list merges into the enclosing list (A5, muyajs pa
 
     it('keeps order for an ordered list pasted into the middle', async () => {
         const muya = bootMuya('1. A\n2. \n3. B\n');
-        const empty = contentBlocks(muya).find(b => b.text === '')!;
+        const empty = contentBlocks(muya).find((b) => b.text === '')!;
         expect(await paste(muya, empty, 0, 0, '1. one\n2. two')).toBe(
             '1. A\n2. one\n3. two\n4. B\n',
         );

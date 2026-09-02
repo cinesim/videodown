@@ -17,9 +17,7 @@ class ListItem extends Parent {
         const listItem = new ListItem(muya);
 
         listItem.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock(child.name).create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock(child.name).create(muya, child)),
         );
 
         return listItem;
@@ -42,7 +40,7 @@ class ListItem extends Parent {
     override getState(): IListItemState {
         const state: IListItemState = {
             name: 'list-item',
-            children: this.children.map(child => child.getState()),
+            children: this.children.map((child) => child.getState()),
         };
 
         return state;

@@ -7,7 +7,7 @@ import escapeCharactersMap from '../escapeCharacter';
 // occur across it). The other space entities were already correct.
 describe('escapeCharactersMap — space entity code points (#3840)', () => {
     it('&nbsp; maps to U+00A0 (non-breaking space), not U+0020', () => {
-        expect(escapeCharactersMap['&nbsp;'].codePointAt(0)).toBe(0x00A0);
+        expect(escapeCharactersMap['&nbsp;'].codePointAt(0)).toBe(0x00a0);
     });
 
     it('&ensp; maps to U+2002 (en space)', () => {

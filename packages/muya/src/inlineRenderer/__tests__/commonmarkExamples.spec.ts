@@ -11,7 +11,7 @@ function findByType<TType extends Token['type']>(
     tokens: Token[],
     type: TType,
 ): Extract<Token, { type: TType }> | undefined {
-    return tokens.find(t => t.type === type) as Extract<Token, { type: TType }> | undefined;
+    return tokens.find((t) => t.type === type) as Extract<Token, { type: TType }> | undefined;
 }
 
 // Defensive regression tests for the CommonMark 0.29 spec examples that the
@@ -27,7 +27,7 @@ function findByType<TType extends Token['type']>(
 // patched and what the new muya forked from.
 
 function topTypes(src: string): string[] {
-    return tokenizer(src).map(t => t.type);
+    return tokenizer(src).map((t) => t.type);
 }
 
 describe('inline lexer — CommonMark 0.29 spec examples (marktext 57cd04c5)', () => {
@@ -94,7 +94,7 @@ describe('inline lexer — reference link (marktext d9f64bab)', () => {
             ['ref', { href: 'http://example.com', title: '' }],
         ]);
         const tokens = tokenizer('[text][ref]', { labels });
-        const types = tokens.map(t => t.type);
+        const types = tokens.map((t) => t.type);
         expect(types, `tokens: ${JSON.stringify(types)}`).toContain('reference_link');
     });
 });
@@ -106,7 +106,7 @@ describe('inline lexer — superscript/subscript (marktext 8e32838b)', () => {
     it('parses ^foo^ as a super_sub_script token with `^` marker', () => {
         const tokens = tokenizer('text^sup^');
         const sup = findByType(tokens, 'super_sub_script') as SuperSubScriptToken;
-        expect(sup, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(sup, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBeDefined();
         expect(sup.marker).toBe('^');
         expect(sup.content).toBe('sup');
     });
@@ -114,7 +114,7 @@ describe('inline lexer — superscript/subscript (marktext 8e32838b)', () => {
     it('parses ~bar~ as a super_sub_script token with `~` marker', () => {
         const tokens = tokenizer('text~sub~');
         const sub = findByType(tokens, 'super_sub_script') as SuperSubScriptToken;
-        expect(sub, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(sub, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBeDefined();
         expect(sub.marker).toBe('~');
         expect(sub.content).toBe('sub');
     });
@@ -206,19 +206,19 @@ describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
 describe('inline lexer — repeated bold + inline_code (marktext d937fac0 / #1071)', () => {
     it('emits a strong token for EVERY `**`-wrapped code span in a sequence', () => {
         const tokens = tokenizer('**`word 1`**, **`word 2`**, **`word 3`**');
-        const strongs = tokens.filter(t => t.type === 'strong');
-        expect(strongs.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(3);
+        const strongs = tokens.filter((t) => t.type === 'strong');
+        expect(strongs.length, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBe(3);
         // And each strong must contain a code span, not literal text.
         for (const strong of strongs) {
-            const innerTypes = (strong as StrongEmToken).children.map(c => c.type);
+            const innerTypes = (strong as StrongEmToken).children.map((c) => c.type);
             expect(innerTypes).toContain('inline_code');
         }
     });
 
     it('does not flip the bug to em (single `*` + code) either', () => {
         const tokens = tokenizer('*`word 1`*, *`word 2`*, *`word 3`*');
-        const ems = tokens.filter(t => t.type === 'em');
-        expect(ems.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(3);
+        const ems = tokens.filter((t) => t.type === 'em');
+        expect(ems.length, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBe(3);
     });
 });
 
@@ -232,14 +232,14 @@ describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1
     it('parses image dest containing balanced parens correctly', () => {
         const tokens = tokenizer('![alt](path/to/(file).png)');
         const image = findByType(tokens, 'image') as ImageToken;
-        expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(image, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBeDefined();
         expect(image.src).toBe('path/to/(file).png');
     });
 
     it('parses link dest containing balanced parens correctly', () => {
         const tokens = tokenizer('[text](path/to/(file).html)');
         const link = findByType(tokens, 'link') as LinkToken;
-        expect(link, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(link, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBeDefined();
         expect(link.href).toBe('path/to/(file).html');
     });
 
@@ -251,13 +251,13 @@ describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1
         // the image stops at `first.png` and the rest stays as following text.
         const tokens = tokenizer('see ![alt](first.png) and also (parens) here');
         const image = findByType(tokens, 'image') as ImageToken;
-        expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(image, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBeDefined();
         expect(image.src).toBe('first.png');
         // The trailing text — including the unrelated `(parens)` group — must
         // remain outside the image token. Every Token in our union carries a
         // `raw` field; `?? ''` defends against the rare extension token type
         // that may omit it.
-        const joined = tokens.map(t => t.raw ?? '').join('');
+        const joined = tokens.map((t) => t.raw ?? '').join('');
         expect(joined).toContain('and also (parens) here');
         expect(image.raw).not.toContain('parens');
     });
@@ -270,13 +270,13 @@ describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1
 describe('inline lexer — bold with escaped dollar signs (#3778)', () => {
     it('emits a strong token for every `**`-wrapped span containing an escaped `$`', () => {
         const tokens = tokenizer('It costs **\\$20** to **\\$30** online.');
-        const strongs = tokens.filter(t => t.type === 'strong');
-        expect(strongs.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(2);
+        const strongs = tokens.filter((t) => t.type === 'strong');
+        expect(strongs.length, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBe(2);
     });
 
     it('still emits em for `*`-wrapped spans containing an escaped `$`', () => {
         const tokens = tokenizer('a *\\$1* and *\\$2* b');
-        const ems = tokens.filter(t => t.type === 'em');
-        expect(ems.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(2);
+        const ems = tokens.filter((t) => t.type === 'em');
+        expect(ems.length, `tokens: ${JSON.stringify(tokens.map((t) => t.type))}`).toBe(2);
     });
 });

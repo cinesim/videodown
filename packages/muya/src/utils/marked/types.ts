@@ -61,14 +61,14 @@ export interface IBlockEndToken {
 // (= MarkedToken | Tokens.Generic) so cases like `'table'` narrow cleanly
 // to `Tokens.Table` instead of `Tokens.Table | Tokens.Generic` — the
 // latter would poison field access with the Generic's `[index: string]: any`.
-export type TLexedToken
-    = | Exclude<MarkedToken, Tokens.Heading | Tokens.List | Tokens.ListItem>
-        | Heading
-        | ListToken
-        | ListItemToken
-        | IFootnoteToken
-        | IMultipleMathToken
-        | IFrontmatterToken;
+export type TLexedToken =
+    | Exclude<MarkedToken, Tokens.Heading | Tokens.List | Tokens.ListItem>
+    | Heading
+    | ListToken
+    | ListItemToken
+    | IFootnoteToken
+    | IMultipleMathToken
+    | IFrontmatterToken;
 
 // The working token stream `markdownToState` walks: lexer output plus the
 // synthetic `block-end` markers it injects to pop the parent stack.

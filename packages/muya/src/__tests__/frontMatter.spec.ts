@@ -34,18 +34,17 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, frontmatterType?: string): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
-    const options = { markdown } as ConstructorParameters<typeof Muya>[1] & { frontmatterType?: string };
-    if (frontmatterType !== undefined)
-        options.frontmatterType = frontmatterType;
+    const options = { markdown } as ConstructorParameters<typeof Muya>[1] & {
+        frontmatterType?: string;
+    };
+    if (frontmatterType !== undefined) options.frontmatterType = frontmatterType;
     const muya = new Muya(host, options);
     muya.init();
     bootedHosts.push(muya.domNode);
@@ -66,7 +65,7 @@ function leafAt(muya: Muya, blockIndex: number): Parent {
     return (content as unknown as { parent: Parent }).parent;
 }
 
-describe('muya.updateParagraph(\'front-matter\')', () => {
+describe("muya.updateParagraph('front-matter')", () => {
     it('prepends front matter at document start without touching the cursor block', async () => {
         const muya = bootMuya('first para\n\nsecond para\n');
         // Cursor on the SECOND paragraph — legacy behavior ignores the cursor and
@@ -96,16 +95,16 @@ describe('muya.updateParagraph(\'front-matter\')', () => {
         placeCursorOn(muya, 1);
         muya.updateParagraph('front-matter');
 
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
         const state = muya.getState();
-        const fmCount = state.filter(b => b.name === 'frontmatter').length;
+        const fmCount = state.filter((b) => b.name === 'frontmatter').length;
         expect(fmCount).toBe(1);
         expect(muya.getMarkdown()).toContain('title: hi');
         expect(muya.getMarkdown()).toContain('body');
     });
 
-    it('default frontmatterType (\'-\') inserts a YAML block (--- fences)', async () => {
+    it("default frontmatterType ('-') inserts a YAML block (--- fences)", async () => {
         const muya = bootMuya('body\n');
         placeCursorOn(muya, 0);
         muya.updateParagraph('front-matter');
@@ -118,7 +117,7 @@ describe('muya.updateParagraph(\'front-matter\')', () => {
         expect(muya.getMarkdown().startsWith('---\n')).toBe(true);
     });
 
-    it('frontmatterType \'+\' inserts a TOML block (+++ fences)', async () => {
+    it("frontmatterType '+' inserts a TOML block (+++ fences)", async () => {
         const muya = bootMuya('body\n', '+');
         placeCursorOn(muya, 0);
         muya.updateParagraph('front-matter');
@@ -131,7 +130,7 @@ describe('muya.updateParagraph(\'front-matter\')', () => {
         expect(muya.getMarkdown().startsWith('+++\n')).toBe(true);
     });
 
-    it('frontmatterType \';\' inserts a JSON block (;;; fences)', async () => {
+    it("frontmatterType ';' inserts a JSON block (;;; fences)", async () => {
         const muya = bootMuya('body\n', ';');
         placeCursorOn(muya, 0);
         muya.updateParagraph('front-matter');
@@ -144,7 +143,7 @@ describe('muya.updateParagraph(\'front-matter\')', () => {
         expect(muya.getMarkdown().startsWith(';;;\n')).toBe(true);
     });
 
-    it('frontmatterType \'{\' inserts a JSON block (brace fences)', async () => {
+    it("frontmatterType '{' inserts a JSON block (brace fences)", async () => {
         const muya = bootMuya('body\n', '{');
         placeCursorOn(muya, 0);
         muya.updateParagraph('front-matter');
@@ -202,10 +201,10 @@ describe('quick-insert front matter (replaceBlockByLabel)', () => {
         const block = leafAt(muya, 1);
         replaceBlockByLabel({ block, muya, label: 'frontmatter' });
 
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
         const state = muya.getState();
-        expect(state.filter(b => b.name === 'frontmatter').length).toBe(1);
+        expect(state.filter((b) => b.name === 'frontmatter').length).toBe(1);
         expect(muya.getMarkdown()).toContain('title: hi');
         expect(muya.getMarkdown()).toContain('body');
     });
@@ -256,25 +255,25 @@ describe('front matter delimiter marker', () => {
         expect(pre.classList.contains('mu-frontmatter')).toBe(true);
     });
 
-    it('yaml (default \'-\') shows --- before and after', async () => {
+    it("yaml (default '-') shows --- before and after", async () => {
         const pre = await insertFrontMatter();
         expect(pre.getAttribute('frontMatterStart')).toBe('---');
         expect(pre.getAttribute('frontMatterEnd')).toBe('---');
     });
 
-    it('toml (\'+\') shows +++ before and after', async () => {
+    it("toml ('+') shows +++ before and after", async () => {
         const pre = await insertFrontMatter('+');
         expect(pre.getAttribute('frontMatterStart')).toBe('+++');
         expect(pre.getAttribute('frontMatterEnd')).toBe('+++');
     });
 
-    it('json (\';\') shows ;;; before and after', async () => {
+    it("json (';') shows ;;; before and after", async () => {
         const pre = await insertFrontMatter(';');
         expect(pre.getAttribute('frontMatterStart')).toBe(';;;');
         expect(pre.getAttribute('frontMatterEnd')).toBe(';;;');
     });
 
-    it('json braces (\'{\') shows { before and } after', async () => {
+    it("json braces ('{') shows { before and } after", async () => {
         const pre = await insertFrontMatter('{');
         expect(pre.getAttribute('frontMatterStart')).toBe('{');
         expect(pre.getAttribute('frontMatterEnd')).toBe('}');

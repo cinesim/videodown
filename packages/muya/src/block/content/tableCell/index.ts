@@ -70,8 +70,7 @@ class TableCellContent extends Format {
 
         const br = '<br/>';
 
-        this.text
-            = text.substring(0, start.offset) + br + text.substring(end.offset);
+        this.text = text.substring(0, start.offset) + br + text.substring(end.offset);
         const offset = start.offset + br.length;
         this.setCursor(offset, offset, true);
     }
@@ -81,7 +80,7 @@ class TableCellContent extends Format {
 
         const offset = this._tableInner.offset(this._row);
         const cursorBlock = this.table.insertRow(
-            offset + 1, /* Because insert after the current row */
+            offset + 1 /* Because insert after the current row */,
         );
         cursorBlock.setCursor(0, 0);
     }
@@ -94,15 +93,13 @@ class TableCellContent extends Format {
         let cursorBlock = null;
         if (nextRow) {
             cursorBlock = nextRow.firstContentInDescendant();
-        }
-        else {
+        } else {
             const lastCellContent = row.lastContentInDescendant();
             const nextContent = lastCellContent?.nextContentInContext();
 
             if (nextContent) {
                 cursorBlock = nextContent;
-            }
-            else {
+            } else {
                 const state = {
                     name: 'paragraph',
                     text: '',
@@ -121,65 +118,49 @@ class TableCellContent extends Format {
     }
 
     override enterHandler(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
-        if (event.shiftKey)
-            return this._shiftEnter(event);
+        if (event.shiftKey) return this._shiftEnter(event);
         else if ((isOsx && event.metaKey) || (!isOsx && event.ctrlKey))
             return this._commandEnter(event);
-        else
-            return this._normalEnter(event);
+        else return this._normalEnter(event);
     }
 
     override arrowHandler(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const previousRow = this._findPreviousRow();
         const nextRow = this._findNextRow();
         const { table, _cell: cell, _row: row } = this;
         const offset = row.offset(cell);
-        const tablePrevContent = table.prev
-            ? table.prev.lastContentInDescendant()
-            : null;
-        const tableNextContent = table.next
-            ? table.next.firstContentInDescendant()
-            : null;
+        const tablePrevContent = table.prev ? table.prev.lastContentInDescendant() : null;
+        const tableNextContent = table.next ? table.next.firstContentInDescendant() : null;
 
         if (event.key === EVENT_KEYS.ArrowUp) {
             event.preventDefault();
             if (previousRow) {
-                const cursorBlock = (
-                    previousRow.find(offset) as Cell
-                ).firstContentInDescendant();
+                const cursorBlock = (previousRow.find(offset) as Cell).firstContentInDescendant();
 
                 if (cursorBlock) {
                     const cursorOffset = cursorBlock.text.length;
                     cursorBlock.setCursor(cursorOffset, cursorOffset, true);
                 }
-            }
-            else if (tablePrevContent) {
+            } else if (tablePrevContent) {
                 const cursorOffset = tablePrevContent.text.length;
                 tablePrevContent.setCursor(cursorOffset, cursorOffset, true);
             }
-        }
-        else if (event.key === EVENT_KEYS.ArrowDown) {
+        } else if (event.key === EVENT_KEYS.ArrowDown) {
             event.preventDefault();
 
             if (nextRow) {
-                const cursorBlock = (
-                    nextRow.find(offset) as Cell
-                ).firstContentInDescendant();
+                const cursorBlock = (nextRow.find(offset) as Cell).firstContentInDescendant();
 
                 cursorBlock?.setCursor(0, 0, true);
-            }
-            else {
+            } else {
                 let cursorBlock = null;
                 if (tableNextContent) {
                     cursorBlock = tableNextContent;
-                }
-                else {
+                } else {
                     const state = {
                         name: 'paragraph',
                         text: '',
@@ -195,8 +176,7 @@ class TableCellContent extends Format {
 
                 cursorBlock.setCursor(0, 0, true);
             }
-        }
-        else {
+        } else {
             super.arrowHandler(event);
         }
     }
@@ -205,29 +185,23 @@ class TableCellContent extends Format {
         const { start, end } = this.getCursor()!;
         const previousContentBlock = this.previousContentInContext();
 
-        if (start.offset !== 0 || start.offset !== end.offset)
-            return super.backspaceHandler(event);
+        if (start.offset !== 0 || start.offset !== end.offset) return super.backspaceHandler(event);
 
         event.preventDefault();
         event.stopPropagation();
 
         if (
-            !previousContentBlock
-            || (previousContentBlock.blockName !== 'table.cell.content'
-                && this.table.isEmpty())
+            !previousContentBlock ||
+            (previousContentBlock.blockName !== 'table.cell.content' && this.table.isEmpty())
         ) {
             const state = {
                 name: 'paragraph',
                 text: '',
             };
-            const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
-                this.muya,
-                state,
-            );
+            const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(this.muya, state);
             this.table.replaceWith(newParagraphBlock);
             newParagraphBlock.firstChild.setCursor(0, 0);
-        }
-        else {
+        } else {
             const offset = previousContentBlock.text.length;
             previousContentBlock.setCursor(offset, offset, true);
         }
@@ -247,8 +221,7 @@ class TableCellContent extends Format {
             ? this.previousContentInContext()
             : this.nextContentInContext();
 
-        if (cursorBlock)
-            cursorBlock.setCursor(0, 0, true);
+        if (cursorBlock) cursorBlock.setCursor(0, 0, true);
     }
 
     // The following code is used to fix a bug in Safari,
@@ -261,8 +234,7 @@ class TableCellContent extends Format {
         if (event.type === 'compositionstart' && this.text === '') {
             this._hasZeroWidthSpaceAtBeginning = true;
             this.domNode!.textContent = '\u200B';
-        }
-        else if (event.type === 'compositionend' && this._hasZeroWidthSpaceAtBeginning) {
+        } else if (event.type === 'compositionend' && this._hasZeroWidthSpaceAtBeginning) {
             this._hasZeroWidthSpaceAtBeginning = false;
             const { text } = this;
             const offset = text.length - 1;

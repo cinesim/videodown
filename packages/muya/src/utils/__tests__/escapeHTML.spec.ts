@@ -9,7 +9,7 @@ describe('escapeHTML / unescapeHTML', () => {
         expect(escapeHTML('<')).toBe('&lt;');
         expect(escapeHTML('>')).toBe('&gt;');
         expect(escapeHTML('"')).toBe('&quot;');
-        expect(escapeHTML('\'')).toBe('&#39;');
+        expect(escapeHTML("'")).toBe('&#39;');
         expect(escapeHTML('&')).toBe('&amp;');
     });
 
@@ -25,9 +25,7 @@ describe('escapeHTML / unescapeHTML', () => {
     it('does not double-escape an already-escaped string round-tripped through unescape', () => {
         const malicious = '<script>alert("x")</script>';
         const escaped = escapeHTML(malicious);
-        expect(escaped).toBe(
-            '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;',
-        );
+        expect(escaped).toBe('&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;');
         expect(unescapeHTML(escaped)).toBe(malicious);
     });
 

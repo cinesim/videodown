@@ -34,10 +34,8 @@ afterEach(() => {
     // just-removed host would corrupt the next test's `setCursor`. Clear it so
     // each test starts from a clean selection.
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -255,7 +253,7 @@ describe('format.format() trims selection whitespace before wrapping (#2166)', (
     });
 });
 
-describe('format.format(\'clear\') with the caret inside the run', () => {
+describe("format.format('clear') with the caret inside the run", () => {
     it('strips a strong run to plain text', () => {
         const content = caretInFirstBlock(bootMuya('**word**\n'), 2);
         content.format('clear');
@@ -326,7 +324,7 @@ describe('inline format toolbar is a passive float (#3196)', () => {
 });
 
 describe('format picker collapses after link creation', () => {
-    it('selecting the link button runs content.format(\'link\') and hides the picker', () => {
+    it("selecting the link button runs content.format('link') and hides the picker", () => {
         const muya = bootMuya('abc\n');
         const content = muya.editor.scrollPage!.firstContentInDescendant() as unknown as Format;
         muya.editor.activeContentBlock = content as never;

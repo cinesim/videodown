@@ -39,12 +39,9 @@ afterEach(() => {
     // `destroy()` detaches the engine's DOM listeners — including the
     // `document`-level handlers registered during init — and removes the host
     // node, so listeners don't leak across tests.
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -60,28 +57,35 @@ function bootMuya(markdown: string): Muya {
 // it (the way a click sets `activeContentBlock`).
 function placeCursorOn(muya: Muya, text: string): Content {
     let target: Content | null = null;
-    const visit = (block: { text?: string; constructor: { blockName?: string }; children?: { forEach: (cb: (b: unknown) => void) => void } }) => {
+    const visit = (block: {
+        text?: string;
+        constructor: { blockName?: string };
+        children?: { forEach: (cb: (b: unknown) => void) => void };
+    }) => {
         if (
-            (block.constructor as { blockName?: string }).blockName?.endsWith('.content')
-            && block.text === text
+            (block.constructor as { blockName?: string }).blockName?.endsWith('.content') &&
+            block.text === text
         ) {
             target = block as unknown as Content;
         }
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     muya.editor.activeContentBlock = target;
     return target;
 }
 
-interface IStateNode { name: string; text?: string; children?: IStateNode[] }
+interface IStateNode {
+    name: string;
+    text?: string;
+    children?: IStateNode[];
+}
 
 // Does any block at the TOP level of the document carry this text directly?
 function topLevelHasParagraph(muya: Muya, text: string): boolean {
     return (muya.getState() as unknown as IStateNode[]).some(
-        node => node.name === 'paragraph' && node.text === text,
+        (node) => node.name === 'paragraph' && node.text === text,
     );
 }
 
@@ -91,43 +95,37 @@ function existsAnywhere(muya: Muya, text: string): boolean {
 }
 
 describe('parity PG13: insertParagraph anchors to the immediate block in nested structures', () => {
-    it(
-        'PG13: inserting after a nested list item keeps the new paragraph inside the list, not at document root',
-        async () => {
-            const muya = bootMuya('- outer\n\n  - inner1\n  - inner2\n');
-            placeCursorOn(muya, 'inner1');
+    it('PG13: inserting after a nested list item keeps the new paragraph inside the list, not at document root', async () => {
+        const muya = bootMuya('- outer\n\n  - inner1\n  - inner2\n');
+        placeCursorOn(muya, 'inner1');
 
-            muya.insertParagraph('after', 'INNERSIBLING');
+        muya.insertParagraph('after', 'INNERSIBLING');
 
-            await vi.waitFor(() => {
-                expect(existsAnywhere(muya, 'INNERSIBLING')).toBe(true);
-            });
+        await vi.waitFor(() => {
+            expect(existsAnywhere(muya, 'INNERSIBLING')).toBe(true);
+        });
 
-            // Desired: the new paragraph is an INNER sibling — the top-level
-            // block count is unchanged (still just the one bullet-list) and the
-            // paragraph is NOT a root-level sibling.
-            expect(muya.getState().length).toBe(1);
-            expect(topLevelHasParagraph(muya, 'INNERSIBLING')).toBe(false);
-        },
-    );
+        // Desired: the new paragraph is an INNER sibling — the top-level
+        // block count is unchanged (still just the one bullet-list) and the
+        // paragraph is NOT a root-level sibling.
+        expect(muya.getState().length).toBe(1);
+        expect(topLevelHasParagraph(muya, 'INNERSIBLING')).toBe(false);
+    });
 
-    it(
-        'PG13: inserting after a paragraph inside a blockquote stays inside the blockquote',
-        async () => {
-            const muya = bootMuya('> quoted line\n');
-            placeCursorOn(muya, 'quoted line');
+    it('PG13: inserting after a paragraph inside a blockquote stays inside the blockquote', async () => {
+        const muya = bootMuya('> quoted line\n');
+        placeCursorOn(muya, 'quoted line');
 
-            muya.insertParagraph('after', 'QUOTESIBLING');
+        muya.insertParagraph('after', 'QUOTESIBLING');
 
-            await vi.waitFor(() => {
-                expect(existsAnywhere(muya, 'QUOTESIBLING')).toBe(true);
-            });
+        await vi.waitFor(() => {
+            expect(existsAnywhere(muya, 'QUOTESIBLING')).toBe(true);
+        });
 
-            // Desired: still a single top-level block (the blockquote) with the
-            // new paragraph nested inside it.
-            expect(muya.getState().length).toBe(1);
-            expect(muya.getState()[0].name).toBe('block-quote');
-            expect(topLevelHasParagraph(muya, 'QUOTESIBLING')).toBe(false);
-        },
-    );
+        // Desired: still a single top-level block (the blockquote) with the
+        // new paragraph nested inside it.
+        expect(muya.getState().length).toBe(1);
+        expect(muya.getState()[0].name).toBe('block-quote');
+        expect(topLevelHasParagraph(muya, 'QUOTESIBLING')).toBe(false);
+    });
 });

@@ -35,7 +35,7 @@ const reference = {
     }),
 };
 
-const tick = () => new Promise(resolve => setTimeout(resolve, 20));
+const tick = () => new Promise((resolve) => setTimeout(resolve, 20));
 
 describe('baseFloat hide() vs in-flight position update', () => {
     it('stays hidden when hide() interrupts the initial position update', async () => {

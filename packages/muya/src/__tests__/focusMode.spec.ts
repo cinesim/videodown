@@ -28,16 +28,17 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(options: Partial<ConstructorParameters<typeof Muya>[1]> = {}): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
-    const muya = new Muya(host, { markdown: '# heading\n\nparagraph A\n\nparagraph B\n', ...options } as ConstructorParameters<typeof Muya>[1]);
+    const muya = new Muya(host, {
+        markdown: '# heading\n\nparagraph A\n\nparagraph B\n',
+        ...options,
+    } as ConstructorParameters<typeof Muya>[1]);
     muya.init();
     bootedHosts.push(muya.domNode);
     return muya;

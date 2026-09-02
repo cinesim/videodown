@@ -14,8 +14,7 @@ const debug = logger('diagramPreview:');
 // scales it down to fit instead of clipping it. Returns true once applied.
 function addViewBox(target: HTMLElement): boolean {
     const svg = target.querySelector('svg');
-    if (!svg || svg.getAttribute('viewBox'))
-        return !!svg;
+    if (!svg || svg.getAttribute('viewBox')) return !!svg;
     const width = Number.parseFloat(svg.getAttribute('width') ?? '');
     const height = Number.parseFloat(svg.getAttribute('height') ?? '');
     if (width > 0 && height > 0) {
@@ -30,11 +29,9 @@ function addViewBox(target: HTMLElement): boolean {
 // the element and its `width`/`height` attributes aren't there synchronously.
 // Try once, then observe `target` until the sized `<svg>` appears.
 function ensureViewBox(target: HTMLElement): void {
-    if (addViewBox(target))
-        return;
+    if (addViewBox(target)) return;
     const observer = new MutationObserver(() => {
-        if (addViewBox(target))
-            observer.disconnect();
+        if (addViewBox(target)) observer.disconnect();
     });
     observer.observe(target, {
         childList: true,
@@ -75,8 +72,7 @@ async function renderDiagram({
             theme: vegaTheme,
             ast: true,
         });
-    }
-    else if (type === 'sequence') {
+    } else if (type === 'sequence') {
         Object.assign(options, { theme: sequenceTheme });
     }
 
@@ -84,11 +80,9 @@ async function renderDiagram({
         const diagram = render.parse(code, plantumlServer);
         target.innerHTML = '';
         diagram.insertImgElement(target);
-    }
-    else if (type === 'vega-lite') {
+    } else if (type === 'vega-lite') {
         await render(target, JSON.parse(code), options);
-    }
-    else if (type === 'flowchart' || type === 'sequence') {
+    } else if (type === 'flowchart' || type === 'sequence') {
         const diagram = render.parse(code);
         target.innerHTML = '';
         diagram.drawSVG(target, options);
@@ -97,8 +91,7 @@ async function renderDiagram({
         // clip a wide diagram, not scale it. Derive a viewBox from those pixel
         // dimensions (once the async draw completes) so it scales to fit.
         ensureViewBox(target);
-    }
-    else if (type === 'mermaid') {
+    } else if (type === 'mermaid') {
         render.initialize({
             startOnLoad: false,
             securityLevel: 'strict',
@@ -158,8 +151,7 @@ class DiagramPreview extends Parent {
         event.preventDefault();
         event.stopPropagation();
 
-        if (this.parent == null)
-            return;
+        if (this.parent == null) return;
 
         const cursorBlock = this.parent.firstContentInDescendant();
         cursorBlock?.setCursor(0, 0);
@@ -167,8 +159,7 @@ class DiagramPreview extends Parent {
 
     async update(code = this._code) {
         const { i18n } = this.muya;
-        if (this._code !== code)
-            this._code = code;
+        if (this._code !== code) this._code = code;
 
         if (code) {
             this.domNode!.innerHTML = i18n.t('Loading...');
@@ -185,10 +176,8 @@ class DiagramPreview extends Parent {
                     plantumlServer,
                     sequenceTheme,
                 });
-            }
-            catch (error) {
-                const detail
-                    = error instanceof Error ? error.message : String(error);
+            } catch (error) {
+                const detail = error instanceof Error ? error.message : String(error);
                 debug.error(`render ${type} diagram failed: ${detail}`);
                 this.domNode!.innerHTML = `<div class="mu-diagram-error">&lt; ${i18n.t(
                     'Invalid Diagram Code',
@@ -198,8 +187,7 @@ class DiagramPreview extends Parent {
                     true,
                 )}</div></div>`;
             }
-        }
-        else {
+        } else {
             this.domNode!.innerHTML = `<div class="${CLASS_NAMES.MU_EMPTY}">&lt; ${i18n.t(
                 'Empty Diagram',
             )} &gt;</div>`;

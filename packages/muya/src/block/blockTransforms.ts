@@ -41,12 +41,10 @@ export function frontmatterMeta(frontmatterType: string): IFrontmatterMeta {
  */
 export function insertFrontMatterAtStart(muya: Muya): boolean {
     const { scrollPage } = muya.editor;
-    if (!scrollPage)
-        return false;
+    if (!scrollPage) return false;
 
     const firstBlock = scrollPage.firstChild as Parent | null;
-    if (firstBlock?.blockName === 'frontmatter')
-        return false;
+    if (firstBlock?.blockName === 'frontmatter') return false;
 
     const fmState = deepClone(emptyStates.frontmatter);
     Object.assign(fmState.meta, frontmatterMeta(muya.options.frontmatterType));
@@ -73,8 +71,7 @@ export function insertFrontMatterAtStart(muya: Muya): boolean {
 export function showTablePicker(muya: Muya, block: Parent) {
     const { eventCenter } = muya;
     const reference = getCursorReference() ?? block.domNode;
-    if (!reference)
-        return;
+    if (!reference) return;
 
     const handler = (row: number, column: number) => {
         // The picker's trigger block (a `/table` quick-insert line or the empty
@@ -86,23 +83,21 @@ export function showTablePicker(muya: Muya, block: Parent) {
     eventCenter.emit('muya-table-picker', { row: -1, column: -1 }, reference, handler);
 }
 
-type TLeafReplacementLabel
-    = | 'paragraph'
-        | 'thematic-break'
-        | 'math-block'
-        | 'html-block'
-        | 'code-block'
-        | 'block-quote';
+type TLeafReplacementLabel =
+    | 'paragraph'
+    | 'thematic-break'
+    | 'math-block'
+    | 'html-block'
+    | 'code-block'
+    | 'block-quote';
 
 function buildLeafBlock(label: TLeafReplacementLabel, muya: Muya, text: string) {
     const cloned = deepClone(emptyStates[label]);
     if (cloned.name === 'paragraph') {
         cloned.text = text;
-    }
-    else if (cloned.name === 'block-quote') {
+    } else if (cloned.name === 'block-quote') {
         const inner = cloned.children[0];
-        if (isParagraphState(inner))
-            inner.text = text;
+        if (isParagraphState(inner)) inner.text = text;
     }
 
     return ScrollPage.loadBlock(label).create(muya, cloned);
@@ -124,8 +119,7 @@ function buildOrderListBlock(muya: Muya, text: string) {
     orderState.meta.loose = preferLooseListItem;
     orderState.meta.delimiter = orderListDelimiter;
     const firstChild = orderState.children[0].children[0];
-    if (text && isParagraphState(firstChild))
-        firstChild.text = text;
+    if (text && isParagraphState(firstChild)) firstChild.text = text;
 
     return ScrollPage.loadBlock('order-list').create(muya, orderState);
 }
@@ -136,8 +130,7 @@ function buildListBlock(label: 'bullet-list' | 'task-list', muya: Muya, text: st
     listState.meta.loose = preferLooseListItem;
     listState.meta.marker = bulletListMarker;
     const firstChild = listState.children[0].children[0];
-    if (text && isParagraphState(firstChild))
-        firstChild.text = text;
+    if (text && isParagraphState(firstChild)) firstChild.text = text;
 
     return ScrollPage.loadBlock(label).create(muya, listState);
 }
@@ -147,11 +140,11 @@ function buildDiagramBlock(label: string, muya: Muya) {
 
     const [name, type] = label.split(' ');
     if (
-        type === 'mermaid'
-        || type === 'plantuml'
-        || type === 'vega-lite'
-        || type === 'flowchart'
-        || type === 'sequence'
+        type === 'mermaid' ||
+        type === 'plantuml' ||
+        type === 'vega-lite' ||
+        type === 'flowchart' ||
+        type === 'sequence'
     ) {
         diagramState.meta.type = type;
         diagramState.meta.lang = type === 'vega-lite' ? 'json' : 'yaml';
@@ -161,22 +154,20 @@ function buildDiagramBlock(label: string, muya: Muya) {
 }
 
 export function buildReplacementBlock(label: string, muya: Muya, text: string) {
-    if (label.startsWith('atx-heading '))
-        return buildHeadingBlock(label, muya, text);
-    if (label.startsWith('diagram '))
-        return buildDiagramBlock(label, muya);
+    if (label.startsWith('atx-heading ')) return buildHeadingBlock(label, muya, text);
+    if (label.startsWith('diagram ')) return buildDiagramBlock(label, muya);
 
     switch (label) {
         case 'paragraph':
-            // fall through
+        // fall through
         case 'thematic-break':
-            // fall through
+        // fall through
         case 'math-block':
-            // fall through
+        // fall through
         case 'html-block':
-            // fall through
+        // fall through
         case 'code-block':
-            // fall through
+        // fall through
         case 'block-quote':
             return buildLeafBlock(label, muya, text);
 
@@ -184,7 +175,7 @@ export function buildReplacementBlock(label: string, muya: Muya, text: string) {
             return buildOrderListBlock(muya, text);
 
         case 'bullet-list':
-            // fall through
+        // fall through
         case 'task-list':
             return buildListBlock(label, muya, text);
 
@@ -194,7 +185,12 @@ export function buildReplacementBlock(label: string, muya: Muya, text: string) {
     }
 }
 
-export function replaceBlockByLabel({ block, muya, label, text = '' }: {
+export function replaceBlockByLabel({
+    block,
+    muya,
+    label,
+    text = '',
+}: {
     block: Parent;
     muya: Muya;
     label: string;
@@ -260,8 +256,7 @@ function finishInsertedBlock(newBlock: Parent, muya: Muya, label: string) {
 // html-block, otherwise to the end of its text.
 function placeCaretInNewBlock(newBlock: Parent, label: string) {
     const cursorBlock = newBlock.firstContentInDescendant();
-    if (!cursorBlock)
-        return;
+    if (!cursorBlock) return;
 
     const offset = label === 'html-block' ? 6 : cursorBlock.text.length;
     cursorBlock.setCursor(offset, offset, true);
@@ -271,14 +266,17 @@ function placeCaretInNewBlock(newBlock: Parent, label: string) {
 // (inside the same container), then move the caret into the new block.
 // Used by the Paragraph menu when the target type is not a valid front-menu
 // turn-into of a non-empty block.
-export function insertBlockBelowByLabel({ block, muya, label }: {
+export function insertBlockBelowByLabel({
+    block,
+    muya,
+    label,
+}: {
     block: Parent;
     muya: Muya;
     label: string;
 }) {
     const newBlock = buildReplacementBlock(label, muya, '');
-    if (!newBlock)
-        return;
+    if (!newBlock) return;
     block.parent!.insertAfter(newBlock, block);
     finishInsertedBlock(newBlock, muya, label);
 }
@@ -292,8 +290,7 @@ export function canTurnInto(block: Parent, label: string): boolean {
     switch (blockName) {
         case 'paragraph': {
             const paragraphIsEmpty = /^\s*$/.test(block.firstContentInDescendant()!.text);
-            if (paragraphIsEmpty)
-                return label !== 'frontmatter';
+            if (paragraphIsEmpty) return label !== 'frontmatter';
 
             return /paragraph|atx-heading|block-quote|order-list|bullet-list|task-list/.test(label);
         }
@@ -302,9 +299,9 @@ export function canTurnInto(block: Parent, label: string): boolean {
             return /atx-heading|paragraph/.test(label);
 
         case 'order-list':
-            // fall through
+        // fall through
         case 'bullet-list':
-            // fall through
+        // fall through
         case 'task-list':
             return /order-list|bullet-list|task-list/.test(label);
 

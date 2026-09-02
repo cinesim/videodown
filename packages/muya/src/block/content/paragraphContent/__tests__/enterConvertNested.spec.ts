@@ -29,10 +29,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -53,15 +51,18 @@ function contentByText(muya: Muya, text: string): Content {
     }) => {
         if (block.constructor.blockName?.endsWith('.content') && block.text === text)
             target = block as unknown as Content;
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     return target;
 }
 
-function enterWithText(muya: Muya, content: Content, text: string): { preventDefault: ReturnType<typeof vi.fn> } {
+function enterWithText(
+    muya: Muya,
+    content: Content,
+    text: string,
+): { preventDefault: ReturnType<typeof vi.fn> } {
     muya.editor.activeContentBlock = content;
     content.text = text;
     content.update();
@@ -78,7 +79,7 @@ function enterWithText(muya: Muya, content: Content, text: string): { preventDef
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 interface IStateNode {

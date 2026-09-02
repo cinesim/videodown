@@ -23,11 +23,7 @@ class Tooltip {
         this._cache = new WeakMap();
         const { domNode, eventCenter } = this._muya;
 
-        eventCenter.attachDOMEvent(
-            domNode,
-            'mouseover',
-            this._mouseOver.bind(this),
-        );
+        eventCenter.attachDOMEvent(domNode, 'mouseover', this._mouseOver.bind(this));
     }
 
     private _mouseOver(event) {
@@ -55,11 +51,7 @@ class Tooltip {
                 }
             }, 300);
 
-            eventCenter.attachDOMEvent(
-                toolTipTarget,
-                'mouseleave',
-                this._mouseLeave.bind(this),
-            );
+            eventCenter.attachDOMEvent(toolTipTarget, 'mouseleave', this._mouseLeave.bind(this));
         }
     }
 

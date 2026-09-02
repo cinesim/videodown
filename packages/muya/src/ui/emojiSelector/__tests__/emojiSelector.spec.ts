@@ -14,7 +14,10 @@ import { zhCN } from '../../../locales/zh-CN';
 // (eventCenter, domNode, i18n, ui) and run BaseFloat/BaseScrollFloat for real
 // so the snabbdom render path is exercised end-to-end in happy-dom.
 
-function makeFakeMuya(t: (s: string) => string = (s: string) => s): { muya: Muya; eventCenter: EventCenter } {
+function makeFakeMuya(t: (s: string) => string = (s: string) => s): {
+    muya: Muya;
+    eventCenter: EventCenter;
+} {
     const eventCenter = new EventCenter();
     const editorDomNode = document.createElement('div');
     const editorWrapper = document.createElement('div');
@@ -43,7 +46,17 @@ function stubReference(): HTMLElement {
     // BaseFloat computes position off the reference; happy-dom has no layout,
     // so a stubbed rect keeps autoUpdate from throwing.
     span.getBoundingClientRect = () =>
-        ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+        ({
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            x: 0,
+            y: 0,
+            toJSON: () => '',
+        }) as DOMRect;
     document.body.appendChild(span);
     return span;
 }
@@ -57,8 +70,7 @@ function localeT(resource: Record<string, string>): (s: string) => string {
 const selectors: EmojiSelector[] = [];
 
 afterEach(() => {
-    while (selectors.length)
-        selectors.pop()!.destroy();
+    while (selectors.length) selectors.pop()!.destroy();
     vi.restoreAllMocks();
 });
 
@@ -83,7 +95,11 @@ describe('emojiSelector — render on muya-emoji-picker event', () => {
         const reference = stubReference();
         const setEmoji = vi.fn();
 
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji },
+        });
 
         expect(selector.renderArray.length).toBeGreaterThan(0);
         expect(selector.activeItem).toBe(selector.renderArray[0]);
@@ -92,7 +108,11 @@ describe('emojiSelector — render on muya-emoji-picker event', () => {
 
     it('groups results under category sections and renders one .item per emoji with a span', () => {
         const reference = stubReference();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji: vi.fn() } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji: vi.fn() },
+        });
 
         const sections = selector.floatBox!.querySelectorAll('section');
         expect(sections.length).toBeGreaterThan(0);
@@ -109,7 +129,11 @@ describe('emojiSelector — render on muya-emoji-picker event', () => {
 
     it('hides (no show) when emojiText is empty', () => {
         const reference = stubReference();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: '', block: { setEmoji: vi.fn() } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: '',
+            block: { setEmoji: vi.fn() },
+        });
 
         expect(selector.status).toBe(false);
         expect(selector.renderArray.length).toBe(0);
@@ -138,10 +162,14 @@ describe('emojiSelector — selection', () => {
         selectors.push(selector);
     });
 
-    it('selectItem calls block.setEmoji with the item\'s first alias', () => {
+    it("selectItem calls block.setEmoji with the item's first alias", () => {
         const reference = stubReference();
         const setEmoji = vi.fn();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji },
+        });
 
         const item = selector.renderArray[0];
         selector.selectItem(item);
@@ -150,10 +178,14 @@ describe('emojiSelector — selection', () => {
         expect(setEmoji).toHaveBeenCalledWith(item.aliases[0]);
     });
 
-    it('clicking a rendered item fires setEmoji with that item\'s alias', () => {
+    it("clicking a rendered item fires setEmoji with that item's alias", () => {
         const reference = stubReference();
         const setEmoji = vi.fn();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji },
+        });
 
         const items = selector.floatBox!.querySelectorAll('div.item');
         const second = (items[1] ?? items[0]) as HTMLElement;
@@ -167,7 +199,11 @@ describe('emojiSelector — selection', () => {
     it('step("next") advances activeItem and selecting it routes through setEmoji', () => {
         const reference = stubReference();
         const setEmoji = vi.fn();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji },
+        });
 
         const first = selector.renderArray[0];
         selector.step('next');
@@ -185,9 +221,15 @@ describe('emojiSelector — localized category titles', () => {
         selectors.push(selector);
 
         const reference = stubReference();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji: vi.fn() } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji: vi.fn() },
+        });
 
-        const titles = [...selector.floatBox!.querySelectorAll('section .title')].map(t => t.textContent);
+        const titles = [...selector.floatBox!.querySelectorAll('section .title')].map(
+            (t) => t.textContent,
+        );
         const category = selector.renderArray[0].category;
         expect(titles).toContain((en.resource as Record<string, string>)[category]);
     });
@@ -198,7 +240,11 @@ describe('emojiSelector — localized category titles', () => {
         selectors.push(selector);
 
         const reference = stubReference();
-        eventCenter.emit('muya-emoji-picker', { reference, emojiText: 'smile', block: { setEmoji: vi.fn() } });
+        eventCenter.emit('muya-emoji-picker', {
+            reference,
+            emojiText: 'smile',
+            block: { setEmoji: vi.fn() },
+        });
 
         const category = selector.renderArray[0].category;
         const translated = (zhCN.resource as Record<string, string>)[category];
@@ -206,7 +252,9 @@ describe('emojiSelector — localized category titles', () => {
         expect(translated).toBeTruthy();
         expect(translated).not.toBe(category);
 
-        const titles = [...selector.floatBox!.querySelectorAll('section .title')].map(t => t.textContent);
+        const titles = [...selector.floatBox!.querySelectorAll('section .title')].map(
+            (t) => t.textContent,
+        );
         expect(titles).toContain(translated);
     });
 });

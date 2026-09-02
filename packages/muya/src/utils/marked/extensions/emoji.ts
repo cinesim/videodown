@@ -12,7 +12,7 @@ interface IEmojiToken {
 
 interface IOptions {
     isRenderEmoji?: boolean;
-};
+}
 
 const DEFAULT_OPTIONS = {
     isRenderEmoji: true,
@@ -32,14 +32,12 @@ function getExtension(opts: IOptions) {
         level: 'inline' as const,
         start(src: string) {
             const match = src.match(START_REG);
-            if (!match)
-                return;
+            if (!match) return;
 
             const index = (match.index || 0) + match[1].length;
             const possibleEmoji = src.substring(index);
 
-            if (EMOJI_REG.test(possibleEmoji))
-                return index;
+            if (EMOJI_REG.test(possibleEmoji)) return index;
         },
 
         tokenizer(src: string) {
@@ -60,12 +58,9 @@ function getExtension(opts: IOptions) {
             const { text, marker } = token;
             if (isRenderEmoji) {
                 const validate = validEmoji(text);
-                if (validate)
-                    return validate.emoji;
-                else
-                    return `${marker}${text}${marker}`;
-            }
-            else {
+                if (validate) return validate.emoji;
+                else return `${marker}${text}${marker}`;
+            } else {
                 return `${marker}${text}${marker}`;
             }
         },

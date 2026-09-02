@@ -8,10 +8,7 @@ import fm from './frontMatter';
 import { DEFAULT_OPTIONS } from './options';
 import walkTokens from './walkTokens';
 
-export function lexBlock(
-    src: string,
-    options: ILexOption = DEFAULT_OPTIONS,
-): TLexedToken[] {
+export function lexBlock(src: string, options: ILexOption = DEFAULT_OPTIONS): TLexedToken[] {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
     const { math, frontMatter, footnote } = options;
     let tokens: (Token | IFrontmatterToken)[] = [];

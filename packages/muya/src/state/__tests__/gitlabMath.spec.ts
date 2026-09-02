@@ -37,9 +37,7 @@ function parse(
 }
 
 function serialize(states: IMathLike[]): string {
-    return new ExportMarkdown({ listIndentation: 1 } as never).generate(
-        states as never,
-    );
+    return new ExportMarkdown({ listIndentation: 1 } as never).generate(states as never);
 }
 
 describe('gitlab math — parse promotion (walkTokens)', () => {

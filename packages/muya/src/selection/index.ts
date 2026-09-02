@@ -1,11 +1,7 @@
 import type TableBodyCell from '../block/gfm/table/cell';
 import type { Muya } from '../muya';
 import type { IAnchorFocusInfo, IImageSelectionData, ISelection } from './types';
-import {
-    getCursorCoords,
-    getCursorYOffset,
-    getSelectionStart,
-} from './cursorCoords';
+import { getCursorCoords, getCursorYOffset, getSelectionStart } from './cursorCoords';
 import ImageSelection from './ImageSelection';
 import TableRectSelection from './TableRectSelection';
 import TextSelection from './TextSelection';
@@ -36,18 +32,19 @@ class Selection {
     }
 
     get type(): SelectionType {
-        if (this._image.selected)
-            return SelectionType.IMAGE;
-        if (this._table.hasSelection)
-            return SelectionType.TABLE;
+        if (this._image.selected) return SelectionType.IMAGE;
+        if (this._table.hasSelection) return SelectionType.TABLE;
         return SelectionType.TEXT;
     }
 
     get current(): TextSelection | TableRectSelection | ImageSelection {
         switch (this.type) {
-            case SelectionType.IMAGE: return this._image;
-            case SelectionType.TABLE: return this._table;
-            default: return this._text;
+            case SelectionType.IMAGE:
+                return this._image;
+            case SelectionType.TABLE:
+                return this._table;
+            default:
+                return this._text;
         }
     }
 
@@ -94,12 +91,9 @@ class Selection {
     }
 
     activate(type: SelectionType): void {
-        if (type !== SelectionType.TEXT)
-            this._text.collapse();
-        if (type !== SelectionType.TABLE)
-            this._table.clear();
-        if (type !== SelectionType.IMAGE)
-            this._image.clear();
+        if (type !== SelectionType.TEXT) this._text.collapse();
+        if (type !== SelectionType.TABLE) this._table.clear();
+        if (type !== SelectionType.IMAGE) this._image.clear();
 
         if (type !== SelectionType.TEXT) {
             this._muya.eventCenter.emit('selection-change', {
@@ -136,8 +130,7 @@ class Selection {
             if (tableSelection.isWholeTableSelected()) {
                 tableSelection.clear();
                 this._text.selectAllContent();
-            }
-            else {
+            } else {
                 tableSelection.selectWholeTable();
             }
             return;
@@ -154,7 +147,12 @@ class Selection {
         const focusOffset = live ? live.focus.offset : this._text.focus?.offset;
 
         // A caret or selection contained in a single content block.
-        if (anchorBlock && anchorBlock === focusBlock && anchorOffset != null && focusOffset != null) {
+        if (
+            anchorBlock &&
+            anchorBlock === focusBlock &&
+            anchorOffset != null &&
+            focusOffset != null
+        ) {
             // Inside one table cell: freeze it as a 1x1 rectangle.
             if (anchorBlock.blockName === 'table.cell.content') {
                 const cellBlock = anchorBlock.closestBlock('table.cell') as TableBodyCell | null;
@@ -184,8 +182,7 @@ class Selection {
 export function getCursorReference() {
     const rect = getCursorCoords();
 
-    if (!rect)
-        return null;
+    if (!rect) return null;
 
     return {
         getBoundingClientRect() {

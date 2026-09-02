@@ -44,8 +44,7 @@ class TableRectSelection {
     }
 
     isWholeTableSelected(): boolean {
-        if (!this.hasSelection)
-            return false;
+        if (!this.hasSelection) return false;
 
         const minRow = Math.min(this._anchor!.row, this._focus!.row);
         const maxRow = Math.max(this._anchor!.row, this._focus!.row);
@@ -53,10 +52,10 @@ class TableRectSelection {
         const maxColumn = Math.max(this._anchor!.column, this._focus!.column);
 
         return (
-            minRow === 0
-            && minColumn === 0
-            && maxRow === this._table!.rowCount - 1
-            && maxColumn === this._table!.columnCount - 1
+            minRow === 0 &&
+            minColumn === 0 &&
+            maxRow === this._table!.rowCount - 1 &&
+            maxColumn === this._table!.columnCount - 1
         );
     }
 
@@ -65,8 +64,7 @@ class TableRectSelection {
 
         const anchorCell = table.cellAt(0, 0);
         const focusCell = table.cellAt(table.rowCount - 1, table.columnCount - 1);
-        if (anchorCell == null || focusCell == null)
-            return;
+        if (anchorCell == null || focusCell == null) return;
 
         this._table = table;
         this._anchor = {
@@ -86,8 +84,7 @@ class TableRectSelection {
 
     selectWholeTable(): void {
         const table = this._table;
-        if (table)
-            this.selectTable(table);
+        if (table) this.selectTable(table);
     }
 
     selectSingleCell(cell: TableBodyCell): void {
@@ -113,16 +110,14 @@ class TableRectSelection {
 
     private _onMouseDown = (event: Event): void => {
         // Right-click opens the context menu; never start a drag-select then.
-        if (!isMouseEvent(event) || event.button === 2)
-            return;
+        if (!isMouseEvent(event) || event.button === 2) return;
 
         // Any fresh interaction discards a previous frozen selection so a normal
         // caret click inside a cell behaves like plain editing again.
         this.clear();
 
         const position = this._cellPositionFromEvent(event);
-        if (position == null)
-            return;
+        if (position == null) return;
 
         this._table = position.cell.table;
         this._anchor = position;
@@ -137,26 +132,19 @@ class TableRectSelection {
     };
 
     private _onMouseMove = (event: Event): void => {
-        if (!isMouseEvent(event) || this._anchor == null || this._table == null)
-            return;
+        if (!isMouseEvent(event) || this._anchor == null || this._table == null) return;
 
         const position = this._cellPositionFromEvent(event);
-        const overSameTable
-            = position != null && position.cell.table === this._table;
+        const overSameTable = position != null && position.cell.table === this._table;
 
         // Begin selecting only once the pointer leaves the anchor cell — within
         // a single cell the user is just placing/extending a text caret.
-        if (
-            overSameTable
-            && position.cell !== this._anchor.cell
-            && !this._isSelecting
-        ) {
+        if (overSameTable && position.cell !== this._anchor.cell && !this._isSelecting) {
             this._isSelecting = true;
             this._freezeNativeSelection();
         }
 
-        if (!this._isSelecting)
-            return;
+        if (!this._isSelecting) return;
 
         this._suppressNativeRange();
 
@@ -171,8 +159,7 @@ class TableRectSelection {
 
         // Nothing to freeze when the drag never started (a plain click) or the
         // pointer was released outside the table (focus is null).
-        if (!this._isSelecting || this._focus == null)
-            this.clear();
+        if (!this._isSelecting || this._focus == null) this.clear();
     };
 
     private _freezeNativeSelection(): void {
@@ -188,24 +175,20 @@ class TableRectSelection {
 
     private _detachDragEvents(): void {
         const { eventCenter } = this._muya;
-        for (const id of this._dragEventIds)
-            eventCenter.detachDOMEvent(id);
+        for (const id of this._dragEventIds) eventCenter.detachDOMEvent(id);
 
         this._dragEventIds = [];
     }
 
     private _cellPositionFromEvent(event: MouseEvent): Nullable<ICellPosition> {
         const { target } = event;
-        if (!(target instanceof Element))
-            return null;
+        if (!(target instanceof Element)) return null;
 
         const cellDom = target.closest('td.mu-table-cell');
-        if (cellDom == null)
-            return null;
+        if (cellDom == null) return null;
 
         const block = getBlock(cellDom);
-        if (block == null || block.blockName !== 'table.cell')
-            return null;
+        if (block == null || block.blockName !== 'table.cell') return null;
 
         const cell = block as TableBodyCell;
 
@@ -219,8 +202,7 @@ class TableRectSelection {
     /** Apply the selection class to every cell inside the anchor→focus rectangle. */
     private _renderHighlight(): void {
         this._clearHighlight();
-        if (this._table == null || this._anchor == null || this._focus == null)
-            return;
+        if (this._table == null || this._anchor == null || this._focus == null) return;
 
         const minRow = Math.min(this._anchor.row, this._focus.row);
         const maxRow = Math.max(this._anchor.row, this._focus.row);
@@ -230,26 +212,20 @@ class TableRectSelection {
         for (let r = minRow; r <= maxRow; r++) {
             for (let c = minColumn; c <= maxColumn; c++) {
                 const classList = this._table.cellAt(r, c)?.domNode?.classList;
-                if (classList == null)
-                    continue;
+                if (classList == null) continue;
 
                 classList.add(SELECTED_CLASS);
-                if (r === minRow)
-                    classList.add(BORDER_TOP_CLASS);
-                if (c === maxColumn)
-                    classList.add(BORDER_RIGHT_CLASS);
-                if (r === maxRow)
-                    classList.add(BORDER_BOTTOM_CLASS);
-                if (c === minColumn)
-                    classList.add(BORDER_LEFT_CLASS);
+                if (r === minRow) classList.add(BORDER_TOP_CLASS);
+                if (c === maxColumn) classList.add(BORDER_RIGHT_CLASS);
+                if (r === maxRow) classList.add(BORDER_BOTTOM_CLASS);
+                if (c === minColumn) classList.add(BORDER_LEFT_CLASS);
             }
         }
     }
 
     private _clearHighlight(): void {
         const dom = this._table?.domNode;
-        if (dom == null)
-            return;
+        if (dom == null) return;
 
         for (const cell of dom.querySelectorAll(`.${SELECTED_CLASS}`)) {
             cell.classList.remove(
@@ -267,8 +243,7 @@ class TableRectSelection {
      * is no frozen selection. The clipboard serializes this to GFM markdown.
      */
     getStateForCopy(): Nullable<ITableState> {
-        if (!this.hasSelection)
-            return null;
+        if (!this.hasSelection) return null;
 
         return this._table!.getSubTableState(
             this._anchor!.row,
@@ -287,8 +262,7 @@ class TableRectSelection {
      * the non-anchor cells would keep their stale DOM.
      */
     emptySelectedCells(): boolean {
-        if (!this.hasSelection)
-            return false;
+        if (!this.hasSelection) return false;
 
         const minRow = Math.min(this._anchor!.row, this._focus!.row);
         const maxRow = Math.max(this._anchor!.row, this._focus!.row);
@@ -311,14 +285,12 @@ class TableRectSelection {
     }
 
     clearSelectedCells(): void {
-        if (!this.hasSelection)
-            return;
+        if (!this.hasSelection) return;
 
         const anchorContent = this._anchor!.cell.firstChild;
         this.emptySelectedCells();
         this.clear();
-        if (anchorContent && anchorContent.isContent())
-            anchorContent.setCursor(0, 0, true);
+        if (anchorContent && anchorContent.isContent()) anchorContent.setCursor(0, 0, true);
     }
 
     /** Discard the frozen selection and remove every highlight class. */

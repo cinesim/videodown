@@ -31,12 +31,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -59,8 +56,7 @@ function cellDom(table: TableBlock, row: number, column: number): HTMLElement {
 
 function fireMouse(node: HTMLElement, type: string): void {
     const event = new MouseEvent(type, { bubbles: true, button: 0 });
-    if (!('x' in event))
-        Object.defineProperty(event, 'x', { value: 0, configurable: true });
+    if (!('x' in event)) Object.defineProperty(event, 'x', { value: 0, configurable: true });
     node.dispatchEvent(event);
 }
 
@@ -73,7 +69,7 @@ function dragSelect(table: TableBlock, r1: number, c1: number, r2: number, c2: n
 }
 
 function tick(): Promise<void> {
-    return new Promise(r => setTimeout(r, 40));
+    return new Promise((r) => setTimeout(r, 40));
 }
 
 // Fire a keyboard delete over the frozen selection. `ownsEvent()` needs

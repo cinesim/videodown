@@ -126,13 +126,10 @@ function makeFakeTable(rowCount: number, cellCount: number) {
 }
 
 describe('table.removeRow — returns surviving cell content for cursor placement (marktext 6293d408)', () => {
-    it('removes the targeted row and returns the next row\'s first cell content', () => {
+    it("removes the targeted row and returns the next row's first cell content", () => {
         const fake = makeFakeTable(3, 2);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            1,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 1);
 
         // Pre-fix: returned undefined, leaving caller with nothing to focus.
         // Post-fix: returns the surviving row's first cell content so the
@@ -142,13 +139,10 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         expect((fake.inner.rows[1] as IFakeRow & { removed?: boolean }).removed).toBe(true);
     });
 
-    it('falls back to the previous row\'s first cell when the last row is removed', () => {
+    it("falls back to the previous row's first cell when the last row is removed", () => {
         const fake = makeFakeTable(3, 2);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            2,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 2);
 
         expect(result).toBe(fake.inner.rows[1].cells[0].firstChild);
         expect((fake.inner.rows[2] as IFakeRow & { removed?: boolean }).removed).toBe(true);
@@ -157,10 +151,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('removes the whole table when the only row is removed, and returns null without an outside fallback', () => {
         const fake = makeFakeTable(1, 3);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            0,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 0);
 
         // No surviving rows AND no outside-of-table content → null.
         expect(result).toBeNull();
@@ -176,10 +167,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         // so the stub stays honest about what it's pretending to be.
         fake.nextContentInContext = vi.fn(() => outsideContent as unknown as TNeighbourReturn);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            0,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 0);
 
         expect(result).toBe(outsideContent);
         expect(fake.remove).toHaveBeenCalledTimes(1);
@@ -191,10 +179,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         const prevOutside = { setCursor: vi.fn() };
         fake.previousContentInContext = vi.fn(() => prevOutside as unknown as TNeighbourReturn);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            0,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 0);
 
         expect(result).toBe(prevOutside);
     });
@@ -202,10 +187,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('returns undefined and does nothing when the offset is out of range', () => {
         const fake = makeFakeTable(2, 2);
 
-        const result = Table.prototype.removeRow.call(
-            fake as unknown as Table,
-            99,
-        );
+        const result = Table.prototype.removeRow.call(fake as unknown as Table, 99);
 
         expect(result).toBeUndefined();
         for (const row of fake.inner.rows)
@@ -214,7 +196,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
 });
 
 describe('table.removeColumn — returns surviving cell content for cursor placement (marktext 6293d408)', () => {
-    it('removes column at offset and returns the first row\'s neighbour cell content', () => {
+    it("removes column at offset and returns the first row's neighbour cell content", () => {
         const fake = makeFakeTable(2, 3);
         // Capture the cells in column 1 (the column we're going to remove).
         const removedCol1Row0 = fake.inner.rows[0].cells[1];
@@ -224,10 +206,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
         // can place the caret on a cell that is still attached.
         const expectedSurvivor = fake.inner.rows[0].cells[2].firstChild;
 
-        const result = Table.prototype.removeColumn.call(
-            fake as unknown as Table,
-            1,
-        );
+        const result = Table.prototype.removeColumn.call(fake as unknown as Table, 1);
 
         expect(result).toBe(expectedSurvivor);
         expect((removedCol1Row0 as IFakeCell & { removed?: boolean }).removed).toBe(true);
@@ -238,10 +217,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
         const fake = makeFakeTable(2, 3);
         const expectedSurvivor = fake.inner.rows[0].cells[1].firstChild;
 
-        const result = Table.prototype.removeColumn.call(
-            fake as unknown as Table,
-            2,
-        );
+        const result = Table.prototype.removeColumn.call(fake as unknown as Table, 2);
 
         expect(result).toBe(expectedSurvivor);
     });
@@ -249,10 +225,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
     it('removes the whole table when the only column is removed', () => {
         const fake = makeFakeTable(2, 1);
 
-        const result = Table.prototype.removeColumn.call(
-            fake as unknown as Table,
-            0,
-        );
+        const result = Table.prototype.removeColumn.call(fake as unknown as Table, 0);
 
         expect(fake.remove).toHaveBeenCalledTimes(1);
         // No outside content stubbed → null.
@@ -268,10 +241,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
         // so the stub stays honest about what it's pretending to be.
         fake.nextContentInContext = vi.fn(() => outsideContent as unknown as TNeighbourReturn);
 
-        const result = Table.prototype.removeColumn.call(
-            fake as unknown as Table,
-            0,
-        );
+        const result = Table.prototype.removeColumn.call(fake as unknown as Table, 0);
 
         expect(result).toBe(outsideContent);
         expect(fake.remove).toHaveBeenCalledTimes(1);
@@ -280,10 +250,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
     it('does nothing and returns undefined when the offset is out of range', () => {
         const fake = makeFakeTable(2, 2);
 
-        const result = Table.prototype.removeColumn.call(
-            fake as unknown as Table,
-            5,
-        );
+        const result = Table.prototype.removeColumn.call(fake as unknown as Table, 5);
 
         expect(result).toBeUndefined();
         // No cells removed.

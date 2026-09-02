@@ -40,11 +40,9 @@ function extractWord(
 ): { left: number; right: number; word: string } | null {
     if (!text || text.length === 0) {
         return null;
-    }
-    else if (offset < 0) {
+    } else if (offset < 0) {
         offset = 0;
-    }
-    else if (offset >= text.length) {
+    } else if (offset >= text.length) {
         offset = text.length - 1;
     }
 
@@ -55,25 +53,21 @@ function extractWord(
     // eslint-disable-next-line no-cond-assign
     while ((match = WORD_DEFINITION.exec(text))) {
         if (match && match.index <= offset) {
-            if (WORD_DEFINITION.lastIndex > offset)
-                left = match.index;
-        }
-        else {
+            if (WORD_DEFINITION.lastIndex > offset) left = match.index;
+        } else {
             break;
         }
     }
     WORD_DEFINITION.lastIndex = 0;
 
     // Cursor is between two word separators (e.g. `*|*` or ` |*`).
-    if (left <= -1)
-        return null;
+    if (left <= -1) return null;
 
     // Find word ending.
     WORD_SEPARATORS.lastIndex = offset;
     match = WORD_SEPARATORS.exec(text);
     let right = -1;
-    if (match)
-        right = match.index;
+    if (match) right = match.index;
 
     WORD_SEPARATORS.lastIndex = 0;
 
@@ -101,13 +95,11 @@ function shouldRemoveClosingChar(
     const { autoPairBracket, autoPairMarkdownSyntax, autoPairQuote } = options;
 
     return (
-        (autoPairQuote && /'/.test(inputChar))
-        || (autoPairQuote && /"/.test(inputChar))
-        || (autoPairBracket && /[}\])]/.test(inputChar))
-        || (autoPairMarkdownSyntax && /\$/.test(inputChar))
-        || (autoPairMarkdownSyntax
-            && /[*$`~_]/.test(inputChar)
-            && preInputChar !== inputChar)
+        (autoPairQuote && /'/.test(inputChar)) ||
+        (autoPairQuote && /"/.test(inputChar)) ||
+        (autoPairBracket && /[}\])]/.test(inputChar)) ||
+        (autoPairMarkdownSyntax && /\$/.test(inputChar)) ||
+        (autoPairMarkdownSyntax && /[*$`~_]/.test(inputChar) && preInputChar !== inputChar)
     );
 }
 
@@ -134,18 +126,18 @@ function shouldInsertClosingPair(
     } = ctx;
 
     return (
-        (autoPairQuote
-            && /'/.test(inputChar)
-            && postIsNotTouching
-            && !/[a-z\d]/i.test(preInputChar))
-        || (autoPairQuote && /"/.test(inputChar) && postIsNotTouching)
-        || (autoPairBracket && /[{[(]/.test(inputChar) && postIsNotTouching)
-        || (type === 'format'
-            && !isInInlineMath
-            && !isInInlineCode
-            && autoPairMarkdownSyntax
-            && !/[a-z0-9]/i.test(preInputChar)
-            && /[*$`~_]/.test(inputChar))
+        (autoPairQuote &&
+            /'/.test(inputChar) &&
+            postIsNotTouching &&
+            !/[a-z\d]/i.test(preInputChar)) ||
+        (autoPairQuote && /"/.test(inputChar) && postIsNotTouching) ||
+        (autoPairBracket && /[{[(]/.test(inputChar) && postIsNotTouching) ||
+        (type === 'format' &&
+            !isInInlineMath &&
+            !isInInlineCode &&
+            autoPairMarkdownSyntax &&
+            !/[a-z0-9]/i.test(preInputChar) &&
+            /[*$`~_]/.test(inputChar))
     );
 }
 
@@ -158,18 +150,14 @@ function selectionPairForKey(
     },
     type: string,
 ) {
-    if (key.length !== 1)
-        return null;
+    if (key.length !== 1) return null;
 
     const close = key === '`' ? '`' : BRACKET_HASH[key];
-    if (!close)
-        return null;
+    if (!close) return null;
 
     const { autoPairBracket, autoPairMarkdownSyntax, autoPairQuote } = options;
-    if (autoPairQuote && /['"]/.test(key))
-        return { open: key, close };
-    if (autoPairBracket && /[{[(]/.test(key))
-        return { open: key, close };
+    if (autoPairQuote && /['"]/.test(key)) return { open: key, close };
+    if (autoPairBracket && /[{[(]/.test(key)) return { open: key, close };
     if (type === 'format' && autoPairMarkdownSyntax && /[*$~_`]/.test(key))
         return { open: key, close };
 
@@ -202,17 +190,14 @@ function deleteAutoPair(
     // handle `deleteContentBackward` or `deleteContentForward`
     const deletedChar = blockText[offset];
     if (
-        event.inputType === 'deleteContentBackward'
-        && postInputChar === BRACKET_HASH[deletedChar]
+        event.inputType === 'deleteContentBackward' &&
+        postInputChar === BRACKET_HASH[deletedChar]
     ) {
         needRender = true;
         text = text.substring(0, offset) + text.substring(offset + 1);
     }
 
-    if (
-        event.inputType === 'deleteContentForward'
-        && inputChar === BACK_HASH[deletedChar]
-    ) {
+    if (event.inputType === 'deleteContentForward' && inputChar === BACK_HASH[deletedChar]) {
         needRender = true;
         start.offset -= 1;
         end.offset -= 1;
@@ -241,9 +226,9 @@ function collapsedInputAutoPair(
         return deleteAutoPair(event, text, start, end, offset, inputChar, postInputChar, blockText);
 
     if (
-        !event.inputType.includes('delete')
-        && inputChar === postInputChar
-        && shouldRemoveClosingChar(inputChar, preInputChar, options)
+        !event.inputType.includes('delete') &&
+        inputChar === postInputChar &&
+        shouldRemoveClosingChar(inputChar, preInputChar, options)
     ) {
         needRender = true;
         text = text.substring(0, offset) + text.substring(offset + 1);
@@ -259,8 +244,8 @@ function collapsedInputAutoPair(
     // the user to immediately delete the spurious closing char.
     const postIsNotTouching = !/\S/.test(postInputChar);
     if (
-        !/\\/.test(preInputChar)
-        && shouldInsertClosingPair(inputChar, preInputChar, postIsNotTouching, {
+        !/\\/.test(preInputChar) &&
+        shouldInsertClosingPair(inputChar, preInputChar, postIsNotTouching, {
             autoPairBracket,
             autoPairMarkdownSyntax,
             autoPairQuote,
@@ -270,22 +255,20 @@ function collapsedInputAutoPair(
         })
     ) {
         needRender = true;
-        text
-            = typeof event.data === 'string' && BRACKET_HASH[event.data]
-                ? text.substring(0, offset)
-                + BRACKET_HASH[inputChar]
-                + text.substring(offset)
+        text =
+            typeof event.data === 'string' && BRACKET_HASH[event.data]
+                ? text.substring(0, offset) + BRACKET_HASH[inputChar] + text.substring(offset)
                 : text;
     }
 
     // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
     if (
-        type === 'format'
-        && typeof event.data === 'string'
-        && /\s/.test(event.data)
-        && /^\* /.test(text)
-        && preInputChar === '*'
-        && postInputChar === '*'
+        type === 'format' &&
+        typeof event.data === 'string' &&
+        /\s/.test(event.data) &&
+        /^\* /.test(text) &&
+        preInputChar === '*' &&
+        postInputChar === '*'
     ) {
         text = text.substring(0, offset) + text.substring(offset + 1);
         needRender = true;
@@ -304,9 +287,9 @@ function lineBreakAutoPair(
 ) {
     // Just work for `Shift + Enter` to create a soft and hard line break.
     if (
-        blockText.endsWith('\n')
-        && start.offset === text.length
-        && (event.inputType === 'insertText' || event.type === 'compositionend')
+        blockText.endsWith('\n') &&
+        start.offset === text.length &&
+        (event.inputType === 'insertText' || event.type === 'compositionend')
     ) {
         text = blockText + event.data;
         // I don't know why firefox don't need to offset++
@@ -315,11 +298,10 @@ function lineBreakAutoPair(
             start.offset++;
             end.offset++;
         }
-    }
-    else if (
-        blockText.length === oldStart.offset
-        && blockText[oldStart.offset - 2] === '\n'
-        && event.inputType === 'deleteContentBackward'
+    } else if (
+        blockText.length === oldStart.offset &&
+        blockText[oldStart.offset - 2] === '\n' &&
+        event.inputType === 'deleteContentBackward'
     ) {
         text = blockText.substring(0, oldStart.offset - 1);
         start.offset = text.length;
@@ -352,8 +334,7 @@ class Content extends TreeNode {
     }
 
     get path(): TBlockPath {
-        if (this.parent == null)
-            return ['text'];
+        if (this.parent == null) return ['text'];
 
         const { path: pPath } = this.parent;
 
@@ -408,67 +389,59 @@ class Content extends TreeNode {
     }
 
     clickHandler(event: Event): void {
-        if (!isMouseEvent(event))
-            return;
+        if (!isMouseEvent(event)) return;
 
         requestAnimationFrame(() => {
-            if (event.shiftKey && this.selection.anchorBlock !== this)
-                return;
+            if (event.shiftKey && this.selection.anchorBlock !== this) return;
 
             const cursor = this.getCursor();
-            if (!cursor)
-                return;
+            if (!cursor) return;
 
             this.setCursor(cursor.start.offset, cursor.end.offset);
         });
     }
 
     tabHandler(_event: Event): void {
-    // Do nothing.
+        // Do nothing.
     }
 
     keyupHandler(_event: Event): void {
-    // Do nothing.
+        // Do nothing.
     }
 
     inputHandler(_event: Event): void {
-    // Do nothing.
+        // Do nothing.
     }
 
     backspaceHandler(_event: Event): void {
-    // Do nothing.
+        // Do nothing.
     }
 
     enterHandler(_event: Event): void {
-    // Do nothing.
+        // Do nothing.
     }
 
     deleteHandler(event: Event): void {
         const { start, end } = this.getCursor()!;
         const { text } = this;
         // Only `languageInputContent` and `codeBlockContent` will call this method.
-        if (start.offset === end.offset && start.offset === text.length)
-            event.preventDefault();
+        if (start.offset === end.offset && start.offset === text.length) event.preventDefault();
     }
 
     arrowHandler(event: Event) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const previousContentBlock = this.previousContentInContext();
         const nextContentBlock = this.nextContentInContext();
         const { start, end } = this.getCursor()!;
-        const { topOffset, bottomOffset } = Selection.getCursorYOffset(
-            this.domNode!,
-        );
+        const { topOffset, bottomOffset } = Selection.getCursorYOffset(this.domNode!);
 
         // Just do nothing if the cursor is not collapsed or `shiftKey` pressed
-        if (start.offset !== end.offset || event.shiftKey)
-            return;
+        if (start.offset !== end.offset || event.shiftKey) return;
 
         if (
-            (event.key === EVENT_KEYS.ArrowUp && topOffset > 0)
-            || (event.key === EVENT_KEYS.ArrowDown && bottomOffset > 0)
+            (event.key === EVENT_KEYS.ArrowUp && topOffset > 0) ||
+            (event.key === EVENT_KEYS.ArrowDown && bottomOffset > 0)
         ) {
             return;
         }
@@ -482,10 +455,7 @@ class Content extends TreeNode {
         const prevKey = isRtl ? EVENT_KEYS.ArrowRight : EVENT_KEYS.ArrowLeft;
         const nextKey = isRtl ? EVENT_KEYS.ArrowLeft : EVENT_KEYS.ArrowRight;
 
-        if (
-            event.key === EVENT_KEYS.ArrowUp
-            || (event.key === prevKey && start.offset === 0)
-        ) {
+        if (event.key === EVENT_KEYS.ArrowUp || (event.key === prevKey && start.offset === 0)) {
             event.preventDefault();
             event.stopPropagation();
 
@@ -503,10 +473,9 @@ class Content extends TreeNode {
 
             cursorBlock = previousContentBlock;
             offset = previousContentBlock.text.length;
-        }
-        else if (
-            event.key === EVENT_KEYS.ArrowDown
-            || (event.key === nextKey && start.offset === this.text.length)
+        } else if (
+            event.key === EVENT_KEYS.ArrowDown ||
+            (event.key === nextKey && start.offset === this.text.length)
         ) {
             event.preventDefault();
             event.stopPropagation();
@@ -521,15 +490,11 @@ class Content extends TreeNode {
                     name: 'paragraph',
                     text: '',
                 };
-                const newNode = ScrollPage.loadBlock(newNodeState.name).create(
-                    muya,
-                    newNodeState,
-                );
+                const newNode = ScrollPage.loadBlock(newNodeState.name).create(muya, newNodeState);
                 this.scrollPage?.append(newNode, 'user');
                 cursorBlock = newNode.children.head;
             }
-            if (cursorBlock)
-                offset = adjustOffset(0, cursorBlock, event);
+            if (cursorBlock) offset = adjustOffset(0, cursorBlock, event);
         }
 
         if (cursorBlock) {
@@ -548,8 +513,7 @@ class Content extends TreeNode {
      */
     getCursor(): IContentCursor | null {
         const selection = this.selection.getSelection();
-        if (selection == null)
-            return null;
+        if (selection == null) return null;
 
         const {
             anchor,
@@ -560,8 +524,7 @@ class Content extends TreeNode {
             type,
         } = selection;
 
-        if (anchor.block !== this || focus.block !== this)
-            return null;
+        if (anchor.block !== this || focus.block !== this) return null;
 
         return {
             start: { offset: Math.min(anchor.offset, focus.offset) },
@@ -585,8 +548,7 @@ class Content extends TreeNode {
         const anchor = { offset: begin, block: this, path: this.path };
         const focus = { offset: end, block: this, path: this.path };
 
-        if (needUpdate)
-            this.update({ anchor, focus, block: this });
+        if (needUpdate) this.update({ anchor, focus, block: this });
 
         this.muya.editor.activeContentBlock = this;
 
@@ -601,8 +563,7 @@ class Content extends TreeNode {
     composeHandler(event: Event) {
         if (event.type === 'compositionstart') {
             this.isComposed = true;
-        }
-        else if (event.type === 'compositionend') {
+        } else if (event.type === 'compositionend') {
             this.isComposed = false;
             // Because the compose event will not cause `input` event, So need call `inputHandler` by ourself
             this.inputHandler(event);
@@ -622,14 +583,13 @@ class Content extends TreeNode {
         isInInlineCode = false,
         type = 'format',
     ) {
-    // TODO: @JOCS, remove use this selection directly.
+        // TODO: @JOCS, remove use this selection directly.
         const { anchor, focus } = this.selection;
         const oldStart = anchor!.offset <= focus!.offset ? anchor : focus;
         let needRender = false;
 
         // The event will not be input event, when click task list item input element.
-        if (!isInputEvent(event) || !oldStart)
-            return { text, needRender };
+        if (!isInputEvent(event) || !oldStart) return { text, needRender };
 
         if (this.text !== text) {
             if (start.offset === end.offset && event.type === 'input') {
@@ -657,10 +617,7 @@ class Content extends TreeNode {
         const { start, end } = this.getCursor()!;
 
         if (this.isCollapsed) {
-            this.text
-                = text.substring(0, start.offset)
-                    + tabCharacter
-                    + text.substring(end.offset);
+            this.text = text.substring(0, start.offset) + tabCharacter + text.substring(end.offset);
             const offset = start.offset + tabCharacter.length;
 
             this.setCursor(offset, offset, true);
@@ -685,19 +642,16 @@ class Content extends TreeNode {
      */
     replaceCurrentWordInlineUnsafe(word: string, replacement: string): boolean {
         const cursor = this.getCursor();
-        if (cursor == null)
-            return false;
+        if (cursor == null) return false;
 
         const { text } = this;
         // Use the start offset of the (possibly whole-word) selection as the
         // probe point.
         const wordInfo = extractWord(text, cursor.start.offset);
-        if (wordInfo == null)
-            return false;
+        if (wordInfo == null) return false;
 
         const { left, right, word: selectedWord } = wordInfo;
-        if (selectedWord !== word)
-            return false;
+        if (selectedWord !== word) return false;
 
         // Reuse the text setter so the change dispatches a json edit op.
         this.text = text.substring(0, left) + replacement + text.substring(right);
@@ -709,14 +663,11 @@ class Content extends TreeNode {
     }
 
     keydownHandler = (event: Event) => {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
-        if (this.muya.ui.handleContentKeydown(event))
-            return;
+        if (this.muya.ui.handleContentKeydown(event)) return;
 
-        if (this._wrapSelectionWithAutoPair(event))
-            return;
+        if (this._wrapSelectionWithAutoPair(event)) return;
 
         switch (event.key) {
             case EVENT_KEYS.Backspace:
@@ -728,8 +679,7 @@ class Content extends TreeNode {
                 break;
 
             case EVENT_KEYS.Enter:
-                if (!this.isComposed)
-                    this.enterHandler(event);
+                if (!this.isComposed) this.enterHandler(event);
 
                 break;
 
@@ -740,14 +690,12 @@ class Content extends TreeNode {
             case EVENT_KEYS.ArrowLeft: // fallthrough
 
             case EVENT_KEYS.ArrowRight: // fallthrough
-                if (!this.isComposed)
-                    this.arrowHandler(event);
+                if (!this.isComposed) this.arrowHandler(event);
 
                 break;
 
             case EVENT_KEYS.Tab:
-                if (!this.isComposed)
-                    this.tabHandler(event);
+                if (!this.isComposed) this.tabHandler(event);
 
                 break;
             default:
@@ -757,22 +705,20 @@ class Content extends TreeNode {
 
     private _wrapSelectionWithAutoPair(event: KeyboardEvent) {
         if (
-            this.isComposed
-            || event.defaultPrevented
-            || event.ctrlKey
-            || event.metaKey
-            || event.altKey
+            this.isComposed ||
+            event.defaultPrevented ||
+            event.ctrlKey ||
+            event.metaKey ||
+            event.altKey
         ) {
             return false;
         }
 
         const cursor = this.getCursor();
-        if (!cursor || cursor.start.offset === cursor.end.offset)
-            return false;
+        if (!cursor || cursor.start.offset === cursor.end.offset) return false;
 
         const pair = selectionPairForKey(event.key, this.muya.options, this.autoPairType);
-        if (!pair)
-            return false;
+        if (!pair) return false;
 
         event.preventDefault();
         event.stopPropagation();
@@ -781,10 +727,8 @@ class Content extends TreeNode {
         const { start, end } = cursor;
         const selectedText = this.text.substring(start.offset, end.offset);
         const wrappedText = `${pair.open}${selectedText}${pair.close}`;
-        this.text
-            = this.text.substring(0, start.offset)
-                + wrappedText
-                + this.text.substring(end.offset);
+        this.text =
+            this.text.substring(0, start.offset) + wrappedText + this.text.substring(end.offset);
 
         const selectionStart = start.offset + pair.open.length;
         const selectionEnd = selectionStart + selectedText.length;

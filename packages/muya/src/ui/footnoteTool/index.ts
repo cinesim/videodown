@@ -51,28 +51,24 @@ export class FootnoteTool extends BaseFloat {
         super.listen();
         const { eventCenter } = this.muya;
 
-        eventCenter.subscribe(
-            'muya-footnote-tool',
-            ((payload: IFootnoteToolPayload) => {
-                const { reference, identifier, footnotes } = payload;
-                if (reference) {
-                    this._identifier = identifier;
-                    this._footnotes = footnotes;
-                    // Defer through a microtask so the originating click can
-                    // finish bubbling before BaseFloat's document-click hide
-                    // handler races the open. Without this the float opens
-                    // and immediately closes on the same tick.
-                    setTimeout(() => {
-                        this.show(reference);
-                        this._render();
-                    }, 0);
-                    return;
-                }
-                if (this._hideTimer)
-                    clearTimeout(this._hideTimer);
-                this._hideTimer = setTimeout(() => this.hide(), 500);
-            }) as (...args: unknown[]) => void,
-        );
+        eventCenter.subscribe('muya-footnote-tool', ((payload: IFootnoteToolPayload) => {
+            const { reference, identifier, footnotes } = payload;
+            if (reference) {
+                this._identifier = identifier;
+                this._footnotes = footnotes;
+                // Defer through a microtask so the originating click can
+                // finish bubbling before BaseFloat's document-click hide
+                // handler races the open. Without this the float opens
+                // and immediately closes on the same tick.
+                setTimeout(() => {
+                    this.show(reference);
+                    this._render();
+                }, 0);
+                return;
+            }
+            if (this._hideTimer) clearTimeout(this._hideTimer);
+            this._hideTimer = setTimeout(() => this.hide(), 500);
+        }) as (...args: unknown[]) => void);
     }
 
     private _render() {
@@ -109,17 +105,14 @@ export class FootnoteTool extends BaseFloat {
     private _handleButtonClick(event: Event, hasFootnote: boolean) {
         event.preventDefault();
         event.stopPropagation();
-        if (hasFootnote)
-            this._goTo();
-        else
-            this._createDefinition();
+        if (hasFootnote) this._goTo();
+        else this._createDefinition();
         this.hide();
     }
 
     private _goTo() {
         const block = this._footnotes.get(this._identifier);
-        if (!block)
-            return;
+        if (!block) return;
         block.domNode?.scrollIntoView({ behavior: 'smooth' });
         const content = block.firstContentInDescendant();
         content?.setCursor(0, 0, true);
@@ -127,8 +120,7 @@ export class FootnoteTool extends BaseFloat {
 
     private _createDefinition() {
         const { scrollPage } = this.muya.editor;
-        if (!scrollPage)
-            return;
+        if (!scrollPage) return;
 
         const state: IFootnoteBlockState = {
             name: 'footnote',
@@ -153,8 +145,7 @@ function collectFootnoteText(block: Footnote): string {
 
     let text = '';
     block.depthFirstTraverse((node) => {
-        if (node.isContent())
-            text += node.text;
+        if (node.isContent()) text += node.text;
     });
     return text.slice(0, PREVIEW_MAX_LENGTH);
 }

@@ -45,24 +45,18 @@ function resolveRelativePath(base: string, relative: string): string {
     // Isolate the root that `..` must never collapse past (mirroring
     // `path.resolve`): a UNC share (`//server/share`), a Windows drive (`C:`),
     // or the POSIX root. The root prefix is preserved; `..` beyond it is a no-op.
-    const root = combined.match(/^\/\/[^/]+\/[^/]+/)?.[0]
-        ?? combined.match(/^[a-z]:/i)?.[0]
-        ?? '';
+    const root = combined.match(/^\/\/[^/]+\/[^/]+/)?.[0] ?? combined.match(/^[a-z]:/i)?.[0] ?? '';
     const body = root ? combined.slice(root.length) : combined;
     const resolved: string[] = [];
     for (const segment of body.split('/')) {
-        if (segment === '' || segment === '.')
-            continue;
+        if (segment === '' || segment === '.') continue;
 
-        if (segment === '..')
-            resolved.pop();
-        else
-            resolved.push(segment);
+        if (segment === '..') resolved.pop();
+        else resolved.push(segment);
     }
     const tail = resolved.join('/');
     // POSIX root keeps a leading slash; a drive/UNC root prefixes its tail.
-    if (root === '')
-        return `/${tail}`;
+    if (root === '') return `/${tail}`;
 
     return tail ? `${root}/${tail}` : root;
 }
@@ -70,10 +64,9 @@ function resolveRelativePath(base: string, relative: string): string {
 export function getImageSrc(src: string) {
     const EXT_REG = /\.(?:jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
     // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
-    const URL_REG
-        = /^https?:\/\/(?:[\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(?::\d{1,5})?\/\S+/i;
-    const DATA_URL_REG
-        = /^data:image\/[\w+-]+(?:;[\w-]+=[\w-]+|;base64)*,[a-zA-Z0-9+/]+={0,2}$/;
+    const URL_REG =
+        /^https?:\/\/(?:[\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(?::\d{1,5})?\/\S+/i;
+    const DATA_URL_REG = /^data:image\/[\w+-]+(?:;[\w-]+=[\w-]+|;base64)*,[a-zA-Z0-9+/]+={0,2}$/;
     const imageExtension = EXT_REG.test(src);
     // An already-`file://` src must not be re-prefixed (avoids `file://file://`).
     const isFileUrl = /^file:\/\//i.test(src);
@@ -84,42 +77,36 @@ export function getImageSrc(src: string) {
         // engine runs in the host renderer where `window.DIRNAME` tracks the
         // current document's directory; when it is absent (headless / no open
         // file) we fall back to the `file://${src}` form.
-        const baseUrl
-            = typeof window !== 'undefined' ? window.DIRNAME : undefined;
+        const baseUrl = typeof window !== 'undefined' ? window.DIRNAME : undefined;
         if (isUrl) {
             return {
                 isUnknownType: false,
                 src,
             };
-        }
-        else if (!isAbsoluteLocal && baseUrl) {
+        } else if (!isAbsoluteLocal && baseUrl) {
             return {
                 isUnknownType: false,
                 src: `file://${resolveRelativePath(baseUrl, src)}`,
             };
-        }
-        else {
+        } else {
             return {
                 isUnknownType: false,
                 src: `file://${src}`,
             };
         }
-    }
-    else if (isUrl && !imageExtension) {
+    } else if (isUrl && !imageExtension) {
         return {
             isUnknownType: true,
             src,
         };
-    }
-    else {
+    } else {
         const isDataUrl = DATA_URL_REG.test(src);
         if (isDataUrl) {
             return {
                 isUnknownType: false,
                 src,
             };
-        }
-        else {
+        } else {
             return {
                 isUnknownType: false,
                 src: '',
@@ -128,7 +115,10 @@ export function getImageSrc(src: string) {
     }
 }
 
-export async function loadImage(url: string, detectContentType = false): Promise<{
+export async function loadImage(
+    url: string,
+    detectContentType = false,
+): Promise<{
     url: string;
     width: number;
     height: number;
@@ -168,8 +158,7 @@ export async function loadImage(url: string, detectContentType = false): Promise
 function isSameOrigin(url: string): boolean {
     try {
         return new URL(url, window.location.href).origin === window.location.origin;
-    }
-    catch {
+    } catch {
         return true;
     }
 }
@@ -183,23 +172,19 @@ export async function checkImageContentType(url: string): Promise<boolean | null
     // Don't fire a HEAD we could never read: a cross-origin request is refused
     // by the CSP (logging a console error) and unreadable under CORS anyway.
     // Report "undetermined" and let the caller fall through to the <img> load.
-    if (!isSameOrigin(url))
-        return null;
+    if (!isSameOrigin(url)) return null;
 
     try {
         const res = await fetch(url, { method: 'HEAD' });
-        if (res.status !== 200)
-            return null;
+        if (res.status !== 200) return null;
 
         // Content-Type can carry parameters (e.g. `image/svg+xml;charset=utf-8`);
         // match only the MIME type.
         const contentType = res.headers.get('content-type')?.split(';')[0].trim();
-        if (!contentType)
-            return null;
+        if (!contentType) return null;
 
         return /^image\/(?:jpeg|png|gif|svg\+xml|webp)$/.test(contentType);
-    }
-    catch {
+    } catch {
         return null;
     }
 }
@@ -217,14 +202,12 @@ export function encodeImageSrc(src: string): string {
 
 export function correctImageSrc(src: string) {
     if (src) {
-    // Fix ASCII and UNC paths on Windows (#1997).
+        // Fix ASCII and UNC paths on Windows (#1997).
         if (isWin && /^(?:[a-z]:\\|[a-z]:\/).+/i.test(src)) {
             src = `file:///${src.replace(/\\/g, '/')}`;
-        }
-        else if (isWin && /^\\\\\?\\.+/.test(src)) {
+        } else if (isWin && /^\\\\\?\\.+/.test(src)) {
             src = `file:///${src.substring(4).replace(/\\/g, '/')}`;
-        }
-        else if (/^\/.+/.test(src)) {
+        } else if (/^\/.+/.test(src)) {
             // Also adding file protocol on UNIX.
             // Do nothing: src = src
         }

@@ -130,13 +130,9 @@ describe('autoPair — 3fa8a9ae no markdown-syntax pairing inside inline code', 
     it('does not auto-pair `*` inside inline code', () => {
         const fakeThis = makeFakeThis('``foo``', 2);
         const event = makeInputEvent('insertText', '*');
-        const { text, needRender } = invokeAutoPair(
-            fakeThis,
-            event,
-            '``*foo``',
-            3,
-            { isInInlineCode: true },
-        );
+        const { text, needRender } = invokeAutoPair(fakeThis, event, '``*foo``', 3, {
+            isInInlineCode: true,
+        });
 
         expect(text).toBe('``*foo``');
         expect(needRender).toBe(false);
@@ -158,13 +154,9 @@ describe('autoPair — 4278362f no markdown-syntax pairing inside inline math', 
     it('does not auto-pair `*` inside inline math', () => {
         const fakeThis = makeFakeThis('$x$', 1);
         const event = makeInputEvent('insertText', '*');
-        const { text, needRender } = invokeAutoPair(
-            fakeThis,
-            event,
-            '$*x$',
-            2,
-            { isInInlineMath: true },
-        );
+        const { text, needRender } = invokeAutoPair(fakeThis, event, '$*x$', 2, {
+            isInInlineMath: true,
+        });
 
         expect(text).toBe('$*x$');
         expect(needRender).toBe(false);

@@ -44,8 +44,7 @@ export class ImageResizeBar {
         const { eventCenter, domNode } = this.muya;
 
         const scrollHandler = (event: Event) => {
-            if (!isHTMLElement(event.target))
-                return;
+            if (!isHTMLElement(event.target)) return;
             if (typeof this._lastScrollTop !== 'number') {
                 this._lastScrollTop = event.target.scrollTop;
 
@@ -54,9 +53,9 @@ export class ImageResizeBar {
 
             // only when scroll distance great than 50px, then hide the float box.
             if (
-                !this._resizing
-                && this._status
-                && Math.abs(event.target.scrollTop - this._lastScrollTop) > 50
+                !this._resizing &&
+                this._status &&
+                Math.abs(event.target.scrollTop - this._lastScrollTop) > 50
             ) {
                 this.hide();
             }
@@ -70,23 +69,20 @@ export class ImageResizeBar {
                 setTimeout(() => {
                     this._render();
                 });
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
 
         eventCenter.attachDOMEvent(document, 'click', this.hide.bind(this));
         eventCenter.attachDOMEvent(findScrollContainer(domNode), 'scroll', scrollHandler);
-        eventCenter.attachDOMEvent(this._container, 'dragstart', event =>
-            event.preventDefault());
+        eventCenter.attachDOMEvent(this._container, 'dragstart', (event) => event.preventDefault());
         eventCenter.attachDOMEvent(document.body, 'mousedown', this._mouseDown);
     }
 
     private _render() {
         const { eventCenter } = this.muya;
-        if (this._status)
-            this.hide();
+        if (this._status) this.hide();
 
         this._status = true;
 
@@ -128,22 +124,13 @@ export class ImageResizeBar {
     }
 
     private _mouseDown = (event: Event) => {
-        if (!isHTMLElement(event.target) || !event.target.closest('.bar'))
-            return;
+        if (!isHTMLElement(event.target) || !event.target.closest('.bar')) return;
 
         const target = event.target;
         const { eventCenter } = this.muya;
         this._movingAnchor = target.getAttribute('data-position');
-        const mouseMoveId = eventCenter.attachDOMEvent(
-            document.body,
-            'mousemove',
-            this._mouseMove,
-        );
-        const mouseUpId = eventCenter.attachDOMEvent(
-            document.body,
-            'mouseup',
-            this._mouseUp,
-        );
+        const mouseMoveId = eventCenter.attachDOMEvent(document.body, 'mousemove', this._mouseMove);
+        const mouseUpId = eventCenter.attachDOMEvent(document.body, 'mouseup', this._mouseUp);
         this._resizing = true;
         // Hide image toolbar
         eventCenter.emit('muya-image-toolbar', { reference: null });
@@ -151,16 +138,14 @@ export class ImageResizeBar {
     };
 
     private _mouseMove = (event: Event) => {
-        if (!isMouseEvent(event))
-            return;
+        if (!isMouseEvent(event)) return;
 
         event.preventDefault();
         const { clientX } = event;
         let width: number | string = '';
         let relativeAnchor: HTMLDivElement;
         const image = this._reference!.querySelector('img');
-        if (!image)
-            return;
+        if (!image) return;
 
         switch (this._movingAnchor) {
             case 'left':
@@ -190,8 +175,7 @@ export class ImageResizeBar {
         event.preventDefault();
         const { eventCenter } = this.muya;
         if (this._eventId.length) {
-            for (const id of this._eventId)
-                eventCenter.detachDOMEvent(id);
+            for (const id of this._eventId) eventCenter.detachDOMEvent(id);
 
             this._eventId = [];
         }
@@ -211,7 +195,7 @@ export class ImageResizeBar {
         this._cleanup?.();
         this._cleanup = null;
         const circles = this._container.querySelectorAll('.bar');
-        Array.from(circles).forEach(c => c.remove());
+        Array.from(circles).forEach((c) => c.remove());
         this._status = false;
         eventCenter.emit('muya-float', this, false);
     }

@@ -1,10 +1,5 @@
 import type { VNode } from 'snabbdom';
-import type {
-    DelToken,
-    ISyntaxRenderOptions,
-    StrongEmToken,
-    Token,
-} from '../types';
+import type { DelToken, ISyntaxRenderOptions, StrongEmToken, Token } from '../types';
 import type Renderer from './index';
 import { CLASS_NAMES } from '../../config';
 import { snakeToCamel } from '../../utils';
@@ -25,8 +20,7 @@ export default function delEmStrongFac(
     const COMMON_MARKER = `span.${className}.${CLASS_NAMES.MU_REMOVE}`;
     const { marker } = token;
     const { start, end } = token.range;
-    const backlashStart
-        = end - marker.length - token.backlash.length;
+    const backlashStart = end - marker.length - token.backlash.length;
     const content: VNode[] = [
         ...token.children.reduce((acc: VNode[], to: Token) => {
             // The original passed a `className` field here too, but receivers
@@ -41,21 +35,9 @@ export default function delEmStrongFac(
 
             return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
         }, []),
-        ...this.backlashInToken(
-            h,
-            token.backlash,
-            className,
-            backlashStart,
-            token,
-        ),
+        ...this.backlashInToken(h, token.backlash, className, backlashStart, token),
     ];
-    const startMarker = this.highlight(
-        h,
-        block,
-        start,
-        start + marker.length,
-        token,
-    );
+    const startMarker = this.highlight(h, block, start, start + marker.length, token);
     const endMarker = this.highlight(h, block, end - marker.length, end, token);
 
     return [

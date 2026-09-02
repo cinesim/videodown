@@ -24,9 +24,7 @@ class TaskListItem extends Parent {
         );
 
         listItem.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock(child.name).create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock(child.name).create(muya, child)),
         );
 
         return listItem;
@@ -68,7 +66,7 @@ class TaskListItem extends Parent {
         const state: ITaskListItemState = {
             name: 'task-list-item',
             meta: { ...this.meta },
-            children: this.children.map(child => child.getState()),
+            children: this.children.map((child) => child.getState()),
         };
 
         return state;

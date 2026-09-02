@@ -42,13 +42,23 @@ function stubReference(): HTMLElement {
     // BaseFloat computes position off the reference; happy-dom has no layout,
     // so a stubbed rect keeps autoUpdate from throwing.
     input.getBoundingClientRect = () =>
-        ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+        ({
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            x: 0,
+            y: 0,
+            toJSON: () => '',
+        }) as DOMRect;
     document.body.appendChild(input);
     return input;
 }
 
 async function nextTick() {
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 describe('imagePathPicker — plugin shape', () => {

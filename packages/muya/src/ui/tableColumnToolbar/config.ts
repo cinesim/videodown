@@ -38,6 +38,6 @@ const icons = [
     },
 ];
 
-export type TableColumnToolIcon = typeof icons[number];
+export type TableColumnToolIcon = (typeof icons)[number];
 
 export default icons;

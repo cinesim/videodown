@@ -85,17 +85,20 @@ describe('nested mixed lists (#4341)', () => {
    - Open
    - Save
 `);
-        const ol = states.find(s => s.name === 'order-list');
+        const ol = states.find((s) => s.name === 'order-list');
         expect(ol, 'expected a top-level order-list state').toBeDefined();
 
         const secondItem = children(ol)[1];
         expect(secondItem.name).toBe('list-item');
 
-        const nestedList = children(secondItem).find(c => c.name === 'bullet-list');
-        expect(nestedList, 'expected a bullet-list nested inside the second order-list item').toBeDefined();
+        const nestedList = children(secondItem).find((c) => c.name === 'bullet-list');
+        expect(
+            nestedList,
+            'expected a bullet-list nested inside the second order-list item',
+        ).toBeDefined();
         // The item is exactly [leading paragraph, nested bullet-list] — the
         // nested list did NOT collapse into a paragraph (the #4341 failure mode).
-        expect(children(secondItem).map(c => c.name)).toEqual(['paragraph', 'bullet-list']);
+        expect(children(secondItem).map((c) => c.name)).toEqual(['paragraph', 'bullet-list']);
         expect(children(nestedList)).toHaveLength(3);
         expect(children(nestedList).map(firstText)).toEqual(['New', 'Open', 'Save']);
     });
@@ -107,16 +110,23 @@ describe('nested mixed lists (#4341)', () => {
   2. Second step
   3. Third step
 `);
-        const ul = states.find(s => s.name === 'bullet-list');
+        const ul = states.find((s) => s.name === 'bullet-list');
         expect(ul, 'expected a top-level bullet-list state').toBeDefined();
 
         const secondItem = children(ul)[1];
         expect(secondItem.name).toBe('list-item');
 
-        const nestedList = children(secondItem).find(c => c.name === 'order-list');
-        expect(nestedList, 'expected an order-list nested inside the second bullet-list item').toBeDefined();
-        expect(children(secondItem).map(c => c.name)).toEqual(['paragraph', 'order-list']);
+        const nestedList = children(secondItem).find((c) => c.name === 'order-list');
+        expect(
+            nestedList,
+            'expected an order-list nested inside the second bullet-list item',
+        ).toBeDefined();
+        expect(children(secondItem).map((c) => c.name)).toEqual(['paragraph', 'order-list']);
         expect(children(nestedList)).toHaveLength(3);
-        expect(children(nestedList).map(firstText)).toEqual(['First step', 'Second step', 'Third step']);
+        expect(children(nestedList).map(firstText)).toEqual([
+            'First step',
+            'Second step',
+            'Third step',
+        ]);
     });
 });

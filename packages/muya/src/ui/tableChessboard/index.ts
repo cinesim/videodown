@@ -34,8 +34,7 @@ class TablePicker extends BaseFloat {
         this._oldVNode = null;
         this._current = null;
         this._select = null;
-        const tableContainer = (this._tableContainer
-            = document.createElement('div'));
+        const tableContainer = (this._tableContainer = document.createElement('div'));
         this.container!.appendChild(tableContainer);
         this.listen();
     }
@@ -47,8 +46,7 @@ class TablePicker extends BaseFloat {
             if (!this.status) {
                 this._showPicker(data, reference, cb);
                 this.render();
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
@@ -65,18 +63,15 @@ class TablePicker extends BaseFloat {
 
         for (i = 0; i < row; i++) {
             let rowSelector = 'div.mu-table-picker-row';
-            if (i === 0)
-                rowSelector += '.mu-table-picker-header';
+            if (i === 0) rowSelector += '.mu-table-picker-header';
 
             const cells = [];
 
             for (j = 0; j < column; j++) {
                 let cellSelector = 'span.mu-table-picker-cell';
-                if (i <= cRow && j <= cColumn)
-                    cellSelector += '.current';
+                if (i <= cRow && j <= cColumn) cellSelector += '.current';
 
-                if (i <= sRow && j <= sColumn)
-                    cellSelector += '.selected';
+                if (i <= sRow && j <= sColumn) cellSelector += '.selected';
 
                 cells.push(
                     h(cellSelector, {
@@ -87,8 +82,7 @@ class TablePicker extends BaseFloat {
                         },
                         on: {
                             mouseenter: (event: MouseEvent) => {
-                                if (!isHTMLElement(event.target))
-                                    return;
+                                if (!isHTMLElement(event.target)) return;
                                 const r = event.target.getAttribute('data-row');
                                 const c = event.target.getAttribute('data-column');
                                 this._select = { row: Number(r), column: Number(c) };
@@ -144,10 +138,8 @@ class TablePicker extends BaseFloat {
 
         const vnode = h('div', [h('div.checker', tableRows), tableFooter]);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(tableContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(tableContainer, vnode);
 
         this._oldVNode = vnode;
     }
@@ -155,14 +147,10 @@ class TablePicker extends BaseFloat {
     private _keyupHandler(event: KeyboardEvent, type: 'row' | 'column') {
         let number = +this._select![type];
         const value = isHTMLInputElement(event.target) ? +event.target.value : Number.NaN;
-        if (event.key === EVENT_KEYS.ArrowUp)
-            number++;
-        else if (event.key === EVENT_KEYS.ArrowDown)
-            number--;
-        else if (event.key === EVENT_KEYS.Enter)
-            this.selectItem();
-        else if (!Number.isNaN(value))
-            number = value - 1;
+        if (event.key === EVENT_KEYS.ArrowUp) number++;
+        else if (event.key === EVENT_KEYS.ArrowDown) number--;
+        else if (event.key === EVENT_KEYS.Enter) this.selectItem();
+        else if (!Number.isNaN(value)) number = value - 1;
 
         if (number !== +this._select![type]) {
             this._select![type] = Math.max(number, 0);
@@ -170,8 +158,12 @@ class TablePicker extends BaseFloat {
         }
     }
 
-    private _showPicker(current: ICheckerCount, reference: ReferenceElement, cb: (row: number, column: number) => void) {
-    // current { row, column } zero base
+    private _showPicker(
+        current: ICheckerCount,
+        reference: ReferenceElement,
+        cb: (row: number, column: number) => void,
+    ) {
+        // current { row, column } zero base
         this._current = current;
         // Clone so footer-input edits mutating `_select` never corrupt the
         // immutable `_current` start position (ICheckerCount is flat).

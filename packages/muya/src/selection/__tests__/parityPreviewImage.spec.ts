@@ -33,12 +33,9 @@ afterEach(() => {
     // `destroy()` detaches the engine's DOM listeners — including the
     // `document`-level keydown/click handlers registered by selection — and
     // removes the host node, so listeners don't leak across tests.
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -55,12 +52,8 @@ function bootMuya(markdown: string): Muya {
 // instance and the <img>.
 function bootImage(src: string): { muya: Muya; img: HTMLImageElement } {
     const muya = bootMuya(`![alt](${src})`);
-    const wrapper = muya.domNode.querySelector<HTMLElement>(
-        `span.${CLASS_NAMES.MU_INLINE_IMAGE}`,
-    )!;
-    const container = wrapper.querySelector<HTMLElement>(
-        `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-    )!;
+    const wrapper = muya.domNode.querySelector<HTMLElement>(`span.${CLASS_NAMES.MU_INLINE_IMAGE}`)!;
+    const container = wrapper.querySelector<HTMLElement>(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)!;
     const img = document.createElement('img');
     img.setAttribute('src', src);
     container.appendChild(img);
@@ -74,56 +67,50 @@ function selectImage(img: HTMLImageElement): void {
 }
 
 describe('parity PG10: Space previews a selected image', () => {
-    it(
-        'PG10: pressing Space with an image selected emits preview-image',
-        () => {
-            const src = 'https://example.com/pic.png';
-            const { muya, img } = bootImage(src);
-            selectImage(img);
-            // Sanity: the click populated the selected-image state.
-            expect(muya.editor.selection.image).toBeTruthy();
+    it('PG10: pressing Space with an image selected emits preview-image', () => {
+        const src = 'https://example.com/pic.png';
+        const { muya, img } = bootImage(src);
+        selectImage(img);
+        // Sanity: the click populated the selected-image state.
+        expect(muya.editor.selection.image).toBeTruthy();
 
-            const handler = vi.fn();
-            muya.on('preview-image', handler);
+        const handler = vi.fn();
+        muya.on('preview-image', handler);
 
-            document.dispatchEvent(
-                new KeyboardEvent('keydown', {
-                    key: ' ',
-                    bubbles: true,
-                    cancelable: true,
-                }),
-            );
+        document.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key: ' ',
+                bubbles: true,
+                cancelable: true,
+            }),
+        );
 
-            // The engine emits preview-image so the host can open the
-            // full-screen viewer.
-            expect(handler).toHaveBeenCalledTimes(1);
-        },
-    );
+        // The engine emits preview-image so the host can open the
+        // full-screen viewer.
+        expect(handler).toHaveBeenCalledTimes(1);
+    });
 
-    it(
-        'PG10: the preview-image payload carries the selected image src',
-        () => {
-            const src = 'https://example.com/pic.png';
-            const { muya, img } = bootImage(src);
-            selectImage(img);
+    it('PG10: the preview-image payload carries the selected image src', () => {
+        const src = 'https://example.com/pic.png';
+        const { muya, img } = bootImage(src);
+        selectImage(img);
 
-            let payload: unknown = null;
-            muya.on('preview-image', (p: unknown) => {
-                payload = p;
-            });
+        let payload: unknown = null;
+        muya.on('preview-image', (p: unknown) => {
+            payload = p;
+        });
 
-            document.dispatchEvent(
-                new KeyboardEvent('keydown', {
-                    key: ' ',
-                    bubbles: true,
-                    cancelable: true,
-                }),
-            );
+        document.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key: ' ',
+                bubbles: true,
+                cancelable: true,
+            }),
+        );
 
-            // Desired: the payload exposes the image src (legacy shape was
-            // `{ data: src }`); the exact key may differ but the src must be
-            // recoverable from the payload.
-            expect(JSON.stringify(payload)).toContain(src);
-        },
-    );
+        // Desired: the payload exposes the image src (legacy shape was
+        // `{ data: src }`); the exact key may differ but the src must be
+        // recoverable from the payload.
+        expect(JSON.stringify(payload)).toContain(src);
+    });
 });

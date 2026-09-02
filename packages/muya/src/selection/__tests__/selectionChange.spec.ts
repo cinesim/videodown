@@ -24,10 +24,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -79,7 +77,7 @@ describe('selection-change payload', () => {
 
         expect(payload).not.toBeNull();
         const formats = payload!.formats as Array<{ type: string }>;
-        expect(formats.some(f => f.type === 'strong')).toBe(true);
+        expect(formats.some((f) => f.type === 'strong')).toBe(true);
     });
 
     it('reports BOTH strong and em when the cursor is inside overlapping markers', () => {
@@ -103,7 +101,7 @@ describe('selection-change payload', () => {
         );
 
         expect(payload).not.toBeNull();
-        const formats = (payload!.formats as Array<{ type: string }>).map(f => f.type);
+        const formats = (payload!.formats as Array<{ type: string }>).map((f) => f.type);
         expect(formats).toContain('strong');
         expect(formats).toContain('em');
     });
@@ -121,8 +119,19 @@ describe('selection-change payload', () => {
             payload = p as Record<string, unknown>;
         });
 
-        const fakeRect = { x: 7, y: 123, width: 1, height: 18, top: 123, left: 7, right: 8, bottom: 141 } as DOMRect;
-        const fakeRects = Object.assign([fakeRect], { item: (i: number) => [fakeRect][i] ?? null }) as unknown as DOMRectList;
+        const fakeRect = {
+            x: 7,
+            y: 123,
+            width: 1,
+            height: 18,
+            top: 123,
+            left: 7,
+            right: 8,
+            bottom: 141,
+        } as DOMRect;
+        const fakeRects = Object.assign([fakeRect], {
+            item: (i: number) => [fakeRect][i] ?? null,
+        }) as unknown as DOMRectList;
         const original = Range.prototype.getClientRects;
         Range.prototype.getClientRects = function getClientRects(): DOMRectList {
             return fakeRects;
@@ -133,8 +142,7 @@ describe('selection-change payload', () => {
                 { offset: 0, block: first, path: first.path },
                 { offset: 5, block: first, path: first.path },
             );
-        }
-        finally {
+        } finally {
             Range.prototype.getClientRects = original;
         }
 

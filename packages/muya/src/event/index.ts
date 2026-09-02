@@ -4,8 +4,7 @@ import type { IEvent, IListeners, Listener } from './types';
 function* uniqueIdGenerator() {
     let id = 0;
 
-    while (true)
-        yield id++;
+    while (true) yield id++;
 }
 const PREFIX = 'event-';
 const idIterator = uniqueIdGenerator();
@@ -28,8 +27,7 @@ class EventCenter {
         listener: EventListener,
         capture?: boolean | AddEventListenerOptions,
     ): string {
-        if (this._checkHasBind(target, event, listener, capture))
-            return '';
+        if (this._checkHasBind(target, event, listener, capture)) return '';
 
         const eventId = this._eventId;
         target.addEventListener(event, listener, capture);
@@ -49,14 +47,13 @@ class EventCenter {
      * @param  {[type]} eventId [unique eventId]
      */
     detachDOMEvent(eventId: string) {
-        if (!eventId)
-            return false;
+        if (!eventId) return false;
 
-        const removeEvent = this.events.find(e => e.eventId === eventId);
+        const removeEvent = this.events.find((e) => e.eventId === eventId);
         if (removeEvent) {
             const { target, event, listener, capture } = removeEvent;
             target.removeEventListener(event, listener, capture);
-            const index = this.events.findIndex(e => e.eventId === eventId);
+            const index = this.events.findIndex((e) => e.eventId === eventId);
             this.events.splice(index, 1);
         }
     }
@@ -79,10 +76,8 @@ class EventCenter {
     subscribe(event: string, listener: Listener, once = false) {
         const listeners = this.listeners[event];
         const handler = { listener, once };
-        if (listeners && Array.isArray(listeners))
-            listeners.push(handler);
-        else
-            this.listeners[event] = [handler];
+        if (listeners && Array.isArray(listeners)) listeners.push(handler);
+        else this.listeners[event] = [handler];
     }
 
     /**
@@ -97,11 +92,8 @@ class EventCenter {
      */
     off(event: string, listener: Listener) {
         const listeners = this.listeners[event];
-        if (
-            Array.isArray(listeners)
-            && listeners.some(l => l.listener === listener)
-        ) {
-            const index = listeners.findIndex(l => l.listener === listener);
+        if (Array.isArray(listeners) && listeners.some((l) => l.listener === listener)) {
+            const index = listeners.findIndex((l) => l.listener === listener);
             listeners.splice(index, 1);
         }
     }
@@ -125,8 +117,7 @@ class EventCenter {
             // forEach to skip the adjacent element. Iterate a copy instead.
             eventListener.slice().forEach(({ listener, once }) => {
                 listener(...data);
-                if (once)
-                    this.off(event, listener);
+                if (once) this.off(event, listener);
             });
         }
     }
@@ -148,10 +139,10 @@ class EventCenter {
     ) {
         for (const { target, event, listener, capture } of this.events) {
             if (
-                target === cTarget
-                && event === cEvent
-                && listener === cListener
-                && capture === cCapture
+                target === cTarget &&
+                event === cEvent &&
+                listener === cListener &&
+                capture === cCapture
             ) {
                 return true;
             }

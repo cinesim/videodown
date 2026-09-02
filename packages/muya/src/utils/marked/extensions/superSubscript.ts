@@ -33,14 +33,12 @@ function getExtension(name: 'superscript' | 'subscript') {
         level: 'inline' as const,
         start(src: string) {
             const match = src.match(START_HASH[name]);
-            if (!match)
-                return;
+            if (!match) return;
 
             const index = (match.index || 0) + match[1].length;
             const possibleSubSup = src.substring(index);
 
-            if (SUP_REG.test(possibleSubSup) || SUB_REG.test(possibleSubSup))
-                return index;
+            if (SUP_REG.test(possibleSubSup) || SUB_REG.test(possibleSubSup)) return index;
         },
 
         tokenizer(src: string) {

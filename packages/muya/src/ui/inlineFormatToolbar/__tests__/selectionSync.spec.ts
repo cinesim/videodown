@@ -71,10 +71,14 @@ describe('inlineFormatToolbar self-syncs its highlight on selection-change', () 
         toolbar.status = true;
 
         emitSelectionChange(muya, [{ type: 'strong' }]);
-        expect(toolbar.container!.querySelector('li.item.strong')!.classList.contains('active')).toBe(true);
+        expect(
+            toolbar.container!.querySelector('li.item.strong')!.classList.contains('active'),
+        ).toBe(true);
 
         emitSelectionChange(muya, []); // selection moved to unformatted text
-        expect(toolbar.container!.querySelector('li.item.strong')!.classList.contains('active')).toBe(false);
+        expect(
+            toolbar.container!.querySelector('li.item.strong')!.classList.contains('active'),
+        ).toBe(false);
     });
 
     it('ignores selection-change while the toolbar is hidden', () => {

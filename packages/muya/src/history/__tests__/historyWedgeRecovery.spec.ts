@@ -11,8 +11,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     delete (window as Partial<Window>).MUYA_VERSION;
 });
 
@@ -40,7 +39,10 @@ function ignoreChange(muya: Muya): boolean {
 }
 
 async function editText(muya: Muya, text: string): Promise<void> {
-    const content = firstContent(muya) as unknown as { text: string; checkInlineUpdate: () => void };
+    const content = firstContent(muya) as unknown as {
+        text: string;
+        checkInlineUpdate: () => void;
+    };
     content.text = text;
     content.checkInlineUpdate();
     await vi.waitFor(() => {
@@ -55,11 +57,9 @@ describe('history recorder recovery after an undo/redo exception', () => {
         await editText(muya, 'seedX');
         await vi.waitFor(() => expect(undoDepth(muya)).toBe(1));
 
-        const spy = vi
-            .spyOn(muya.editor, 'updateContents')
-            .mockImplementationOnce(() => {
-                throw new Error('simulated replay failure');
-            });
+        const spy = vi.spyOn(muya.editor, 'updateContents').mockImplementationOnce(() => {
+            throw new Error('simulated replay failure');
+        });
 
         expect(() => muya.undo()).toThrow('simulated replay failure');
 

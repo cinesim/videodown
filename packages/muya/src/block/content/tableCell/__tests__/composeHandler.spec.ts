@@ -30,10 +30,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -54,14 +52,14 @@ function tableCells(muya: Muya): Content[] {
     }) => {
         if (block.constructor.blockName === 'table.cell.content')
             out.push(block as unknown as Content);
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
     return out;
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function composeEvent(type: 'compositionstart' | 'compositionend'): Event {
@@ -71,7 +69,8 @@ function composeEvent(type: 'compositionstart' | 'compositionend'): Event {
 // `_hasZeroWidthSpaceAtBeginning` is a private flag; the spec reads it to prove
 // the guard fired (test files are exempt from muya's strict cast rule).
 function zwspFlag(cell: Content): boolean {
-    return (cell as unknown as { _hasZeroWidthSpaceAtBeginning: boolean })._hasZeroWidthSpaceAtBeginning;
+    return (cell as unknown as { _hasZeroWidthSpaceAtBeginning: boolean })
+        ._hasZeroWidthSpaceAtBeginning;
 }
 
 // A table with an empty first header cell and non-empty cells elsewhere.

@@ -42,11 +42,11 @@ class HeadingCopyLink extends TreeNode {
         // Accessible button semantics: discoverable + focusable + operable by
         // assistive tech and keyboard (the keydown handler below activates it).
         this.attributes = {
-            'contenteditable': 'false',
-            'role': 'button',
-            'tabindex': '0',
+            contenteditable: 'false',
+            role: 'button',
+            tabindex: '0',
             'aria-label': label,
-            'title': label,
+            title: label,
         };
         this.createDomNode();
 
@@ -78,10 +78,8 @@ class HeadingCopyLink extends TreeNode {
         // Keyboard activation (Enter / Space) for the focusable button, so it
         // is operable without a pointer.
         const keydownHandler = (event: Event) => {
-            if (!isKeyboardEvent(event))
-                return;
-            if (event.key !== 'Enter' && event.key !== ' ')
-                return;
+            if (!isKeyboardEvent(event)) return;
+            if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
             event.stopPropagation();
             this._activate();
@@ -97,8 +95,7 @@ class HeadingCopyLink extends TreeNode {
     // time the attachment's parent is the heading block.
     private _activate() {
         const heading = this.parent;
-        if (!heading)
-            return;
+        if (!heading) return;
 
         this.muya.eventCenter.emit('heading-copy-link', {
             key: stableSlug(heading),
@@ -106,8 +103,7 @@ class HeadingCopyLink extends TreeNode {
     }
 
     private _detachDOMEvents() {
-        for (const id of this._eventIds)
-            this.muya.eventCenter.detachDOMEvent(id);
+        for (const id of this._eventIds) this.muya.eventCenter.detachDOMEvent(id);
     }
 
     override remove(_source: string) {

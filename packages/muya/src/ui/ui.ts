@@ -19,7 +19,7 @@ export class Ui {
     }
 
     private _listen() {
-    // cache shown float box
+        // cache shown float box
         this.muya.eventCenter.subscribe('muya-float', (tool, status) => {
             status ? this.shownFloat.add(tool) : this.shownFloat.delete(tool);
         });
@@ -30,20 +30,17 @@ export class Ui {
     }
 
     hideAllFloatTools() {
-        for (const tool of this.shownFloat)
-            tool.hide();
+        for (const tool of this.shownFloat) tool.hide();
 
-        for (const btn of this._shownButton)
-            btn.hide();
+        for (const btn of this._shownButton) btn.hide();
     }
 
     handleContentKeydown(event: KeyboardEvent): boolean {
-        if (this.shownFloat.size === 0 || !CONTENT_NAV_KEYS.has(event.key))
-            return false;
+        if (this.shownFloat.size === 0 || !CONTENT_NAV_KEYS.has(event.key)) return false;
 
         if (
-            event.shiftKey
-            && (event.key === EVENT_KEYS.ArrowUp || event.key === EVENT_KEYS.ArrowDown)
+            event.shiftKey &&
+            (event.key === EVENT_KEYS.ArrowUp || event.key === EVENT_KEYS.ArrowDown)
         ) {
             return false;
         }

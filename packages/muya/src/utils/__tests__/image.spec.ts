@@ -17,8 +17,7 @@ function withDirname(dirname: string | undefined, fn: () => void) {
     window.DIRNAME = dirname;
     try {
         fn();
-    }
-    finally {
+    } finally {
         window.DIRNAME = previous;
     }
 }
@@ -38,8 +37,7 @@ describe('checkImageContentType (#3837)', () => {
             vi.fn().mockResolvedValue({
                 status,
                 headers: {
-                    get: (h: string) =>
-                        h.toLowerCase() === 'content-type' ? contentType : null,
+                    get: (h: string) => (h.toLowerCase() === 'content-type' ? contentType : null),
                 },
             }),
         );
@@ -143,25 +141,19 @@ describe('getImageSrc — relative local image paths anchored to window.DIRNAME'
 
     it('resolves a `./` relative path', () => {
         withDirname(DIRNAME, () => {
-            expect(getImageSrc('./img/cat.jpg').src).toBe(
-                'file:///home/user/docs/img/cat.jpg',
-            );
+            expect(getImageSrc('./img/cat.jpg').src).toBe('file:///home/user/docs/img/cat.jpg');
         });
     });
 
     it('collapses `../` parent segments', () => {
         withDirname(DIRNAME, () => {
-            expect(getImageSrc('../shared/logo.svg').src).toBe(
-                'file:///home/user/shared/logo.svg',
-            );
+            expect(getImageSrc('../shared/logo.svg').src).toBe('file:///home/user/shared/logo.svg');
         });
     });
 
     it('does not produce a double `file://` prefix', () => {
         withDirname(DIRNAME, () => {
-            expect(getImageSrc('assets/foo.png').src).not.toContain(
-                'file://file://',
-            );
+            expect(getImageSrc('assets/foo.png').src).not.toContain('file://file://');
         });
     });
 
@@ -218,8 +210,8 @@ describe('getImageSrc — non-relative sources are left unchanged', () => {
     });
 
     it('leaves a data: URL untouched', () => {
-        const dataUrl
-            = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+        const dataUrl =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
         withDirname(DIRNAME, () => {
             expect(getImageSrc(dataUrl)).toEqual({
                 isUnknownType: false,

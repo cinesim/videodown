@@ -28,8 +28,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     delete (window as Partial<Window>).MUYA_VERSION;
 });
 
@@ -57,7 +56,7 @@ function convert(text: string): ILiveBlock[] {
     content.checkInlineUpdate();
 
     const top: ILiveBlock[] = [];
-    (muya.editor.scrollPage as unknown as ILiveBlock).children!.forEach(b => top.push(b));
+    (muya.editor.scrollPage as unknown as ILiveBlock).children!.forEach((b) => top.push(b));
     return top;
 }
 
@@ -66,22 +65,22 @@ describe('_convertToList after bold text + soft-line-break (#2429)', () => {
         // `**foo:**` + two spaces + soft-line-break + `- `
         const blocks = convert('**foo:**  \n- ');
 
-        const list = blocks.find(b => b.blockName === 'bullet-list');
+        const list = blocks.find((b) => b.blockName === 'bullet-list');
         expect(list).toBeDefined();
         // marker is the dash typed on the new line, not a `*` from the bold run.
         expect(list!.meta!.marker).toBe('-');
 
         // the bold text is preserved intact as a leading paragraph, not corrupted
         // into `**foo:*`.
-        const para = blocks.find(b => b.blockName === 'paragraph');
+        const para = blocks.find((b) => b.blockName === 'paragraph');
         expect(para).toBeDefined();
         expect(para!.firstContentInDescendant().text).toBe('**foo:**');
     });
 
     it('still converts a plain single-line `- ` to a bullet list', () => {
         const blocks = convert('- ');
-        expect(blocks.some(b => b.blockName === 'bullet-list')).toBe(true);
+        expect(blocks.some((b) => b.blockName === 'bullet-list')).toBe(true);
         // no spurious leading paragraph
-        expect(blocks.some(b => b.blockName === 'paragraph')).toBe(false);
+        expect(blocks.some((b) => b.blockName === 'paragraph')).toBe(false);
     });
 });

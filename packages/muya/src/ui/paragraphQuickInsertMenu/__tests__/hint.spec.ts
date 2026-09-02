@@ -41,10 +41,8 @@ afterEach(() => {
     }
     // Restore the pre-test value of window.MUYA_VERSION (delete if it was
     // unset before we ran).
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(options: Partial<ConstructorParameters<typeof Muya>[1]> = {}) {

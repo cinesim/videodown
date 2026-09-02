@@ -52,10 +52,7 @@ function makeFakeParagraph(overrides: Partial<IFakeParagraph> = {}): IFakeParagr
 }
 
 function callTabHandler(fakeThis: IFakeParagraph, event: Event) {
-    ParagraphContent.prototype.tabHandler.call(
-        fakeThis as unknown as ParagraphContent,
-        event,
-    );
+    ParagraphContent.prototype.tabHandler.call(fakeThis as unknown as ParagraphContent, event);
 }
 
 describe('paragraphContent.tabHandler — Shift+Tab unindent must not fall through to insertTab', () => {

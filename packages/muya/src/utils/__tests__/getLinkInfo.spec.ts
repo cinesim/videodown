@@ -15,17 +15,19 @@ import { getLinkInfo } from '../getLinkInfo';
 // produces the `linkInfo` payload that LinkTools.selectItem will later
 // hand back to `contentState.unlink` or `options.jumpClick`.
 
-function makeEl(tag: 'a' | 'span', dataset: Record<string, string>, attrs: Record<string, string> = {}, props: Record<string, string> = {}): HTMLElement {
+function makeEl(
+    tag: 'a' | 'span',
+    dataset: Record<string, string>,
+    attrs: Record<string, string> = {},
+    props: Record<string, string> = {},
+): HTMLElement {
     const el = document.createElement(tag);
-    for (const [k, v] of Object.entries(dataset))
-        el.dataset[k] = v;
-    for (const [k, v] of Object.entries(attrs))
-        el.setAttribute(k, v);
+    for (const [k, v] of Object.entries(dataset)) el.dataset[k] = v;
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
     // Set ad-hoc DOM properties (e.g. `href` on a <span>) that aren't on
     // the static HTMLElement type. The structural cast captures that
     // intent without spreading `any` through the helper.
-    for (const [k, v] of Object.entries(props))
-        (el as unknown as Record<string, string>)[k] = v;
+    for (const [k, v] of Object.entries(props)) (el as unknown as Record<string, string>)[k] = v;
     return el;
 }
 
@@ -62,10 +64,7 @@ describe('getLinkInfo — reference link (rendered as a.mu-reference-link)', () 
     it('returns null href for a shortcut ref link with no resolved label', () => {
         // referenceLink renderer drops props.href when the label isn't defined,
         // and renders as <span.mu-reference-link> with no href attribute.
-        const el = makeEl(
-            'span',
-            { start: '0', end: '10', raw: '[foo][bar]' },
-        );
+        const el = makeEl('span', { start: '0', end: '10', raw: '[foo][bar]' });
         const info = getLinkInfo(el);
         // We still extract raw/range — but href is empty.
         expect(info).not.toBeNull();
@@ -103,11 +102,7 @@ describe('getLinkInfo — guards', () => {
     });
 
     it('handles missing start/end gracefully (range becomes null)', () => {
-        const el = makeEl(
-            'a',
-            { raw: '<a href="https://x.com">x</a>' },
-            { href: 'https://x.com' },
-        );
+        const el = makeEl('a', { raw: '<a href="https://x.com">x</a>' }, { href: 'https://x.com' });
         const info = getLinkInfo(el);
         expect(info).not.toBeNull();
         expect(info!.range).toBeNull();

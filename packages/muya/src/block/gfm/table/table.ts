@@ -17,9 +17,7 @@ class TableInner extends Parent {
         const table = new TableInner(muya, state);
 
         table.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock('table.row').create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock('table.row').create(muya, child)),
         );
 
         return table;
@@ -40,7 +38,7 @@ class TableInner extends Parent {
     override getState(): ITableState {
         const state: ITableState = {
             name: 'table',
-            children: this.map(node => (node as TableRow).getState()),
+            children: this.map((node) => (node as TableRow).getState()),
         };
 
         return state;

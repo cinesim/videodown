@@ -35,10 +35,8 @@ afterEach(() => {
         host.remove();
     }
     loadRendererMock.mockReset();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -170,7 +168,9 @@ describe('muya render-affecting options', () => {
     function bootMuyaWith(markdown: string, options: Record<string, unknown>): Muya {
         const host = document.createElement('div');
         document.body.appendChild(host);
-        const muya = new Muya(host, { markdown, ...options } as ConstructorParameters<typeof Muya>[1]);
+        const muya = new Muya(host, { markdown, ...options } as ConstructorParameters<
+            typeof Muya
+        >[1]);
         muya.init();
         bootedHosts.push(muya.domNode);
         return muya;
@@ -178,7 +178,7 @@ describe('muya render-affecting options', () => {
 
     it('superSubScript:false renders literal ^sup^ (no <sup> element)', async () => {
         const muya = bootMuyaWith('^sup^\n', { superSubScript: false });
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
         expect(muya.domNode.querySelectorAll('sup').length).toBe(0);
         expect(muya.domNode.textContent).toContain('^sup^');
@@ -188,7 +188,7 @@ describe('muya render-affecting options', () => {
 
     it('superSubScript:true renders a <sup> element for ^sup^', async () => {
         const muya = bootMuyaWith('^sup^\n', { superSubScript: true });
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
         expect(muya.domNode.querySelectorAll('sup').length).toBe(1);
         // The marker is preserved in the serialized markdown regardless.
@@ -197,16 +197,16 @@ describe('muya render-affecting options', () => {
 
     it('setOptions superSubScript with forceRender toggles the <sup> live', async () => {
         const muya = bootMuyaWith('^sup^\n', { superSubScript: true });
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(muya.domNode.querySelectorAll('sup').length).toBe(1);
 
         muya.setOptions({ superSubScript: false }, true);
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(muya.domNode.querySelectorAll('sup').length).toBe(0);
         expect(muya.domNode.textContent).toContain('^sup^');
 
         muya.setOptions({ superSubScript: true }, true);
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         expect(muya.domNode.querySelectorAll('sup').length).toBe(1);
     });
 
@@ -229,7 +229,7 @@ describe('muya render-affecting options', () => {
         expect((muya.getState()[0] as { meta: { lang: string } }).meta.lang).toBe('yaml');
 
         muya.setOptions({ frontmatterType: '+' }, true);
-        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
         // The fences are still `---` (yaml), NOT `+++` (toml) — the existing
         // block's meta is unchanged by the option switch.
@@ -266,7 +266,9 @@ describe('muya diagram-theme options', () => {
     function bootMuyaWith(markdown: string, options: Record<string, unknown>): Muya {
         const host = document.createElement('div');
         document.body.appendChild(host);
-        const muya = new Muya(host, { markdown, ...options } as ConstructorParameters<typeof Muya>[1]);
+        const muya = new Muya(host, { markdown, ...options } as ConstructorParameters<
+            typeof Muya
+        >[1]);
         muya.init();
         bootedHosts.push(muya.domNode);
         return muya;

@@ -32,10 +32,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -106,9 +104,7 @@ describe('format-click on images', () => {
         const wrapper = muya.domNode.querySelector<HTMLElement>(
             `span.${CLASS_NAMES.MU_INLINE_IMAGE}`,
         )!;
-        const container = wrapper.querySelector<HTMLElement>(
-            `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-        )!;
+        const container = wrapper.querySelector<HTMLElement>(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)!;
         const img = document.createElement('img');
         img.setAttribute('src', src);
         container.appendChild(img);

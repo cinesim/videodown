@@ -13,28 +13,24 @@ import { isStandaloneTableHtml } from '../paste';
 
 describe('isStandaloneTableHtml — single-root guard (legacy childElementCount === 1)', () => {
     it('still accepts a genuine lone table', () => {
-        expect(
-            isStandaloneTableHtml('<table><tr><td>a</td></tr></table>'),
-        ).toBe(true);
+        expect(isStandaloneTableHtml('<table><tr><td>a</td></tr></table>')).toBe(true);
     });
 
     it('tolerates leading/trailing whitespace around the single table', () => {
-        expect(
-            isStandaloneTableHtml('  <table border="1"><tr><td>a</td></tr></table>\n'),
-        ).toBe(true);
+        expect(isStandaloneTableHtml('  <table border="1"><tr><td>a</td></tr></table>\n')).toBe(
+            true,
+        );
     });
 
     it('rejects two sibling tables even though the greedy regex spans them', () => {
-        const twoTables
-            = '<table><tr><td>a</td></tr></table><table><tr><td>b</td></tr></table>';
+        const twoTables = '<table><tr><td>a</td></tr></table><table><tr><td>b</td></tr></table>';
         // The greedy `^<table\b[\s\S]*<\/table>$` matches this whole string, but
         // the parsed container has two root elements — not a standalone table.
         expect(isStandaloneTableHtml(twoTables)).toBe(false);
     });
 
     it('rejects a table followed by a sibling element', () => {
-        const tablePlusDiv
-            = '<table><tr><td>a</td></tr></table><div>after</div>';
+        const tablePlusDiv = '<table><tr><td>a</td></tr></table><div>after</div>';
         expect(isStandaloneTableHtml(tablePlusDiv)).toBe(false);
     });
 

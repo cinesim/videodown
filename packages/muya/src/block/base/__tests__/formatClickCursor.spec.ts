@@ -41,10 +41,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -67,7 +65,7 @@ function directionOf(anchorOffset: number, focusOffset: number): SelectionDirect
 }
 
 function flushFrame(): Promise<void> {
-    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 describe('setCursor preserves a backward selection (begin > end stays backward)', () => {

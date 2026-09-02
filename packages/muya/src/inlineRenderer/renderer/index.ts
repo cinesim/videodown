@@ -88,10 +88,7 @@ interface Renderer extends InlineSyntaxRender {}
 
 @methodMixins(inlineSyntaxRenderer)
 class Renderer {
-    public loadMathMap: Map<
-        string,
-    string | VNode | (string | VNode)[] | undefined
-    > = new Map();
+    public loadMathMap: Map<string, string | VNode | (string | VNode)[] | undefined> = new Map();
 
     public loadImageMap: Map<
         string,
@@ -106,19 +103,21 @@ class Renderer {
 
     public urlMap: Map<string, string> = new Map();
 
-    constructor(public muya: Muya, public parent: InlineRenderer) {}
+    constructor(
+        public muya: Muya,
+        public parent: InlineRenderer,
+    ) {}
 
     private _checkConflicted(block: Format, token: Token, cursor: IRenderCursor = {}) {
         const anchor = cursor.anchor || cursor.start;
         const focus = cursor.focus || cursor.end;
-        if (!anchor || !focus || (cursor.block && cursor.block !== block))
-            return false;
+        if (!anchor || !focus || (cursor.block && cursor.block !== block)) return false;
 
         const { start, end } = token.range;
 
         return (
-            conflict([start, end], [anchor.offset, anchor.offset])
-            || conflict([start, end], [focus.offset, focus.offset])
+            conflict([start, end], [anchor.offset, anchor.offset]) ||
+            conflict([start, end], [focus.offset, focus.offset])
         );
     }
 
@@ -129,8 +128,8 @@ class Renderer {
         cursor: IRenderCursor,
     ) {
         return (
-            outerClass
-            || (this._checkConflicted(block, token, cursor)
+            outerClass ||
+            (this._checkConflicted(block, token, cursor)
                 ? CLASS_NAMES.MU_GRAY
                 : CLASS_NAMES.MU_HIDE)
         );

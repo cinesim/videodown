@@ -38,11 +38,7 @@ describe('marktext 0baf2e9e/7de33f11 — inline html tag XSS defenses', () => {
         //   `!sanitize('<' + tag + '>')`. Adding attribute-bearing variants
         // here would assert against DOMPurify behaviour the renderer never
         // exercises and could create false failures.
-        it.each([
-            ['<embed>'],
-            ['<object>'],
-            ['<iframe>'],
-        ])('strips %s', (tag) => {
+        it.each([['<embed>'], ['<object>'], ['<iframe>']])('strips %s', (tag) => {
             // The htmlTag renderer treats an empty result from
             // `sanitize('<' + tag + '>')` as the trigger to downgrade to `<span>`.
             expect(sanitize(tag)).toBe('');

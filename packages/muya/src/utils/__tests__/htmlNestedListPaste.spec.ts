@@ -24,7 +24,7 @@ function htmlToState(html: string) {
 }
 
 function firstItemChildren(states: IStateLike[]) {
-    return states[0].children?.[0].children?.map(child => child.name) ?? [];
+    return states[0].children?.[0].children?.map((child) => child.name) ?? [];
 }
 
 describe('htmlToMarkdown - nested HTML lists under ordered parents', () => {
@@ -34,7 +34,7 @@ describe('htmlToMarkdown - nested HTML lists under ordered parents', () => {
         );
 
         expect(markdown).toContain('1. one\n   - two');
-        expect(states.map(state => state.name)).toEqual(['order-list']);
+        expect(states.map((state) => state.name)).toEqual(['order-list']);
         expect(firstItemChildren(states)).toEqual(['paragraph', 'bullet-list']);
     });
 
@@ -44,7 +44,7 @@ describe('htmlToMarkdown - nested HTML lists under ordered parents', () => {
         );
 
         expect(markdown).toContain('1. one\n   1. two');
-        expect(states.map(state => state.name)).toEqual(['order-list']);
+        expect(states.map((state) => state.name)).toEqual(['order-list']);
         expect(firstItemChildren(states)).toEqual(['paragraph', 'order-list']);
     });
 
@@ -54,7 +54,7 @@ describe('htmlToMarkdown - nested HTML lists under ordered parents', () => {
         );
 
         expect(markdown).toContain('10. ten\n    - child');
-        expect(states.map(state => state.name)).toEqual(['order-list']);
+        expect(states.map((state) => state.name)).toEqual(['order-list']);
         expect(firstItemChildren(states)).toEqual(['paragraph', 'bullet-list']);
     });
 });

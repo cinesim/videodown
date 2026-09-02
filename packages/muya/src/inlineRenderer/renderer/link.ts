@@ -8,19 +8,11 @@ import { sanitizeHyperlink } from '../../utils/url';
 // 'link': /^(\[)((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*?)(\\*)\]\((.*?)(\\*)\)/, // can nest
 export default function link(
     this: Renderer,
-    {
-        h,
-        cursor,
-        block,
-        token,
-        outerClass,
-    }: ISyntaxRenderOptions & { token: LinkToken },
+    { h, cursor, block, token, outerClass }: ISyntaxRenderOptions & { token: LinkToken },
 ) {
     const className = this.getClassName(outerClass, block, token, cursor);
-    const linkClassName
-        = className === CLASS_NAMES.MU_HIDE
-            ? className
-            : CLASS_NAMES.MU_LINK_IN_BRACKET;
+    const linkClassName =
+        className === CLASS_NAMES.MU_HIDE ? className : CLASS_NAMES.MU_LINK_IN_BRACKET;
     const { start, end } = token.range;
     const firstMiddleBracket = this.highlight(h, block, start, start + 3, token);
 
@@ -36,12 +28,12 @@ export default function link(
         h,
         block,
         start + 1 + token.anchor.length + token.backlash.first.length + 2,
-        start
-        + 1
-        + token.anchor.length
-        + token.backlash.first.length
-        + 2
-        + token.hrefAndTitle.length,
+        start +
+            1 +
+            token.anchor.length +
+            token.backlash.first.length +
+            2 +
+            token.hrefAndTitle.length,
         token,
     );
 
@@ -49,12 +41,12 @@ export default function link(
         h,
         block,
         start + 1 + token.anchor.length + token.backlash.first.length,
-        start
-        + 1
-        + token.anchor.length
-        + token.backlash.first.length
-        + 2
-        + token.hrefAndTitle.length,
+        start +
+            1 +
+            token.anchor.length +
+            token.backlash.first.length +
+            2 +
+            token.hrefAndTitle.length,
         token,
     );
 
@@ -63,24 +55,16 @@ export default function link(
     const firstBacklashStart = start + 1 + token.anchor.length;
     const secondBacklashStart = end - 1 - token.backlash.second.length;
 
-    if (
-        isLengthEven(token.backlash.first)
-        && isLengthEven(token.backlash.second)
-    ) {
+    if (isLengthEven(token.backlash.first) && isLengthEven(token.backlash.second)) {
         if (!token.children.length && !token.backlash.first) {
             // no-text-link
             return [
-                h(
-                    `span.${CLASS_NAMES.MU_GRAY}.${CLASS_NAMES.MU_REMOVE}`,
-                    firstMiddleBracket,
-                ),
+                h(`span.${CLASS_NAMES.MU_GRAY}.${CLASS_NAMES.MU_REMOVE}`, firstMiddleBracket),
                 h(
                     `a.${CLASS_NAMES.MU_NO_TEXT_LINK}.${CLASS_NAMES.MU_INLINE_RULE}`,
                     {
                         props: {
-                            href: sanitizeHyperlink(
-                                token.href + encodeURI(token.backlash.second),
-                            ),
+                            href: sanitizeHyperlink(token.href + encodeURI(token.backlash.second)),
                             target: '_blank',
                             title: token.title,
                         },
@@ -98,8 +82,7 @@ export default function link(
                 ),
                 h(`span.${CLASS_NAMES.MU_GRAY}.${CLASS_NAMES.MU_REMOVE}`, lastBracket),
             ];
-        }
-        else {
+        } else {
             // has children
             return [
                 h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, firstBracket),
@@ -107,9 +90,7 @@ export default function link(
                     `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_LINK}`,
                     {
                         props: {
-                            href: sanitizeHyperlink(
-                                token.href + encodeURI(token.backlash.second),
-                            ),
+                            href: sanitizeHyperlink(token.href + encodeURI(token.backlash.second)),
                             title: token.title,
                         },
                         dataset: {
@@ -129,9 +110,7 @@ export default function link(
                                 block,
                                 token: to,
                             });
-                            return Array.isArray(chunk)
-                                ? [...acc, ...chunk]
-                                : [...acc, chunk];
+                            return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
                         }, []),
                         ...this.backlashInToken(
                             h,
@@ -162,8 +141,7 @@ export default function link(
                 h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, lastBracket),
             ];
         }
-    }
-    else {
+    } else {
         return [
             ...firstBracket,
             ...token.children.reduce((acc: VNode[], to: Token) => {
@@ -178,13 +156,7 @@ export default function link(
 
                 return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
             }, []),
-            ...this.backlashInToken(
-                h,
-                token.backlash.first,
-                className,
-                firstBacklashStart,
-                token,
-            ),
+            ...this.backlashInToken(h, token.backlash.first, className, firstBacklashStart, token),
             ...middleHref,
             ...this.backlashInToken(
                 h,

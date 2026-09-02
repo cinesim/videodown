@@ -28,12 +28,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -66,7 +63,7 @@ describe('track C — cut a selected inline image deletes it (muyajs parity)', (
         expect(muya.editor.selection.image).not.toBeNull();
 
         muya.editor.clipboard.cutHandler();
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         expect(muya.getMarkdown()).toBe('\n');
         expect(muya.editor.selection.image).toBeNull();
@@ -86,7 +83,7 @@ describe('track C — cut a selected inline image deletes it (muyajs parity)', (
         muya.editor.selection.selectImage({ token, imageId: 'cut-img', block });
 
         muya.editor.clipboard.cutHandler();
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         expect(muya.getMarkdown()).toBe('before  after\n');
         expect(muya.editor.selection.image).toBeNull();

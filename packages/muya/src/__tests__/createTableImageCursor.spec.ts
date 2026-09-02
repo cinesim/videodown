@@ -31,10 +31,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -62,8 +60,7 @@ function firstBlock(muya: Muya): TState {
 
 function firstTable(muya: Muya): ITableState {
     const b = firstBlock(muya);
-    if (!isTableState(b))
-        throw new Error(`expected a table, got ${b.name}`);
+    if (!isTableState(b)) throw new Error(`expected a table, got ${b.name}`);
     return b;
 }
 
@@ -75,7 +72,7 @@ describe('muya.createTable()', () => {
         await vi.waitFor(() => {
             const b = firstTable(muya);
             expect(b.children.length).toBe(3); // rows (header + 2 body)
-            expect(b.children.every(row => row.children.length === 4)).toBe(true); // columns
+            expect(b.children.every((row) => row.children.length === 4)).toBe(true); // columns
         });
     });
 
@@ -84,10 +81,10 @@ describe('muya.createTable()', () => {
         placeCursorOnFirstBlock(muya);
         muya.createTable({ rows: 2, columns: 2 });
         await vi.waitFor(() => {
-            const cells = firstTable(muya).children.flatMap(row => row.children);
-            expect(cells.every(c => c.name === 'table.cell')).toBe(true);
-            expect(cells.every(c => c.text === '')).toBe(true);
-            expect(cells.every(c => c.meta.align === 'none')).toBe(true);
+            const cells = firstTable(muya).children.flatMap((row) => row.children);
+            expect(cells.every((c) => c.name === 'table.cell')).toBe(true);
+            expect(cells.every((c) => c.text === '')).toBe(true);
+            expect(cells.every((c) => c.meta.align === 'none')).toBe(true);
         });
     });
 
@@ -120,7 +117,7 @@ describe('muya.createTable()', () => {
         await vi.waitFor(() => {
             const b = firstTable(muya);
             expect(b.children.length).toBe(2); // header + one body row
-            expect(b.children.every(row => row.children.length === 1)).toBe(true);
+            expect(b.children.every((row) => row.children.length === 1)).toBe(true);
         });
     });
 
@@ -136,7 +133,7 @@ describe('muya.createTable()', () => {
             // also normalises to the minimum of 1 column rather than allocating
             // an array of non-integer length.
             expect(b.children.length).toBe(2);
-            expect(b.children.every(row => row.children.length === 1)).toBe(true);
+            expect(b.children.every((row) => row.children.length === 1)).toBe(true);
         });
     });
 
@@ -147,7 +144,7 @@ describe('muya.createTable()', () => {
         await vi.waitFor(() => {
             const b = firstTable(muya);
             expect(b.children.length).toBe(3); // floor(3.9)
-            expect(b.children.every(row => row.children.length === 2)).toBe(true); // floor(2.9)
+            expect(b.children.every((row) => row.children.length === 2)).toBe(true); // floor(2.9)
         });
     });
 
@@ -200,7 +197,7 @@ describe('muya.createTable()', () => {
             expect(s.length).toBe(1);
             expect(s[0].name).toBe('bullet-list');
             const item = (s[0] as { children: { children: { name: string }[] }[] }).children[0];
-            expect(item.children.map(c => c.name)).toEqual(['paragraph', 'table']);
+            expect(item.children.map((c) => c.name)).toEqual(['paragraph', 'table']);
         });
         // the nested table still serializes without throwing
         expect(() => muya.getMarkdown()).not.toThrow();
@@ -257,8 +254,8 @@ describe('muya.insertImage()', () => {
     it('embeds a well-formed base64 data URL verbatim', async () => {
         const muya = bootMuya('\n');
         placeCursorOnFirstBlock(muya, 0);
-        const dataUrl
-            = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+        const dataUrl =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
         muya.insertImage({ src: dataUrl, alt: 'dot' });
         await vi.waitFor(() => {
             expect(muya.getMarkdown()).toContain(`![dot](${dataUrl})`);
@@ -336,11 +333,13 @@ describe('muya.setCursor()', () => {
 
     it('does not throw and leaves the document intact for an unresolvable path', () => {
         const muya = bootMuya('hello\n');
-        expect(() => muya.setCursor({
-            anchor: { offset: 0 },
-            focus: { offset: 0 },
-            anchorPath: [99, 'text'],
-            focusPath: [99, 'text'],
-        })).not.toThrow();
+        expect(() =>
+            muya.setCursor({
+                anchor: { offset: 0 },
+                focus: { offset: 0 },
+                anchorPath: [99, 'text'],
+                focusPath: [99, 'text'],
+            }),
+        ).not.toThrow();
     });
 });

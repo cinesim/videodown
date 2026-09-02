@@ -18,9 +18,7 @@ class BulletList extends Parent {
         const bulletList = new BulletList(muya, state);
 
         bulletList.append(
-            ...state.children.map(child =>
-                ScrollPage.loadBlock(child.name).create(muya, child),
-            ),
+            ...state.children.map((child) => ScrollPage.loadBlock(child.name).create(muya, child)),
         );
 
         return bulletList;
@@ -43,8 +41,7 @@ class BulletList extends Parent {
             marker: meta.marker,
         };
         this.classList = [CLASS_NAMES.MU_BULLET_LIST];
-        if (!meta.loose)
-            this.classList.push('mu-tight-list');
+        if (!meta.loose) this.classList.push('mu-tight-list');
 
         this.createDomNode();
     }
@@ -53,7 +50,7 @@ class BulletList extends Parent {
         const state: IBulletListState = {
             name: 'bullet-list',
             meta: { ...this.meta },
-            children: this.children.map(child => (child as ListItem).getState()),
+            children: this.children.map((child) => (child as ListItem).getState()),
         };
 
         return state;

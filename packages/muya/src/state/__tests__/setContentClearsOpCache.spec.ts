@@ -28,7 +28,7 @@ function makeState(blocks: TState[]): JSONState {
 }
 
 function nextFrame(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 describe('setContent drops the previous document pending op batch (#2938)', () => {
@@ -48,7 +48,7 @@ describe('setContent drops the previous document pending op batch (#2938)', () =
         await nextFrame();
         await nextFrame();
 
-        const texts = (state.getState() as Array<{ text: string }>).map(b => b.text);
+        const texts = (state.getState() as Array<{ text: string }>).map((b) => b.text);
         // The stale insert must NOT have been applied to doc B.
         expect(texts).toEqual(['B1', 'B2']);
     });
@@ -64,7 +64,7 @@ describe('setContent drops the previous document pending op batch (#2938)', () =
         await nextFrame();
         await nextFrame();
 
-        const texts = (state.getState() as Array<{ text: string }>).map(b => b.text);
+        const texts = (state.getState() as Array<{ text: string }>).map((b) => b.text);
         expect(texts).toEqual(['B', 'C']);
     });
 });

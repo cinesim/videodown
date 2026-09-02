@@ -20,8 +20,7 @@ beforeEach(() => {
 
 afterEach(() => {
     while (bootedHosts.length) bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
     else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
@@ -38,8 +37,8 @@ describe('muya.destroy — UI plugin cleanup (#3315)', () => {
     it('calls destroy() on every registered UI plugin', () => {
         const muya = bootMuya('hello\n');
         const destroyA = vi.fn();
-        const destroyB = vi.fn()
-    ;(muya as unknown as { _uiPlugins: Record<string, unknown> })._uiPlugins = {
+        const destroyB = vi.fn();
+        (muya as unknown as { _uiPlugins: Record<string, unknown> })._uiPlugins = {
             a: { destroy: destroyA },
             b: { destroy: destroyB },
         };
@@ -51,8 +50,8 @@ describe('muya.destroy — UI plugin cleanup (#3315)', () => {
     });
 
     it('does not throw for a plugin without a destroy() method', () => {
-        const muya = bootMuya('hello\n')
-    ;(muya as unknown as { _uiPlugins: Record<string, unknown> })._uiPlugins = {
+        const muya = bootMuya('hello\n');
+        (muya as unknown as { _uiPlugins: Record<string, unknown> })._uiPlugins = {
             legacy: {},
         };
 

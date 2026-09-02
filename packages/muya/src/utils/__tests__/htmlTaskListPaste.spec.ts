@@ -28,7 +28,7 @@ function firstTask(states: IStateLike[]) {
     const item = states[0].children?.[0];
     return {
         checked: item?.meta?.checked,
-        text: item?.children?.find(child => child.name === 'paragraph')?.text,
+        text: item?.children?.find((child) => child.name === 'paragraph')?.text,
     };
 }
 

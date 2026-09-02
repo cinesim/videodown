@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code when working inside `packages/muya`.
 
-> **Location.** `packages/muya` is the TypeScript rewrite of muya (upstream: <https://github.com/marktext/muya>), migrated into this marktext monorepo and published as `@muyajs/core`. The desktop renderer now consumes `@muyajs/core` as its editor engine; the legacy JS engine `packages/muyajs` (`@marktext/muyajs`, the `muya/` alias) is being retired and only a handful of call sites still reference it. `packages/muya` keeps its own toolchain (ESLint/antfu, stylelint, madge, vitest), and the marktext-root ESLint ignores `packages/muya/**` — treat it as a self-contained package with its own conventions.
+> **Location.** `packages/muya` is the TypeScript rewrite of muya (upstream: <https://github.com/marktext/muya>), migrated into this marktext monorepo and published as `@muyajs/core`. The desktop renderer now consumes `@muyajs/core` as its editor engine; the legacy JS engine `packages/muyajs` (`@marktext/muyajs`, the `muya/` alias) is being retired and only a handful of call sites still reference it. `packages/muya` keeps package-local Oxlint/Oxfmt settings alongside stylelint, madge, and vitest.
 
 ## Layout inside `packages/muya`
 
@@ -10,7 +10,7 @@ This file provides guidance to Claude Code when working inside `packages/muya`.
 - `test/spec/` — CommonMark / GFM conformance suites (run via `test:spec`, separate vitest config).
 - `examples/` — `muya-examples`, a Vite vanilla-TS demo that consumes `@muyajs/core` via `workspace:*`. Listed as its own workspace in the repo-root `package.json`.
 - `e2e/` — `muya-e2e`, Playwright real-browser E2E suite. Self-contained host page under `e2e/host/`. See `e2e/README.md` and `e2e/BACKLOG.md`.
-- `eslint.config.mjs`, `.stylelintrc`, `.madgerc` — package-local tooling. The marktext-root ESLint explicitly ignores `packages/muya/**`, so muya self-lints with its own antfu-based config.
+- `.oxlintrc.json`, `.oxfmtrc.json`, `.stylelintrc`, `.madgerc` — package-local tooling. Oxlint and Oxfmt automatically use these nested configs for muya files.
 
 Stub packages (`packages/facade`, `packages/findReplace`) from the upstream muya monorepo were not migrated — they had no source.
 
@@ -19,10 +19,11 @@ Stub packages (`packages/facade`, `packages/findReplace`) from the upstream muya
 Run from the marktext repo root.
 
 - `bun run --cwd packages/muya/examples dev:demo` — start the examples Vite dev server.
+- `bun run --cwd packages/muya format` / `bun run --cwd packages/muya format:check` — write/check formatting with Oxfmt.
 - `bun run --cwd packages/muya build` — `tsc && vite build`, emits `lib/{es,umd,cjs}` and `lib/types`.
 - `bun run --cwd packages/muya test` / `bun run --cwd packages/muya coverage` — Vitest unit tests (co-located under `src/**/__tests__/`). Single file: `bun run --cwd packages/muya vitest run path/to/file.test.ts`.
 - `bun run --cwd packages/muya test:spec` — CommonMark 0.31 + GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. `test:spec:commonmark` / `test:spec:gfm` scope to one suite. Pass/fail counts are locked by `test/spec/expected-failures.json`: any listed example that starts passing fails the suite (remove it from the list); any unlisted example that starts failing fails the suite. Compliance can only go up. Baseline lives in `test/spec/conformance.md` (CommonMark 87.7% / GFM 86.3% at PR-6a).
-- `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` — ESLint over `src test` (antfu config; rules below).
+- `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` — Oxlint over `src test`.
 - `bun run --cwd packages/muya lint:types` — `tsc --noEmit`.
 - `bun run --cwd packages/muya lint:css` — Stylelint over `src/**/*.css`.
 - `bun run --cwd packages/muya check-circular` — `madge --circular src/index.ts`. CI enforces this.
@@ -80,14 +81,14 @@ The variables are set on the editor root (`.mu-editor`) and consumed by the
 bundled stylesheets; each has a default baked into the CSS, so passing nothing
 renders the standalone defaults.
 
-| Option (`IMuyaOptions`) | CSS variable | Default | Applies to |
-|---|---|---|---|
-| `fontSize` (number, px) | `--mu-font-size` | `16px` | `.mu-editor` base text |
-| `lineHeight` (number) | `--mu-line-height` | `1.6` | `.mu-editor` base text |
-| `editorFontFamily` (string) | `--mu-font-family` | Open Sans stack | `.mu-editor` base text |
-| `codeFontSize` (number, px) | `--mu-code-font-size` | `90%` | `.mu-code-block` only |
-| `codeFontFamily` (string) | `--mu-code-font-family` | DejaVu Sans Mono stack | `.mu-code-block` only |
-| `wrapCodeBlocks` (boolean) | — (`.mu-code-wrap` root class) | off (`pre`) | code-block line wrapping |
+| Option (`IMuyaOptions`)     | CSS variable                   | Default                | Applies to               |
+| --------------------------- | ------------------------------ | ---------------------- | ------------------------ |
+| `fontSize` (number, px)     | `--mu-font-size`               | `16px`                 | `.mu-editor` base text   |
+| `lineHeight` (number)       | `--mu-line-height`             | `1.6`                  | `.mu-editor` base text   |
+| `editorFontFamily` (string) | `--mu-font-family`             | Open Sans stack        | `.mu-editor` base text   |
+| `codeFontSize` (number, px) | `--mu-code-font-size`          | `90%`                  | `.mu-code-block` only    |
+| `codeFontFamily` (string)   | `--mu-code-font-family`        | DejaVu Sans Mono stack | `.mu-code-block` only    |
+| `wrapCodeBlocks` (boolean)  | — (`.mu-code-wrap` root class) | off (`pre`)            | code-block line wrapping |
 
 Inline code (`code.mu-inline-rule`) is deliberately NOT driven by these — it
 keeps its relative `0.8em` / mono sizing. Editor column width
@@ -97,12 +98,10 @@ through `muya.setOptions({...})`.
 
 ## Conventions enforced by tooling
 
-- **ESLint** (`eslint.config.mjs`, antfu base) adds:
+- **Oxlint** (`.oxlintrc.json`) adds:
     - `complexity` ≤ 20 and `max-lines-per-function` ≤ 200 (warnings) for non-test TS.
-    - Interface names **must** start with `I[A-Z0-9]` (e.g. `IMuyaOptions`, `IPlugin`). The naming-convention rule will flag interfaces that don't.
-    - Private class members **must** be prefixed with `_` (e.g. `_uiPlugins`, `_activeContentBlock`).
-    - Style: 4-space indent, semicolons required, React rules disabled, Markdown linting disabled.
-    - Bans `value as unknown as X` double-casts outside audited boundary helpers — use type guards or named helpers instead.
+    - Explicit `any` is an error.
+    - Oxfmt enforces 4-space indentation and required semicolons through the nested `.oxfmtrc.json`.
 - **Madge** circular-dep check (`bun run --cwd packages/muya check-circular`) runs in CI — adding a circular import will fail the build.
 - Test files (`*.test.ts`, `*.spec.ts`) and `vite.config.ts` are excluded from the strict TS lint rules above.
 

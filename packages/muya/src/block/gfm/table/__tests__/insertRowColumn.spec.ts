@@ -29,10 +29,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -47,19 +45,16 @@ function bootMuya(markdown: string): Muya {
 function findTable(muya: Muya): Table {
     let table: Table | null = null;
     const visit = (block: TreeNode) => {
-        if ((block.constructor as typeof TreeNode)?.blockName === 'table')
-            table = block as Table;
-        if (block.isParent())
-            block.children.forEach(c => visit(c));
+        if ((block.constructor as typeof TreeNode)?.blockName === 'table') table = block as Table;
+        if (block.isParent()) block.children.forEach((c) => visit(c));
     };
     visit(muya.editor.scrollPage!);
-    if (!table)
-        throw new Error('no table found');
+    if (!table) throw new Error('no table found');
     return table;
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 // A 1-header + 1-body table whose two columns are left- and right-aligned.
@@ -82,7 +77,7 @@ describe('table.insertRow', () => {
         expect(newRow.children.every((c: { text: string }) => c.text === '')).toBe(true);
     });
 
-    it('inherits the header row\'s per-column alignment in the new row', async () => {
+    it("inherits the header row's per-column alignment in the new row", async () => {
         const muya = bootMuya(ALIGNED_TABLE);
         const table = findTable(muya);
 
@@ -104,7 +99,9 @@ describe('table.insertRow', () => {
         const caretCell = table.insertRow(1);
 
         expect(caretCell).toBeTruthy();
-        expect((caretCell.constructor as { blockName?: string }).blockName).toBe('table.cell.content');
+        expect((caretCell.constructor as { blockName?: string }).blockName).toBe(
+            'table.cell.content',
+        );
         expect(caretCell.text).toBe('');
     });
 
@@ -132,8 +129,7 @@ describe('table.insertColumn', () => {
         expect(table.columnCount).toBe(3);
         // Every row gained one empty cell.
         const state = table.getState();
-        for (const row of state.children)
-            expect(row.children.length).toBe(3);
+        for (const row of state.children) expect(row.children.length).toBe(3);
     });
 
     it('applies the requested alignment to the whole new column', async () => {
@@ -145,18 +141,19 @@ describe('table.insertColumn', () => {
         await flush();
         const state = table.getState();
         // The inserted column (index 1) is center-aligned in every row.
-        for (const row of state.children)
-            expect(row.children[1].meta.align).toBe('center');
+        for (const row of state.children) expect(row.children[1].meta.align).toBe('center');
     });
 
-    it('returns the new column\'s first cell content for caret placement', () => {
+    it("returns the new column's first cell content for caret placement", () => {
         const muya = bootMuya(ALIGNED_TABLE);
         const table = findTable(muya);
 
         const caretCell = table.insertColumn(1, 'center');
 
         expect(caretCell).toBeTruthy();
-        expect((caretCell.constructor as { blockName?: string }).blockName).toBe('table.cell.content');
+        expect((caretCell.constructor as { blockName?: string }).blockName).toBe(
+            'table.cell.content',
+        );
         expect(caretCell.text).toBe('');
     });
 

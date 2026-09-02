@@ -26,8 +26,7 @@ function walkTokens(options: ILexOption) {
             // never fenced and can't carry a language. For fenced blocks we
             // tag them once; subsequent visits are no-ops, so this stays
             // idempotent even if walkTokens accidentally runs multiple times.
-            if (token.codeBlockStyle === 'indented')
-                token.lang = '';
+            if (token.codeBlockStyle === 'indented') token.lang = '';
             else if (!token.codeBlockStyle && typeof token.lang === 'string')
                 token.codeBlockStyle = 'fenced';
         }
@@ -40,7 +39,8 @@ function walkTokens(options: ILexOption) {
             token.type = 'multiplemath';
             token.mathStyle = 'gitlab';
             token.displayMode = true;
-            const codeFields = token as IMathToken & Partial<{ lang: unknown; codeBlockStyle: unknown }>;
+            const codeFields = token as IMathToken &
+                Partial<{ lang: unknown; codeBlockStyle: unknown }>;
             delete codeFields.lang;
             delete codeFields.codeBlockStyle;
         }

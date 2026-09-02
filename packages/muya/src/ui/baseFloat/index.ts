@@ -80,8 +80,7 @@ abstract class BaseFloat {
         const { floatBox } = this;
 
         const keydownHandler = (event: Event) => {
-            if (isKeyboardEvent(event) && event.key === EVENT_KEYS.Escape)
-                this.hide();
+            if (isKeyboardEvent(event) && event.key === EVENT_KEYS.Escape) this.hide();
         };
 
         /**
@@ -90,8 +89,7 @@ abstract class BaseFloat {
          * so the float box needs to be hidden.
          */
         const scrollHandler = (event: Event) => {
-            if (!isHTMLElement(event.target))
-                return;
+            if (!isHTMLElement(event.target)) return;
             if (typeof this._lastScrollTop !== 'number') {
                 this._lastScrollTop = event.target.scrollTop;
 
@@ -99,10 +97,7 @@ abstract class BaseFloat {
             }
 
             // only when scroll distance great than 50px, then hide the float box.
-            if (
-                this.status
-                && Math.abs(event.target.scrollTop - this._lastScrollTop) > 50
-            ) {
+            if (this.status && Math.abs(event.target.scrollTop - this._lastScrollTop) > 50) {
                 this.hide();
             }
         };
@@ -117,8 +112,7 @@ abstract class BaseFloat {
     }
 
     hide() {
-        if (!this.status)
-            return;
+        if (!this.status) return;
 
         const { eventCenter } = this.muya;
         const { floatBox } = this;
@@ -140,8 +134,7 @@ abstract class BaseFloat {
         this.cb = noop;
         this._lastScrollTop = null;
 
-        if (BUTTON_GROUP.includes(this.name))
-            eventCenter.emit('muya-float-button', this, false);
+        if (BUTTON_GROUP.includes(this.name)) eventCenter.emit('muya-float-button', this, false);
         else eventCenter.emit('muya-float', this, false);
     }
 
@@ -176,8 +169,7 @@ abstract class BaseFloat {
                 // `opacity: 1` on an already-hidden float without restoring
                 // `status`, so the next `hide()` early-returns and the float is
                 // stuck visible. Bail unless this pass is still the active one.
-                if (this._cleanup !== cleanup)
-                    return;
+                if (this._cleanup !== cleanup) return;
                 Object.assign(floatBox.style, {
                     left: `${x}px`,
                     top: `${y}px`,
@@ -189,14 +181,12 @@ abstract class BaseFloat {
 
         this.status = true;
 
-        if (BUTTON_GROUP.includes(this.name))
-            eventCenter.emit('muya-float-button', this, true);
+        if (BUTTON_GROUP.includes(this.name)) eventCenter.emit('muya-float-button', this, true);
         else eventCenter.emit('muya-float', this, true);
     }
 
     destroy() {
-        if (this.container && this._resizeObserver)
-            this._resizeObserver.unobserve(this.container);
+        if (this.container && this._resizeObserver) this._resizeObserver.unobserve(this.container);
 
         if (this._cleanup) {
             this._cleanup();

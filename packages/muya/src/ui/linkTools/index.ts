@@ -8,7 +8,7 @@ import iconsConfig from './config';
 
 import './index.css';
 
-type LinkToolIcon = typeof iconsConfig[number];
+type LinkToolIcon = (typeof iconsConfig)[number];
 
 interface ILinkInfo {
     href?: string | null;
@@ -66,28 +66,28 @@ class LinkTools extends BaseFloat {
     override listen() {
         const { eventCenter } = this.muya;
         super.listen();
-        eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo, block }: ILinkToolsEventPayload) => {
-            if (reference) {
-                this._linkInfo = linkInfo ?? null;
-                this._linkBlock = block ?? null;
-                setTimeout(() => {
-                    this.show(reference);
-                    this.render();
-                }, 0);
-            }
-            else {
-                if (this._hideTimer)
-                    clearTimeout(this._hideTimer);
+        eventCenter.subscribe(
+            'muya-link-tools',
+            ({ reference, linkInfo, block }: ILinkToolsEventPayload) => {
+                if (reference) {
+                    this._linkInfo = linkInfo ?? null;
+                    this._linkBlock = block ?? null;
+                    setTimeout(() => {
+                        this.show(reference);
+                        this.render();
+                    }, 0);
+                } else {
+                    if (this._hideTimer) clearTimeout(this._hideTimer);
 
-                this._hideTimer = setTimeout(() => {
-                    this.hide();
-                }, 500);
-            }
-        });
+                    this._hideTimer = setTimeout(() => {
+                        this.hide();
+                    }, 500);
+                }
+            },
+        );
 
         const mouseOverHandler = () => {
-            if (this._hideTimer)
-                clearTimeout(this._hideTimer);
+            if (this._hideTimer) clearTimeout(this._hideTimer);
         };
 
         const mouseOutHandler = () => {
@@ -106,7 +106,7 @@ class LinkTools extends BaseFloat {
         // that keeps unresolved reference links out of the popover entirely).
         const icons = this._linkInfo?.href
             ? this._icons
-            : this._icons.filter(icon => icon.type !== 'jump');
+            : this._icons.filter((icon) => icon.type !== 'jump');
         const children = icons.map((i) => {
             let icon: VNode | undefined;
             let iconWrapperSelector: string | undefined;
@@ -119,7 +119,7 @@ class LinkTools extends BaseFloat {
                         'i.icon-inner',
                         {
                             style: {
-                                'background': `url(${i.icon}) no-repeat`,
+                                background: `url(${i.icon}) no-repeat`,
                                 'background-size': '100%',
                             },
                         },
@@ -145,10 +145,8 @@ class LinkTools extends BaseFloat {
 
         const vnode = h('ul', children);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(linkContainer, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(linkContainer, vnode);
 
         this._oldVNode = vnode;
     }

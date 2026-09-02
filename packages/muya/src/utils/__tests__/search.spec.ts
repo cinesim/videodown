@@ -28,10 +28,7 @@ describe('buildRegexValue — marktext 4c517b16 group expansion', () => {
     });
 
     it('expands $1, $2… to the corresponding sub-matches', () => {
-        const value = buildRegexValue(
-            makeMatch('2026-05-20', ['2026', '05', '20']),
-            '$3/$2/$1',
-        );
+        const value = buildRegexValue(makeMatch('2026-05-20', ['2026', '05', '20']), '$3/$2/$1');
         expect(value).toBe('20/05/2026');
     });
 
@@ -63,8 +60,8 @@ describe('matchString — search option matrix', () => {
         it('matches every casing when false (3 matches, indices 0/4/8)', () => {
             const matches = matchString('Foo foo FOO', 'foo', { isCaseSensitive: false });
             expect(matches).toHaveLength(3);
-            expect(matches.map(m => m.index)).toEqual([0, 4, 8]);
-            expect(matches.map(m => m.match)).toEqual(['Foo', 'foo', 'FOO']);
+            expect(matches.map((m) => m.index)).toEqual([0, 4, 8]);
+            expect(matches.map((m) => m.match)).toEqual(['Foo', 'foo', 'FOO']);
         });
 
         it('matches only the exact-case occurrence when true (1 match at the lowercase foo)', () => {
@@ -79,7 +76,7 @@ describe('matchString — search option matrix', () => {
         it('matches every substring occurrence when false (3 matches)', () => {
             const matches = matchString('cat category scatter', 'cat', { isWholeWord: false });
             expect(matches).toHaveLength(3);
-            expect(matches.map(m => m.index)).toEqual([0, 4, 14]);
+            expect(matches.map((m) => m.index)).toEqual([0, 4, 14]);
         });
 
         it('matches only the standalone word when true (1 match)', () => {

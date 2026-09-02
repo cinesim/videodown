@@ -16,21 +16,9 @@ export default function footnoteIdentifier(
     const { marker } = token;
     const { start, end } = token.range;
 
-    const startMarker = this.highlight(
-        h,
-        block,
-        start,
-        start + marker.length,
-        token,
-    );
+    const startMarker = this.highlight(h, block, start, start + marker.length, token);
     const endMarker = this.highlight(h, block, end - 1, end, token);
-    const content = this.highlight(
-        h,
-        block,
-        start + marker.length,
-        end - 1,
-        token,
-    );
+    const content = this.highlight(h, block, start + marker.length, end - 1, token);
 
     return [
         h(

@@ -15,7 +15,7 @@ export default defineConfig({
         lib: {
             entry: resolve(dirname, 'src/index.ts'),
             name: pkg.name,
-            fileName: format => `${format}/index.js`,
+            fileName: (format) => `${format}/index.js`,
             formats: ['es', 'umd', 'cjs'],
         },
     },

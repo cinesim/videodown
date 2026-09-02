@@ -1,10 +1,5 @@
 import type { BeginRules, InlineRules } from './rules';
-import type {
-    ITokenizerFacOptions,
-    ITokenizerOptions,
-    Labels,
-    Token,
-} from './types';
+import type { ITokenizerFacOptions, ITokenizerOptions, Labels, Token } from './types';
 import escapeCharactersMap from '../config/escapeCharacter';
 import { isLengthEven, union } from '../utils';
 import { beginRules, inlineRules, linkValidateRules, validateRules } from './rules';
@@ -18,8 +13,7 @@ import {
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
-const disallowedHtmlTag
-    = /title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext/i;
+const disallowedHtmlTag = /title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext/i;
 
 // Mutable cursor + accumulator threaded through every inline-rule handler.
 // `src`/`pos` advance as input is consumed; `pending`/`pendingStartPos`
@@ -58,12 +52,7 @@ function pushPending(state: ILexState) {
 }
 
 function consumeBeginRules(state: ILexState, beginRules: BeginRules) {
-    const beginRuleKeys = [
-        'header',
-        'hr',
-        'code_fence',
-        'multiple_math',
-    ] as const;
+    const beginRuleKeys = ['header', 'hr', 'code_fence', 'multiple_math'] as const;
 
     for (const ruleName of beginRuleKeys) {
         const to = beginRules[ruleName].exec(state.src);
@@ -117,8 +106,7 @@ function consumeBeginRules(state: ILexState, beginRules: BeginRules) {
 
 function tryBacklash(state: ILexState): boolean {
     const backTo = state.inlineRules.backlash.exec(state.src);
-    if (!backTo)
-        return false;
+    if (!backTo) return false;
 
     pushPending(state);
     state.tokens.push({
@@ -203,8 +191,8 @@ function tryChunks(state: ILexState): boolean {
                 // not the start of a shortcode (#1677).
                 const prevChar = state.originSrc[state.pos - 1];
                 if (
-                    (prevChar && /\w/.test(prevChar))
-                    || !lowerPriority(state.src, to[0].length, validateRules)
+                    (prevChar && /\w/.test(prevChar)) ||
+                    !lowerPriority(state.src, to[0].length, validateRules)
                 ) {
                     return false;
                 }
@@ -215,11 +203,7 @@ function tryChunks(state: ILexState): boolean {
                 end: state.pos + to[0].length,
             };
             const marker = to[1];
-            if (
-                rule === 'inline_code'
-                || rule === 'emoji'
-                || rule === 'inline_math'
-            ) {
+            if (rule === 'inline_code' || rule === 'emoji' || rule === 'inline_math') {
                 state.tokens.push({
                     type: rule,
                     raw: to[0],
@@ -229,8 +213,7 @@ function tryChunks(state: ILexState): boolean {
                     content: to[2],
                     backlash: to[3],
                 });
-            }
-            else {
+            } else {
                 state.tokens.push({
                     type: rule,
                     raw: to[0],
@@ -260,13 +243,12 @@ function tryChunks(state: ILexState): boolean {
 }
 
 function trySuperSubScript(state: ILexState): boolean {
-    if (!state.superSubScript)
-        return false;
+    if (!state.superSubScript) return false;
 
-    const superSubTo
-        = state.inlineRules.superscript.exec(state.src) || state.inlineRules.subscript.exec(state.src);
-    if (!superSubTo)
-        return false;
+    const superSubTo =
+        state.inlineRules.superscript.exec(state.src) ||
+        state.inlineRules.subscript.exec(state.src);
+    if (!superSubTo) return false;
 
     pushPending(state);
     state.tokens.push({
@@ -287,12 +269,10 @@ function trySuperSubScript(state: ILexState): boolean {
 }
 
 function tryFootnote(state: ILexState): boolean {
-    if (state.pos === 0 || !state.footnote)
-        return false;
+    if (state.pos === 0 || !state.footnote) return false;
 
     const footnoteTo = state.inlineRules.footnote_identifier.exec(state.src);
-    if (!footnoteTo)
-        return false;
+    if (!footnoteTo) return false;
 
     pushPending(state);
     state.tokens.push({
@@ -315,8 +295,7 @@ function tryFootnote(state: ILexState): boolean {
 function tryImage(state: ILexState): boolean {
     const imageTo = state.inlineRules.image.exec(state.src);
     correctUrl(imageTo);
-    if (!(imageTo && isLengthEven(imageTo[3]) && isLengthEven(imageTo[5])))
-        return false;
+    if (!(imageTo && isLengthEven(imageTo[3]) && isLengthEven(imageTo[5]))) return false;
 
     const { src: imageSrc, title } = parseSrcAndTitle(imageTo[4]);
     pushPending(state);
@@ -355,14 +334,14 @@ function tryLink(state: ILexState): boolean {
     correctUrl(linkTo);
     if (
         !(
-            linkTo
-            && isLengthEven(linkTo[3])
-            && isLengthEven(linkTo[5])
+            linkTo &&
+            isLengthEven(linkTo[3]) &&
+            isLengthEven(linkTo[5]) &&
             // CommonMark §6.6: code spans, HTML tags, etc. group more tightly
             // than links. If a higher-priority inline rule matches a span
             // that extends past the tentative link's range, defer to it.
             // Covers CM 0.29 examples 520 (HTML tag) and 521 (code span).
-            && lowerPriority(state.src, linkTo[0].length, linkValidateRules)
+            lowerPriority(state.src, linkTo[0].length, linkValidateRules)
         )
     ) {
         return false;
@@ -408,14 +387,14 @@ function tryReferenceLink(state: ILexState): boolean {
     const rLinkTo = state.inlineRules.reference_link.exec(state.src);
     if (
         !(
-            rLinkTo
+            rLinkTo &&
             // CommonMark §6.5: link labels match case-insensitively. The
             // labels Map is populated by `collectReferenceDefinitions` with
             // lowercased keys, so normalize the candidate before lookup.
-            && state.labels.has((rLinkTo[3] || rLinkTo[1]).toLowerCase())
-            && isLengthEven(rLinkTo[2])
-            && isLengthEven(rLinkTo[4])
-            && lowerPriority(state.src, rLinkTo[0].length, linkValidateRules)
+            state.labels.has((rLinkTo[3] || rLinkTo[1]).toLowerCase()) &&
+            isLengthEven(rLinkTo[2]) &&
+            isLengthEven(rLinkTo[4]) &&
+            lowerPriority(state.src, rLinkTo[0].length, linkValidateRules)
         )
     ) {
         return false;
@@ -458,10 +437,10 @@ function tryReferenceImage(state: ILexState): boolean {
     const rImageTo = state.inlineRules.reference_image.exec(state.src);
     if (
         !(
-            rImageTo
-            && state.labels.has((rImageTo[3] || rImageTo[1]).toLowerCase())
-            && isLengthEven(rImageTo[2])
-            && isLengthEven(rImageTo[4])
+            rImageTo &&
+            state.labels.has((rImageTo[3] || rImageTo[1]).toLowerCase()) &&
+            isLengthEven(rImageTo[2]) &&
+            isLengthEven(rImageTo[4])
         )
     ) {
         return false;
@@ -494,8 +473,7 @@ function tryReferenceImage(state: ILexState): boolean {
 
 function tryHtmlEscape(state: ILexState): boolean {
     const htmlEscapeTo = state.inlineRules.html_escape.exec(state.src);
-    if (!htmlEscapeTo)
-        return false;
+    if (!htmlEscapeTo) return false;
 
     const len = htmlEscapeTo[0].length;
     pushPending(state);
@@ -529,8 +507,7 @@ function trimAutoLinkExtent(raw: string): string {
     let end = raw.length;
 
     const lt = raw.indexOf('<');
-    if (lt !== -1)
-        end = lt;
+    if (lt !== -1) end = lt;
 
     let changed = true;
     while (changed && end > 0) {
@@ -540,25 +517,20 @@ function trimAutoLinkExtent(raw: string): string {
         if ('?!.,:*_~'.includes(c)) {
             end -= 1;
             changed = true;
-        }
-        else if (c === ')') {
+        } else if (c === ')') {
             let opening = 0;
             let closing = 0;
             for (let i = 0; i < end; i++) {
-                if (raw[i] === '(')
-                    opening += 1;
-                else if (raw[i] === ')')
-                    closing += 1;
+                if (raw[i] === '(') opening += 1;
+                else if (raw[i] === ')') closing += 1;
             }
             if (closing > opening) {
                 end -= 1;
                 changed = true;
             }
-        }
-        else if (c === ';') {
+        } else if (c === ';') {
             let entityStart = end - 2;
-            while (entityStart >= 0 && /[a-z0-9]/i.test(raw[entityStart]))
-                entityStart -= 1;
+            while (entityStart >= 0 && /[a-z0-9]/i.test(raw[entityStart])) entityStart -= 1;
             if (entityStart >= 0 && entityStart < end - 2 && raw[entityStart] === '&') {
                 end = entityStart;
                 changed = true;
@@ -573,9 +545,9 @@ function tryAutoLinkExtension(state: ILexState): boolean {
     const autoLinkExtTo = state.inlineRules.auto_link_extension.exec(state.src);
     if (
         !(
-            autoLinkExtTo
-            && state.top
-            && (state.pos === 0 || /[* _~(]/.test(state.originSrc[state.pos - 1]))
+            autoLinkExtTo &&
+            state.top &&
+            (state.pos === 0 || /[* _~(]/.test(state.originSrc[state.pos - 1]))
         )
     ) {
         return false;
@@ -593,10 +565,8 @@ function tryAutoLinkExtension(state: ILexState): boolean {
         const trimmed = trimAutoLinkExtent(raw);
         if (trimmed.length !== raw.length) {
             raw = trimmed;
-            if (www)
-                www = trimmed;
-            if (url)
-                url = trimmed;
+            if (www) www = trimmed;
+            if (url) url = trimmed;
         }
     }
 
@@ -622,8 +592,7 @@ function tryAutoLinkExtension(state: ILexState): boolean {
 
 function tryAutoLink(state: ILexState): boolean {
     const autoLTo = state.inlineRules.auto_link.exec(state.src);
-    if (!autoLTo)
-        return false;
+    if (!autoLTo) return false;
 
     pushPending(state);
     state.tokens.push({
@@ -672,10 +641,10 @@ function tryHtmlTag(state: ILexState): boolean {
     }
 
     if (
-        htmlTo
-        && !disallowedHtmlTag.test(htmlTo[3])
+        htmlTo &&
+        !disallowedHtmlTag.test(htmlTo[3]) &&
         // eslint-disable-next-line no-cond-assign
-        && (attrs = getAttributes(htmlTo[0]))
+        (attrs = getAttributes(htmlTo[0]))
     ) {
         const tag = htmlTo[3];
         const html = htmlTo[0];
@@ -693,14 +662,14 @@ function tryHtmlTag(state: ILexState): boolean {
             content: htmlTo[4],
             children: htmlTo[4]
                 ? tokenizerFac(
-                        htmlTo[4],
-                        null,
-                        state.inlineRules,
-                        state.pos + htmlTo[2].length,
-                        false,
-                        state.labels,
-                        state.options,
-                    )
+                      htmlTo[4],
+                      null,
+                      state.inlineRules,
+                      state.pos + htmlTo[2].length,
+                      false,
+                      state.labels,
+                      state.options,
+                  )
                 : [],
             range: {
                 start: state.pos,
@@ -718,8 +687,7 @@ function tryHtmlTag(state: ILexState): boolean {
 
 function trySoftLineBreak(state: ILexState): boolean {
     const softTo = state.inlineRules.soft_line_break.exec(state.src);
-    if (!softTo)
-        return false;
+    if (!softTo) return false;
 
     const len = softTo[0].length;
     pushPending(state);
@@ -742,8 +710,7 @@ function trySoftLineBreak(state: ILexState): boolean {
 
 function tryHardLineBreak(state: ILexState): boolean {
     const hardTo = state.inlineRules.hard_line_break.exec(state.src);
-    if (!hardTo)
-        return false;
+    if (!hardTo) return false;
 
     const len = hardTo[0].length;
     pushPending(state);
@@ -767,8 +734,7 @@ function tryHardLineBreak(state: ILexState): boolean {
 
 function tryTailHeader(state: ILexState): boolean {
     const tailTo = state.inlineRules.tail_header.exec(state.src);
-    if (!(tailTo && state.top))
-        return false;
+    if (!(tailTo && state.top)) return false;
 
     pushPending(state);
     state.tokens.push({
@@ -808,7 +774,15 @@ const INLINE_HANDLERS: ReadonlyArray<(state: ILexState) => boolean> = [
     tryTailHeader,
 ];
 
-function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: InlineRules, pos = 0, top: boolean, labels: Labels, options: ITokenizerFacOptions) {
+function tokenizerFac(
+    src: string,
+    beginRules: BeginRules | null,
+    inlineRules: InlineRules,
+    pos = 0,
+    top: boolean,
+    labels: Labels,
+    options: ITokenizerFacOptions,
+) {
     const { superSubScript, footnote } = options;
     const state: ILexState = {
         originSrc: src,
@@ -825,8 +799,7 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         footnote,
     };
 
-    if (beginRules && state.pos === 0)
-        consumeBeginRules(state, beginRules);
+    if (beginRules && state.pos === 0) consumeBeginRules(state, beginRules);
 
     while (state.src.length) {
         let consumed = false;
@@ -836,11 +809,9 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
                 break;
             }
         }
-        if (consumed)
-            continue;
+        if (consumed) continue;
 
-        if (!state.pending)
-            state.pendingStartPos = state.pos;
+        if (!state.pending) state.pendingStartPos = state.pos;
         state.pending += state.src[0];
         state.src = state.src.substring(1);
         state.pos++;
@@ -851,15 +822,18 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
     return state.tokens;
 }
 
-export function tokenizer(src: string, {
-    highlights = [],
-    hasBeginRules = true,
-    labels = new Map(),
-    options = {
-        superSubScript: true,
-        footnote: false,
-    },
-}: ITokenizerOptions = {} as ITokenizerOptions) {
+export function tokenizer(
+    src: string,
+    {
+        highlights = [],
+        hasBeginRules = true,
+        labels = new Map(),
+        options = {
+            superSubScript: true,
+            footnote: false,
+        },
+    }: ITokenizerOptions = {} as ITokenizerOptions,
+) {
     const tokens = tokenizerFac(
         src,
         hasBeginRules ? beginRules : null,
@@ -877,8 +851,7 @@ export function tokenizer(src: string, {
                 if (highlight) {
                     if (token.highlights && Array.isArray(token.highlights))
                         token.highlights.push(highlight);
-                    else
-                        token.highlights = [highlight];
+                    else token.highlights = [highlight];
                 }
             }
 
@@ -887,8 +860,7 @@ export function tokenizer(src: string, {
         }
     };
 
-    if (highlights.length)
-        postTokenizer(tokens);
+    if (highlights.length) postTokenizer(tokens);
 
     return tokens;
 }
@@ -920,8 +892,7 @@ function rebuildWrapperToken(token: Token): string {
 export function generator(tokens: Token[], rebuildWrappers = false) {
     let result = '';
 
-    for (const token of tokens)
-        result += rebuildWrappers ? rebuildWrapperToken(token) : token.raw;
+    for (const token of tokens) result += rebuildWrappers ? rebuildWrapperToken(token) : token.raw;
 
     return result;
 }
@@ -961,10 +932,8 @@ export function tokensToPlainText(tokens: Token[]): string {
                 break;
 
             case 'html_tag':
-                if (token.children)
-                    result += tokensToPlainText(token.children);
-                else if (token.content)
-                    result += token.content;
+                if (token.children) result += tokensToPlainText(token.children);
+                else if (token.content) result += token.content;
                 break;
 
             case 'backlash':

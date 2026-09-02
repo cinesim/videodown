@@ -7,7 +7,8 @@
 // on the raw marked output BEFORE DOMPurify, because the `data-identifier`
 // marker the footnote extension emits is stripped by the default export config.
 
-const FOOTNOTE_DEF_RE = /<div class="footnote-block" data-identifier="([^"]*)">([\s\S]*?)<\/div>\s*/g;
+const FOOTNOTE_DEF_RE =
+    /<div class="footnote-block" data-identifier="([^"]*)">([\s\S]*?)<\/div>\s*/g;
 
 // Inline `[^id]` syntax. Identifier matches the marked footnote extension's
 // block rule (utils/marked/extensions/footnote.ts: `[^^[\]\s]+`) so any id
@@ -35,13 +36,11 @@ export function transformFootnotes(html: string): string {
         // First definition wins for duplicate identifiers — matches the way
         // pandoc / GFM linkrefs treat repeated labels and what the plan asks
         // for (Section 10, risk #2).
-        if (!definitions.has(id))
-            definitions.set(id, inner);
+        if (!definitions.has(id)) definitions.set(id, inner);
         return '';
     });
 
-    if (definitions.size === 0)
-        return html;
+    if (definitions.size === 0) return html;
 
     // 2. Stash code spans / blocks so step 3 only scans live prose.
     const codeSlots: string[] = [];
@@ -57,10 +56,8 @@ export function transformFootnotes(html: string): string {
     const refNumber = new Map<string, number>();
     let nextN = 1;
     body = body.replace(FOOTNOTE_REF_RE, (match, id: string) => {
-        if (!definitions.has(id))
-            return match;
-        if (!refNumber.has(id))
-            refNumber.set(id, nextN++);
+        if (!definitions.has(id)) return match;
+        if (!refNumber.has(id)) refNumber.set(id, nextN++);
         const n = refNumber.get(id)!;
         return `<sup class="footnote-ref"><a href="#fn-${n}" id="fnref-${n}">${n}</a></sup>`;
     });
@@ -68,15 +65,12 @@ export function transformFootnotes(html: string): string {
     // 4. Restore the protected code regions.
     body = body.replace(CODE_PLACEHOLDER_RESTORE_RE, (_, i) => codeSlots[Number(i)]);
 
-    if (refNumber.size === 0)
-        return body;
+    if (refNumber.size === 0) return body;
 
     // 5. Build the footnotes section in numeric order. Orphan definitions
     //    (defined but never referenced inline) are dropped — same as the
     //    parser-extension behaviour marktext shipped.
-    const orderedRefs = Array.from(refNumber.entries()).sort(
-        (a, b) => a[1] - b[1],
-    );
+    const orderedRefs = Array.from(refNumber.entries()).sort((a, b) => a[1] - b[1]);
     const items: string[] = [];
     for (const [id, n] of orderedRefs) {
         const inner = definitions.get(id) ?? '';

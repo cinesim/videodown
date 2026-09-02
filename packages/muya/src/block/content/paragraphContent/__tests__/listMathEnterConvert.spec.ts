@@ -21,13 +21,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -50,12 +47,14 @@ function keyEvent(over: Partial<KeyboardEvent> = {}): KeyboardEvent {
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 // Drive `$$` + Enter on the list item's paragraph content and return the
 // resulting top-level document state (the order-list).
-async function enterDollarsInList(token: string): Promise<{ listChildren: number; itemBlockNames: string[] }> {
+async function enterDollarsInList(
+    token: string,
+): Promise<{ listChildren: number; itemBlockNames: string[] }> {
     const muya = bootMuya('1. x\n');
     const content = muya.editor.scrollPage!.firstContentInDescendant() as unknown as Content;
     content.text = token;
@@ -65,12 +64,15 @@ async function enterDollarsInList(token: string): Promise<{ listChildren: number
     content.enterHandler(keyEvent({ key: 'Enter' }));
     await flush();
 
-    const state = muya.getState() as Array<{ name: string; children?: Array<{ name: string; children?: Array<{ name: string }> }> }>;
+    const state = muya.getState() as Array<{
+        name: string;
+        children?: Array<{ name: string; children?: Array<{ name: string }> }>;
+    }>;
     const list = state[0];
     const items = list.children ?? [];
     return {
         listChildren: items.length,
-        itemBlockNames: (items[0]?.children ?? []).map(c => c.name),
+        itemBlockNames: (items[0]?.children ?? []).map((c) => c.name),
     };
 }
 

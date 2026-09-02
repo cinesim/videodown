@@ -41,13 +41,7 @@ const FORMAT_SHORTCUTS_SHIFT = {
 } as const;
 
 /** Keys that should not trigger toolbar hiding */
-const NON_EDITING_KEYS = new Set([
-    'Shift',
-    'Control',
-    'Meta',
-    'Alt',
-    'Tab',
-]);
+const NON_EDITING_KEYS = new Set(['Shift', 'Control', 'Meta', 'Alt', 'Tab']);
 
 /**
  * Inline format toolbar for text formatting
@@ -108,8 +102,7 @@ export class InlineFormatToolbar extends BaseFloat {
                     this.show(reference);
                     this._render();
                 });
-            }
-            else {
+            } else {
                 this.hide();
             }
         });
@@ -118,13 +111,15 @@ export class InlineFormatToolbar extends BaseFloat {
         // formats — this is how formats applied outside the toolbar (menu /
         // command / shortcut) light up their buttons. Single-block tool, so
         // ignore collapsed / cross-block selections.
-        eventCenter.subscribe('selection-change', ({ formats, isCollapsed, isSelectionInSameBlock }) => {
-            if (!this.status || isCollapsed || !isSelectionInSameBlock)
-                return;
+        eventCenter.subscribe(
+            'selection-change',
+            ({ formats, isCollapsed, isSelectionInSameBlock }) => {
+                if (!this.status || isCollapsed || !isSelectionInSameBlock) return;
 
-            this._formats = formats;
-            this._render();
-        });
+                this._formats = formats;
+                this._render();
+            },
+        );
 
         eventCenter.attachDOMEvent(domNode, 'keydown', (event) => {
             this._handleKeydown(event, editor);
@@ -137,19 +132,16 @@ export class InlineFormatToolbar extends BaseFloat {
      * @param editor - Editor instance
      */
     private _handleKeydown(event: Event, editor: typeof this.muya.editor) {
-        if (!isKeyboardEvent(event))
-            return;
+        if (!isKeyboardEvent(event)) return;
 
         const { key, shiftKey, metaKey, ctrlKey } = event;
         const selection = editor.selection.getSelection();
-        if (!selection)
-            return;
+        if (!selection) return;
 
         const { anchor, isSelectionInSameBlock } = selection;
         const anchorBlock = anchor.block;
 
-        if (!isSelectionInSameBlock)
-            return;
+        if (!isSelectionInSameBlock) return;
 
         // Hide toolbar on editing operations
         if (!(anchorBlock instanceof Format) || (!metaKey && !ctrlKey)) {
@@ -169,8 +161,7 @@ export class InlineFormatToolbar extends BaseFloat {
      */
     private _hideOnEditingKey(key: string, metaKey: boolean, ctrlKey: boolean) {
         // Don't hide if it's a modifier/navigation key or if format shortcut is pressed
-        if (NON_EDITING_KEYS.has(key) || metaKey || ctrlKey)
-            return;
+        if (NON_EDITING_KEYS.has(key) || metaKey || ctrlKey) return;
 
         if (this.status) {
             this.hide();
@@ -203,10 +194,15 @@ export class InlineFormatToolbar extends BaseFloat {
      * Render the format toolbar UI
      */
     private _render() {
-        const { _icons: icons, _oldVNode: oldVNode, _formatContainer: formatContainer, _formats: formats } = this;
+        const {
+            _icons: icons,
+            _oldVNode: oldVNode,
+            _formatContainer: formatContainer,
+            _formats: formats,
+        } = this;
         const { i18n } = this.muya;
 
-        const children = icons.map(icon => this._createIconItem(icon, formats, i18n));
+        const children = icons.map((icon) => this._createIconItem(icon, formats, i18n));
         const vnode = h('ul', children);
 
         patch(oldVNode || formatContainer, vnode);
@@ -226,7 +222,7 @@ export class InlineFormatToolbar extends BaseFloat {
                 'i.icon-inner',
                 {
                     style: {
-                        'background': `url(${icon.icon}) no-repeat`,
+                        background: `url(${icon.icon}) no-repeat`,
                         'background-size': '100%',
                     },
                 },
@@ -237,7 +233,7 @@ export class InlineFormatToolbar extends BaseFloat {
         const iconWrapper = h('div.icon-wrapper', iconElement);
 
         const isActive = formats.some(
-            f => f.type === icon.type || (f.type === 'html_tag' && f.tag === icon.type),
+            (f) => f.type === icon.type || (f.type === 'html_tag' && f.tag === icon.type),
         );
 
         const itemSelector = `li.item.${icon.type}${isActive ? '.active' : ''}`;
@@ -249,7 +245,7 @@ export class InlineFormatToolbar extends BaseFloat {
                     title: `${i18n.t(icon.tooltip)}\n${icon.shortcut}`,
                 },
                 on: {
-                    click: event => this._selectItem(event, icon),
+                    click: (event) => this._selectItem(event, icon),
                 },
             },
             [iconWrapper],
@@ -268,8 +264,7 @@ export class InlineFormatToolbar extends BaseFloat {
         const { selection } = this.muya.editor;
         const { anchor, focus, anchorBlock, anchorPath, focusBlock, focusPath } = selection;
 
-        if (!anchor || !focus || !anchorBlock || !focusBlock)
-            return;
+        if (!anchor || !focus || !anchorBlock || !focusBlock) return;
 
         // Restore selection before formatting
         selection.setSelection(
@@ -282,8 +277,7 @@ export class InlineFormatToolbar extends BaseFloat {
         // Hide toolbar for link and image, re-render for other formats
         if (/link|image/.test(item.type)) {
             this.hide();
-        }
-        else {
+        } else {
             this._formats = this._block!.getFormatsInRange().formats;
             this._render();
         }

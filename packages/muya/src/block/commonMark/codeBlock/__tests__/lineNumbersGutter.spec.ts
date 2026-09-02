@@ -39,7 +39,7 @@ function bootMuya(markdown: string, options: Record<string, unknown> = {}): Muya
 }
 
 function nextFrame(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 const THREE_LINE_FENCE = '```js\nconst a = 1\nconst b = 2\nconst c = 3\n```\n';
@@ -91,7 +91,9 @@ describe('code-block line-numbers gutter', () => {
         // unknown language, or an indented block never loads a language, so the
         // gutter must be seeded on first render independent of the language.
         it('fills spans on first render for a fenced block with no language', async () => {
-            const muya = bootMuya('```\nconst a = 1\nconst b = 2\nconst c = 3\n```\n', { codeBlockLineNumbers: true });
+            const muya = bootMuya('```\nconst a = 1\nconst b = 2\nconst c = 3\n```\n', {
+                codeBlockLineNumbers: true,
+            });
             const wrapper = muya.domNode.querySelector<HTMLElement>('.mu-line-numbers-rows')!;
             await nextFrame();
             await nextFrame();
@@ -99,7 +101,9 @@ describe('code-block line-numbers gutter', () => {
         });
 
         it('fills spans on first render for an unknown language', async () => {
-            const muya = bootMuya('```not-a-real-language\none\ntwo\n```\n', { codeBlockLineNumbers: true });
+            const muya = bootMuya('```not-a-real-language\none\ntwo\n```\n', {
+                codeBlockLineNumbers: true,
+            });
             const wrapper = muya.domNode.querySelector<HTMLElement>('.mu-line-numbers-rows')!;
             await nextFrame();
             await nextFrame();
@@ -107,7 +111,9 @@ describe('code-block line-numbers gutter', () => {
         });
 
         it('fills spans on first render for an indented code block', async () => {
-            const muya = bootMuya('    const a = 1\n    const b = 2\n', { codeBlockLineNumbers: true });
+            const muya = bootMuya('    const a = 1\n    const b = 2\n', {
+                codeBlockLineNumbers: true,
+            });
             const wrapper = muya.domNode.querySelector<HTMLElement>('.mu-line-numbers-rows')!;
             await nextFrame();
             await nextFrame();
@@ -150,7 +156,9 @@ describe('code-block line-numbers gutter', () => {
         });
 
         it('does not gutter front matter even with the option on', () => {
-            const muya = bootMuya('---\ntitle: x\nlang: en\n---\n\nbody\n', { codeBlockLineNumbers: true });
+            const muya = bootMuya('---\ntitle: x\nlang: en\n---\n\nbody\n', {
+                codeBlockLineNumbers: true,
+            });
             const root = muya.domNode;
             const frontmatter = root.querySelector<HTMLElement>('pre.mu-frontmatter');
             expect(frontmatter).not.toBeNull();
@@ -160,7 +168,9 @@ describe('code-block line-numbers gutter', () => {
         });
 
         it('does not gutter a diagram block even with the option on', () => {
-            const muya = bootMuya('```mermaid\ngraph TD\nA-->B\n```\n', { codeBlockLineNumbers: true });
+            const muya = bootMuya('```mermaid\ngraph TD\nA-->B\n```\n', {
+                codeBlockLineNumbers: true,
+            });
             const root = muya.domNode;
             const diagram = root.querySelector<HTMLElement>('pre.mu-diagram-container');
             expect(diagram).not.toBeNull();

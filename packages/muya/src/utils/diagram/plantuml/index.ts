@@ -12,8 +12,7 @@ export default class Diagram {
     static parse(input: string, plantumlServer?: string) {
         const diagram = new Diagram();
         diagram._encode(input);
-        if (plantumlServer)
-            diagram.plantumlServer = plantumlServer;
+        if (plantumlServer) diagram.plantumlServer = plantumlServer;
 
         return diagram;
     }
@@ -31,12 +30,8 @@ export default class Diagram {
     }
 
     insertImgElement(container: string | HTMLElement) {
-        const div
-            = typeof container === 'string'
-                ? document.getElementById(container)
-                : container;
-        if (div === null || !div.tagName)
-            throw new Error(`Invalid container: ${container}`);
+        const div = typeof container === 'string' ? document.getElementById(container) : container;
+        if (div === null || !div.tagName) throw new Error(`Invalid container: ${container}`);
 
         const src = `${this.plantumlServer}/svg/${this.encodedInput}`;
 

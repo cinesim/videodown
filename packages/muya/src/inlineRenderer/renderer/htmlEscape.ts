@@ -5,13 +5,7 @@ import escapeCharactersMap from '../../config/escapeCharacter';
 
 export default function htmlEscape(
     this: Renderer,
-    {
-        h,
-        cursor,
-        block,
-        token,
-        outerClass,
-    }: ISyntaxRenderOptions & { token: HTMLEscapeToken },
+    { h, cursor, block, token, outerClass }: ISyntaxRenderOptions & { token: HTMLEscapeToken },
 ) {
     const className = this.getClassName(outerClass, block, token, cursor);
     const { escapeCharacter } = token;

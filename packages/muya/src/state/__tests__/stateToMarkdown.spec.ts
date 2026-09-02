@@ -47,10 +47,7 @@ describe('serializeTable — row width mismatch', () => {
     });
 
     it('does not crash when a body row has fewer cells than the header', () => {
-        const state = table([
-            row([cell('a'), cell('b'), cell('c')]),
-            row([cell('1')]),
-        ]);
+        const state = table([row([cell('a'), cell('b'), cell('c')]), row([cell('1')])]);
 
         const md = new ExportMarkdown().generate([state]);
 
@@ -60,10 +57,7 @@ describe('serializeTable — row width mismatch', () => {
     });
 
     it('serialises a well-formed table normally', () => {
-        const state = table([
-            row([cell('a'), cell('b')]),
-            row([cell('1'), cell('2')]),
-        ]);
+        const state = table([row([cell('a'), cell('b')]), row([cell('1'), cell('2')])]);
 
         const md = new ExportMarkdown().generate([state]);
 
@@ -160,8 +154,7 @@ describe('serializeTable — column alignment', () => {
     });
 
     it('round-trips a left/center/right table to a byte-stable delimiter row', () => {
-        const md
-            = '| a | b | c |\n| :--- | :---: | ---: |\n| 1 | 2 | 3 |\n';
+        const md = '| a | b | c |\n| :--- | :---: | ---: |\n| 1 | 2 | 3 |\n';
 
         const firstPass = new ExportMarkdown().generate(gen(md));
         const secondPass = new ExportMarkdown().generate(gen(firstPass));
@@ -193,17 +186,13 @@ interface INavNode {
 
 describe('serializeTable — pipe escaping (#3563)', () => {
     it('escapes a pipe at the very start of a cell', () => {
-        const md = new ExportMarkdown().generate([
-            table([row([cell('|lead'), cell('b')])]),
-        ]);
+        const md = new ExportMarkdown().generate([table([row([cell('|lead'), cell('b')])])]);
 
         expect(md).toContain('\\|lead');
     });
 
     it('escapes both of two consecutive pipes in a cell', () => {
-        const md = new ExportMarkdown().generate([
-            table([row([cell('a||b'), cell('c')])]),
-        ]);
+        const md = new ExportMarkdown().generate([table([row([cell('a||b'), cell('c')])])]);
 
         expect(md).toContain('a\\|\\|b');
     });
@@ -217,7 +206,7 @@ describe('serializeTable — pipe escaping (#3563)', () => {
         expect(md).toContain('\\|danger');
 
         const reparsed = gen(md) as unknown as INavNode[];
-        const tableNode = reparsed.find(n => n.name === 'table')!;
+        const tableNode = reparsed.find((n) => n.name === 'table')!;
         const bodyRow = tableNode.children![1];
 
         // No phantom column, no content loss or shift into the next cell.

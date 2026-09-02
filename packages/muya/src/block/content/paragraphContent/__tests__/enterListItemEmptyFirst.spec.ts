@@ -33,10 +33,8 @@ afterEach(() => {
         host.remove();
     }
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 // A loose bullet list whose single list item holds two paragraphs: an empty
@@ -76,11 +74,10 @@ function contentByText(muya: Muya, text: string): Content {
     }) => {
         if (block.constructor.blockName?.endsWith('.content') && block.text === text)
             target = block as unknown as Content;
-        block.children?.forEach(b => visit(b as typeof block));
+        block.children?.forEach((b) => visit(b as typeof block));
     };
     visit(muya.editor.scrollPage as unknown as Parameters<typeof visit>[0]);
-    if (!target)
-        throw new Error(`content block with text "${text}" not found`);
+    if (!target) throw new Error(`content block with text "${text}" not found`);
     return target;
 }
 
@@ -97,10 +94,13 @@ function enterAt(muya: Muya, content: Content, offset: number) {
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
-interface IListItemLike { name: string; children?: unknown[] }
+interface IListItemLike {
+    name: string;
+    children?: unknown[];
+}
 
 describe('#4644 enter on empty first paragraph of a multi-paragraph list item', () => {
     it('never produces a list-item with zero content children', async () => {
@@ -128,7 +128,7 @@ describe('#4644 enter on empty first paragraph of a multi-paragraph list item', 
         const state = muya.getState();
         const list = state[0] as { children: { children: { name: string; text: string }[] }[] };
         expect(list.children.length).toBe(2);
-        expect(list.children[0].children.map(p => p.text)).toEqual(['']);
-        expect(list.children[1].children.map(p => p.text)).toEqual(['tail']);
+        expect(list.children[0].children.map((p) => p.text)).toEqual(['']);
+        expect(list.children[1].children.map((p) => p.text)).toEqual(['tail']);
     });
 });

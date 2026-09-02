@@ -75,18 +75,19 @@ The demo command starts Vite in `examples/` and serves `@muyajs/core` directly f
 
 Run from the repo root — Turbo fans tasks out across packages.
 
-| Command | What it does |
-| --- | --- |
-| `bun run --cwd packages/muya/examples dev:demo` | Boot the examples Vite dev server. |
-| `bun run --cwd packages/muya build` | `tsc && vite build`. Emits `lib/{es,umd,cjs}` and `lib/types`. |
-| `bun run --cwd packages/muya test` | Vitest unit tests. |
-| `bun run --cwd packages/muya coverage` | Vitest with Istanbul coverage. |
-| `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` | ESLint (antfu base). |
-| `bun run --cwd packages/muya lint:types` | `tsc --noEmit`. |
-| `bun run --cwd packages/muya lint:css` | Stylelint over all CSS. |
-| `bun run --cwd packages/muya check-circular` | `madge --circular src/index.ts` — CI enforces this. |
-| `bun run --cwd packages/muya/e2e e2e` | Playwright suite. See `e2e/README.md`. |
-| `bun run --cwd packages/muya/e2e e2e:ui` | Playwright UI mode for interactive debugging. |
+| Command                                                                           | What it does                                                   |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `bun run --cwd packages/muya format` / `bun run --cwd packages/muya format:check` | Write/check formatting with Oxfmt.                             |
+| `bun run --cwd packages/muya/examples dev:demo`                                   | Boot the examples Vite dev server.                             |
+| `bun run --cwd packages/muya build`                                               | `tsc && vite build`. Emits `lib/{es,umd,cjs}` and `lib/types`. |
+| `bun run --cwd packages/muya test`                                                | Vitest unit tests.                                             |
+| `bun run --cwd packages/muya coverage`                                            | Vitest with Istanbul coverage.                                 |
+| `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix`       | Oxlint.                                                        |
+| `bun run --cwd packages/muya lint:types`                                          | `tsc --noEmit`.                                                |
+| `bun run --cwd packages/muya lint:css`                                            | Stylelint over all CSS.                                        |
+| `bun run --cwd packages/muya check-circular`                                      | `madge --circular src/index.ts` — CI enforces this.            |
+| `bun run --cwd packages/muya/e2e e2e`                                             | Playwright suite. See `e2e/README.md`.                         |
+| `bun run --cwd packages/muya/e2e e2e:ui`                                          | Playwright UI mode for interactive debugging.                  |
 
 Scoped runs:
 
@@ -105,11 +106,11 @@ bun run --cwd packages/muya test:spec:gfm
 
 ## Coding conventions
 
-ESLint and Stylelint enforce most of these — `bun run --cwd packages/muya lint:fix` is the source of truth — but a few are worth knowing up front:
+Oxlint, Oxfmt, and Stylelint enforce most of these — `bun run --cwd packages/muya lint:fix` and `bun run format` are the source of truth — but a few are worth knowing up front:
 
 - **TypeScript first.** All new source goes in `.ts`. Public types belong in `packages/core/src/types.ts`.
-- **4-space indent, semicolons required.** The antfu config in `eslint.config.mjs` configures this for the repo.
-- **Interface names start with `I`** followed by an uppercase letter or digit (e.g. `IMuyaOptions`, `IPlugin`). The `@typescript-eslint/naming-convention` rule flags violations.
+- **4-space indent, semicolons required.** The package-local `.oxfmtrc.json` configures this style.
+- **Interface names start with `I`** followed by an uppercase letter or digit (e.g. `IMuyaOptions`, `IPlugin`).
 - **Private class members are prefixed with `_`** (e.g. `_uiPlugins`, `_activeContentBlock`).
 - **Complexity caps.** `complexity ≤ 20` and `max-lines-per-function ≤ 200` are warnings for non-test TS. Refactor rather than disable.
 - **No circular imports.** `bun run --cwd packages/muya check-circular` runs in CI; adding a cycle into `src/index.ts` fails the build.
@@ -144,12 +145,12 @@ Scope is optional but encouraged for `packages/core/` work (`core`, `inline`, `s
 2. Make focused commits — bundle drive-by cleanups into separate commits or PRs.
 3. Run the quality gates locally:
 
-   ```sh
-   bun run --cwd packages/muya lint
-   bun run --cwd packages/muya lint:types
-   bun run --cwd packages/muya test
-   bun run --cwd packages/muya check-circular
-   ```
+    ```sh
+    bun run --cwd packages/muya lint
+    bun run --cwd packages/muya lint:types
+    bun run --cwd packages/muya test
+    bun run --cwd packages/muya check-circular
+    ```
 
 4. If your change touches the UI or editing surface, run `bun run --cwd packages/muya/e2e e2e` and add coverage for the new behavior under `e2e/tests/`.
 5. If your change affects markdown parsing or HTML output, check the conformance baseline doesn't regress: `bun run --cwd packages/muya test:spec`. Conformance can only go up — see `test/spec/expected-failures.json`.
@@ -159,7 +160,7 @@ Scope is optional but encouraged for `packages/core/` work (`core`, `inline`, `s
 - Base branch is `master` (not `main`).
 - Use a Conventional-Commit-style title (it becomes the squash commit subject).
 - Describe the **why** in the body, not just the **what** — the diff already shows the what. Link related issues with `Closes #123` / `Refs #123`.
-- Pre-commit, `lint-staged` runs `eslint --fix` on staged `*.ts` and `stylelint --fix` on staged `*.css` (see `.lintstagedrc`). If a hook fails, fix the issue and create a new commit — **don't bypass with `--no-verify`** unless a maintainer asks you to.
+- Pre-commit, `lint-staged` runs Oxlint and Oxfmt on staged source files. If a hook fails, fix the issue and create a new commit — **don't bypass with `--no-verify`** unless a maintainer asks you to.
 
 Maintainers will review and may ask for changes. PRs are merged via **squash merge** to keep `master` linear; your branch commits don't need to be individually clean.
 

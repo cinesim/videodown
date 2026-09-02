@@ -19,7 +19,7 @@ export default function backlashInToken(
 
     for (i = 0; i < len; i++) {
         const chunk = chunks[i];
-        const light = highlights.filter(light =>
+        const light = highlights.filter((light) =>
             union({ start: start + i, end: start + i + 1 }, light),
         );
         let selector = 'span';
@@ -28,10 +28,8 @@ export default function backlashInToken(
             selector += `.${className}`;
         }
 
-        if (isEven(i))
-            result.push(h(`${selector}.${outerClass}`, chunk));
-        else
-            result.push(h(`${selector}.${CLASS_NAMES.MU_BACKLASH}`, chunk));
+        if (isEven(i)) result.push(h(`${selector}.${outerClass}`, chunk));
+        else result.push(h(`${selector}.${CLASS_NAMES.MU_BACKLASH}`, chunk));
     }
 
     return result;

@@ -34,10 +34,8 @@ class Parent extends TreeNode {
             return;
         }
 
-        if (value)
-            operateClassName(this.domNode, 'add', CLASS_NAMES.MU_ACTIVE);
-        else
-            operateClassName(this.domNode, 'remove', CLASS_NAMES.MU_ACTIVE);
+        if (value) operateClassName(this.domNode, 'add', CLASS_NAMES.MU_ACTIVE);
+        else operateClassName(this.domNode, 'remove', CLASS_NAMES.MU_ACTIVE);
     }
 
     get firstChild() {
@@ -51,27 +49,24 @@ class Parent extends TreeNode {
     protected get isContainerBlock() {
         // `task-list-item` is intentionally omitted: it shares the
         // `task-list` prefix and would be matched by the alternative above.
-        return /block-quote|order-list|bullet-list|task-list|list-item/.test(
-            this.blockName,
-        );
+        return /block-quote|order-list|bullet-list|task-list|list-item/.test(this.blockName);
     }
 
     get path(): TBlockPath {
-    // You should never call get path on Parent.
+        // You should never call get path on Parent.
         debug.error('You should never call get path on Parent.');
         return [];
     }
 
     private _getJsonPath() {
         const { path } = this;
-        if (this.isContainerBlock)
-            path.pop();
+        if (this.isContainerBlock) path.pop();
 
         return path;
     }
 
     getState(): TState {
-    // You should never call get state on Parent.
+        // You should never call get state on Parent.
         debug.error('You should never call get state on Parent.');
         return {} as TState;
     }
@@ -108,8 +103,7 @@ class Parent extends TreeNode {
     append(...childrenAndSource: [...Parent[], string]): void;
     append(...children: Parent[]): void;
     append(...args: unknown[]) {
-        const source
-            = typeof args[args.length - 1] === 'string' ? args.pop() : 'api';
+        const source = typeof args[args.length - 1] === 'string' ? args.pop() : 'api';
 
         (args as Parent[]).forEach((node) => {
             node.parent = this;
@@ -159,10 +153,7 @@ class Parent extends TreeNode {
         return this.children.map(callback);
     }
 
-    reduce<M>(
-        callback: (memo: M, cur: TreeNode, i: number) => M,
-        initialValue: M,
-    ): M {
+    reduce<M>(callback: (memo: M, cur: TreeNode, i: number) => M, initialValue: M): M {
         return this.children.reduce<M>(callback, initialValue);
     }
 
@@ -184,17 +175,10 @@ class Parent extends TreeNode {
         return block;
     }
 
-    insertBefore(
-        newNode: Parent,
-        refNode: Nullable<Parent> = null,
-        source = 'user',
-    ) {
+    insertBefore(newNode: Parent, refNode: Nullable<Parent> = null, source = 'user') {
         newNode.parent = this;
         this.children.insertBefore(newNode, refNode);
-        this.domNode!.insertBefore(
-            newNode.domNode!,
-            refNode ? refNode.domNode! : null,
-        );
+        this.domNode!.insertBefore(newNode.domNode!, refNode ? refNode.domNode! : null);
 
         if (source === 'user') {
             // dispatch json1 operation
@@ -232,15 +216,11 @@ class Parent extends TreeNode {
 
     removeChild(node: TreeNode, source = 'user') {
         if (!this.children.contains(node)) {
-            debug.warn(
-                'Can not removeChild(node), because node is not child of this block',
-            );
+            debug.warn('Can not removeChild(node), because node is not child of this block');
         }
 
-        if (node.isParent())
-            node.remove(source);
-        else if (node.isContent())
-            node.remove();
+        if (node.isParent()) node.remove(source);
+        else if (node.isContent()) node.remove();
 
         return node;
     }
@@ -277,8 +257,7 @@ class Parent extends TreeNode {
 
             callback(node);
 
-            if (node.isParent())
-                node.children.forEach(child => queue.push(child));
+            if (node.isParent()) node.children.forEach((child) => queue.push(child));
         }
     }
 

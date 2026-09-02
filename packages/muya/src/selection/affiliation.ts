@@ -41,7 +41,7 @@ const PARAGRAPH_TYPES: ReadonlySet<string> = new Set([
  * their level from `tagName` (`h1`…`h6`) so they are handled separately.
  */
 const CONTAINER_TYPE_BY_NAME: Readonly<Record<string, string>> = {
-    'paragraph': 'p',
+    paragraph: 'p',
     'block-quote': 'blockquote',
     'bullet-list': 'ul',
     'task-list': 'ul',
@@ -49,11 +49,11 @@ const CONTAINER_TYPE_BY_NAME: Readonly<Record<string, string>> = {
     'list-item': 'li',
     'task-list-item': 'li',
     'code-block': 'pre',
-    'frontmatter': 'pre',
-    'table': 'figure',
+    frontmatter: 'pre',
+    table: 'figure',
     'html-block': 'pre',
     'math-block': 'pre',
-    'diagram': 'figure',
+    diagram: 'figure',
     'thematic-break': 'hr',
 };
 
@@ -130,11 +130,7 @@ function _markdownTypeOf(block: TreeNode): string | undefined {
     return CONTAINER_TYPE_BY_NAME[block.blockName];
 }
 
-const LIST_BLOCK_NAMES: ReadonlySet<string> = new Set([
-    'bullet-list',
-    'order-list',
-    'task-list',
-]);
+const LIST_BLOCK_NAMES: ReadonlySet<string> = new Set(['bullet-list', 'order-list', 'task-list']);
 
 function _isLoose(block: Parent | null | undefined): boolean {
     // Lists carry `meta.loose`; list *items* do not, so loose-ness for an `li`
@@ -152,8 +148,7 @@ function _isLoose(block: Parent | null | undefined): boolean {
 function _parentListOf(item: Parent): Parent | null {
     let node: Nullable<Parent> = item.parent;
     while (node) {
-        if (LIST_BLOCK_NAMES.has(node.blockName))
-            return node;
+        if (LIST_BLOCK_NAMES.has(node.blockName)) return node;
 
         node = node.parent;
     }
@@ -167,8 +162,7 @@ function _buildEntry(block: Parent, type: string): IAffiliationEntry {
     if (type === 'ul' || type === 'ol') {
         entry.listType = LIST_TYPE_BY_NAME[block.blockName];
         entry.isLooseListItem = _isLoose(block);
-    }
-    else if (type === 'li') {
+    } else if (type === 'li') {
         // Both bullet and ordered items share the `list-item` block, and the
         // loose flag lives on the parent list — derive both from there.
         const list = _parentListOf(block);
@@ -189,11 +183,9 @@ function _ancestorBlocks(leaf: Content | null): Parent[] {
     let node: Nullable<Parent> = leaf?.parent;
 
     while (node) {
-        if (PARAGRAPH_TYPES.has(_markdownTypeOf(node) ?? ''))
-            blocks.unshift(node);
+        if (PARAGRAPH_TYPES.has(_markdownTypeOf(node) ?? '')) blocks.unshift(node);
 
-        if (node.isOutMostBlock)
-            break;
+        if (node.isOutMostBlock) break;
 
         node = node.parent;
     }
@@ -206,9 +198,7 @@ function _ancestorBlocks(leaf: Content | null): Parent[] {
  * paragraph-type ancestors into an affiliation chain (outermost-first).
  */
 export function buildAffiliation(leaf: Content | null): IAffiliationEntry[] {
-    return _ancestorBlocks(leaf).map(block =>
-        _buildEntry(block, _markdownTypeOf(block)!),
-    );
+    return _ancestorBlocks(leaf).map((block) => _buildEntry(block, _markdownTypeOf(block)!));
 }
 
 /**
@@ -221,18 +211,18 @@ export function buildSelectionAffiliation(
     focusLeaf: Content | null,
 ): IAffiliationEntry[] {
     const anchorBlocks = _ancestorBlocks(anchorLeaf);
-    const shared
-        = anchorLeaf === focusLeaf
+    const shared =
+        anchorLeaf === focusLeaf
             ? anchorBlocks
             : _intersectBlocks(anchorBlocks, _ancestorBlocks(focusLeaf));
 
-    return shared.map(block => _buildEntry(block, _markdownTypeOf(block)!));
+    return shared.map((block) => _buildEntry(block, _markdownTypeOf(block)!));
 }
 
 function _intersectBlocks(anchorBlocks: Parent[], focusBlocks: Parent[]): Parent[] {
     const focusSet = new Set<Parent>(focusBlocks);
 
-    return anchorBlocks.filter(block => focusSet.has(block));
+    return anchorBlocks.filter((block) => focusSet.has(block));
 }
 
 /**
@@ -240,8 +230,7 @@ function _intersectBlocks(anchorBlocks: Parent[], focusBlocks: Parent[]): Parent
  * `{ type, functionType }` shape.
  */
 export function endpointBlockInfo(leaf: Content | null): IEndpointBlockInfo | null {
-    if (!leaf)
-        return null;
+    if (!leaf) return null;
 
     return {
         blockName: leaf.blockName,

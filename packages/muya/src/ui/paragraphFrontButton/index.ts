@@ -35,7 +35,7 @@ function renderIcon(i: string, className: string) {
             'i.icon-inner',
             {
                 style: {
-                    'background': `url(${i}) no-repeat`,
+                    background: `url(${i}) no-repeat`,
                     'background-size': '100%',
                 },
             },
@@ -71,7 +71,10 @@ export class ParagraphFrontButton {
     private _disableListen: boolean = false;
     private _dragEvents: string[] = [];
 
-    constructor(public muya: Muya, options = {}) {
+    constructor(
+        public muya: Muya,
+        options = {},
+    ) {
         this._options = Object.assign({}, defaultOptions(), options);
         this.init();
         this.listen();
@@ -114,10 +117,8 @@ export class ParagraphFrontButton {
         // guard — same pattern as `mouseMove` below — rather than casting
         // the wrapper to EventListener (which would hide a real mismatch).
         const mousemoveHandler = throttle((event: Event) => {
-            if (this._disableListen)
-                return;
-            if (!isMouseEvent(event))
-                return;
+            if (this._disableListen) return;
+            if (!isMouseEvent(event)) return;
 
             const { x, y } = event;
             const els = [
@@ -125,15 +126,13 @@ export class ParagraphFrontButton {
                 ...document.elementsFromPoint(x + LEFT_OFFSET, y),
             ];
             const outMostElement = els.find(
-                ele =>
-                    ele[BLOCK_DOM_PROPERTY]
-                    && (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock,
+                (ele) =>
+                    ele[BLOCK_DOM_PROPERTY] && (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock,
             );
             if (outMostElement) {
                 this.show(outMostElement[BLOCK_DOM_PROPERTY] as Parent);
                 this.render();
-            }
-            else {
+            } else {
                 this.hide();
             }
         }, 300);
@@ -170,8 +169,7 @@ export class ParagraphFrontButton {
     };
 
     private _mouseMove = (event: Event) => {
-        if (!this._dragInfo || !isMouseEvent(event))
-            return;
+        if (!this._dragInfo || !isMouseEvent(event)) return;
 
         event.preventDefault();
 
@@ -181,16 +179,14 @@ export class ParagraphFrontButton {
             ...document.elementsFromPoint(x + LEFT_OFFSET, y),
         ];
         const outMostElement = els.find(
-            ele =>
-                ele[BLOCK_DOM_PROPERTY]
-                && (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock,
+            (ele) => ele[BLOCK_DOM_PROPERTY] && (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock,
         );
         this._moveShadow(event);
 
         if (
-            outMostElement
-            && outMostElement[BLOCK_DOM_PROPERTY] !== this._dragInfo.block
-            && (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== 'frontmatter'
+            outMostElement &&
+            outMostElement[BLOCK_DOM_PROPERTY] !== this._dragInfo.block &&
+            (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== 'frontmatter'
         ) {
             const block = outMostElement[BLOCK_DOM_PROPERTY];
             const rect = outMostElement.getBoundingClientRect();
@@ -201,8 +197,7 @@ export class ParagraphFrontButton {
                 target: block,
                 position,
             });
-        }
-        else {
+        } else {
             if (this._ghost) {
                 this._ghost.remove();
                 this._ghost = null;
@@ -218,10 +213,9 @@ export class ParagraphFrontButton {
 
         this._disableListen = false;
         const { eventCenter } = this.muya;
-        this._dragEvents.forEach(eventId => eventCenter.detachDOMEvent(eventId));
+        this._dragEvents.forEach((eventId) => eventCenter.detachDOMEvent(eventId));
         this._dragEvents = [];
-        if (this._ghost)
-            this._ghost.remove();
+        if (this._ghost) this._ghost.remove();
 
         this._destroyShadow();
         document.body.style.cursor = 'auto';
@@ -230,26 +224,20 @@ export class ParagraphFrontButton {
 
         if (target && position && block) {
             if (
-                (position === 'down' && block.prev === target)
-                || (position === 'up' && block.next === target)
+                (position === 'down' && block.prev === target) ||
+                (position === 'up' && block.next === target)
             ) {
                 return;
             }
 
-            if (position === 'up')
-                block.insertInto(block.parent!, target);
-            else
-                block.insertInto(block.parent!, target.next);
+            if (position === 'up') block.insertInto(block.parent!, target);
+            else block.insertInto(block.parent!, target.next);
 
             // TODO: @JOCS, remove use this.selection directly.
-            const { anchorBlock, anchor, focus, isSelectionInSameBlock }
-                = block.muya.editor.selection ?? {};
+            const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
+                block.muya.editor.selection ?? {};
 
-            if (
-                isSelectionInSameBlock
-                && anchorBlock
-                && anchorBlock.isInBlock(block)
-            ) {
+            if (isSelectionInSameBlock && anchorBlock && anchorBlock.isInBlock(block)) {
                 const begin = Math.min(anchor!.offset, focus!.offset);
                 const end = Math.max(anchor!.offset, focus!.offset);
                 anchorBlock.setCursor(begin, end);
@@ -262,8 +250,7 @@ export class ParagraphFrontButton {
     private _startDrag = () => {
         const { _block: block } = this;
         // Frontmatter should not be drag.
-        if (!block || block.blockName === 'frontmatter')
-            return;
+        if (!block || block.blockName === 'frontmatter') return;
 
         this._disableListen = true;
         this._dragInfo = {
@@ -276,11 +263,7 @@ export class ParagraphFrontButton {
         document.body.style.cursor = 'grabbing';
 
         this._dragEvents = [
-            eventCenter.attachDOMEvent(
-                document,
-                'mousemove',
-                throttle(this._mouseMove, 100),
-            ),
+            eventCenter.attachDOMEvent(document, 'mousemove', throttle(this._mouseMove, 100)),
             eventCenter.attachDOMEvent(document, 'mouseup', this._mouseUp),
         ];
     };
@@ -319,8 +302,7 @@ export class ParagraphFrontButton {
     private _moveShadow(event: Event) {
         const { _shadow: shadow } = this;
         // The shadow already be removed.
-        if (!shadow || !isMouseEvent(event))
-            return;
+        if (!shadow || !isMouseEvent(event)) return;
 
         const { y } = event;
         Object.assign(shadow.style, {
@@ -337,7 +319,12 @@ export class ParagraphFrontButton {
     }
 
     render() {
-        const { _container: container, _iconWrapper: iconWrapper, _block: block, _oldVNode: oldVNode } = this;
+        const {
+            _container: container,
+            _iconWrapper: iconWrapper,
+            _block: block,
+            _oldVNode: oldVNode,
+        } = this;
 
         const iconWrapperSelector = 'div.mu-icon-wrapper';
         const i = getIcon(block!);
@@ -346,10 +333,8 @@ export class ParagraphFrontButton {
 
         const vnode = h(iconWrapperSelector, [iconParagraph, iconDrag]);
 
-        if (oldVNode)
-            patch(oldVNode, vnode);
-        else
-            patch(iconWrapper, vnode);
+        if (oldVNode) patch(oldVNode, vnode);
+        else patch(iconWrapper, vnode);
 
         this._oldVNode = vnode;
 
@@ -359,8 +344,7 @@ export class ParagraphFrontButton {
     }
 
     hide() {
-        if (!this._status)
-            return;
+        if (!this._status) return;
 
         this._block = null;
         this._status = false;
@@ -382,8 +366,7 @@ export class ParagraphFrontButton {
     }
 
     show(block: Parent) {
-        if (this._block && this._block === block)
-            return;
+        if (this._block && this._block === block) return;
 
         this._block = block;
         const { domNode } = block;
@@ -405,9 +388,14 @@ export class ParagraphFrontButton {
         // Extract offset values, handling both number and object types
         let crossAxisValue = 0;
         let alignmentAxisValue = 0;
-        if (typeof offsetOptions === 'object' && offsetOptions !== null && !('then' in offsetOptions)) {
+        if (
+            typeof offsetOptions === 'object' &&
+            offsetOptions !== null &&
+            !('then' in offsetOptions)
+        ) {
             crossAxisValue = (offsetOptions as { crossAxis?: number }).crossAxis ?? 0;
-            alignmentAxisValue = (offsetOptions as { alignmentAxis?: number | null }).alignmentAxis ?? 0;
+            alignmentAxisValue =
+                (offsetOptions as { alignmentAxis?: number | null }).alignmentAxis ?? 0;
         }
 
         const updatePosition = () => {

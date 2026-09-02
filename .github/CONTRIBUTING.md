@@ -81,7 +81,7 @@ If there are conflicts or you want to update your local branch, please do the fo
 
 ### Style Guide
 
-You can run ESLint (`bun run lint`) to help you to follow the style guide.
+You can run Oxlint (`bun run lint`) and Oxfmt (`bun run format`) to help you follow the style guide.
 
 - ES6 and "best practices"
 - 2 space indent

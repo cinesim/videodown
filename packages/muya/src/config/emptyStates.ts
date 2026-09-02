@@ -15,11 +15,11 @@ import type {
 } from '../state/types';
 
 interface IEmptyStates {
-    'paragraph': IParagraphState;
+    paragraph: IParagraphState;
     'thematic-break': IThematicBreakState;
-    'frontmatter': IFrontmatterState;
+    frontmatter: IFrontmatterState;
     'atx-heading': IAtxHeadingState;
-    'table': ITableState;
+    table: ITableState;
     'math-block': IMathBlockState;
     'html-block': IHtmlBlockState;
     'code-block': ICodeBlockState;
@@ -27,11 +27,11 @@ interface IEmptyStates {
     'order-list': IOrderListState;
     'bullet-list': IBulletListState;
     'task-list': ITaskListState;
-    'diagram': IDiagramState;
+    diagram: IDiagramState;
 }
 
 const emptyStates: IEmptyStates = {
-    'paragraph': {
+    paragraph: {
         name: 'paragraph',
         text: '',
     },
@@ -39,7 +39,7 @@ const emptyStates: IEmptyStates = {
         name: 'thematic-break',
         text: '---', // --- or ___ or ***
     },
-    'frontmatter': {
+    frontmatter: {
         name: 'frontmatter',
         text: '',
         meta: {
@@ -54,7 +54,7 @@ const emptyStates: IEmptyStates = {
         },
         text: '# ', // can not contain `\n`!
     },
-    'table': {
+    table: {
         name: 'table',
         children: [
             {
@@ -186,7 +186,7 @@ const emptyStates: IEmptyStates = {
             },
         ],
     },
-    'diagram': {
+    diagram: {
         name: 'diagram',
         text: '',
         meta: {

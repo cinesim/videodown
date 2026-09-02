@@ -21,8 +21,7 @@ export default function highlight(
     if (highlights) {
         for (const light of highlights) {
             const un = union({ start: rStart, end: rEnd }, light);
-            if (un)
-                unions.push(un);
+            if (un) unions.push(un);
         }
     }
 
@@ -31,17 +30,14 @@ export default function highlight(
             const { start, end, active } = u;
             const className = this.getHighlightClassName(!!active);
 
-            if (pos < start)
-                result.push(text.substring(pos, start));
+            if (pos < start) result.push(text.substring(pos, start));
 
             result.push(h(`span.${className}`, text.substring(start, end)));
             pos = end;
         }
 
-        if (pos < rEnd)
-            result.push(block.text.substring(pos, rEnd));
-    }
-    else {
+        if (pos < rEnd) result.push(block.text.substring(pos, rEnd));
+    } else {
         result = [text.substring(rStart, rEnd)];
     }
 

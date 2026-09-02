@@ -33,7 +33,9 @@ function placeCursorOnLastContent(muya: Muya) {
 }
 // eslint-disable-next-line ts/no-explicit-any
 function hasName(state: any[], name: string): boolean {
-    return state.some(b => b.name === name || (Array.isArray(b.children) && hasName(b.children, name)));
+    return state.some(
+        (b) => b.name === name || (Array.isArray(b.children) && hasName(b.children, name)),
+    );
 }
 
 describe('updateParagraph same-block menu model', () => {
@@ -79,7 +81,10 @@ describe('updateParagraph same-block menu model', () => {
         await vi.waitFor(() => {
             const s = muya.getState();
             expect(s[0].name).toBe('bullet-list');
-            expect((s[0] as { children: { children: { name: string }[] }[] }).children[0].children[0].name).toBe('atx-heading');
+            expect(
+                (s[0] as { children: { children: { name: string }[] }[] }).children[0].children[0]
+                    .name,
+            ).toBe('atx-heading');
         });
     });
 

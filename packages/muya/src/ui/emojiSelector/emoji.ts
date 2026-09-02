@@ -5,10 +5,8 @@ import emojis from '../../config/emojis';
 const emojisForSearch: Record<string, EmojiType[]> = {};
 
 for (const emoji of emojis) {
-    if (emojisForSearch[emoji.category])
-        emojisForSearch[emoji.category].push(emoji);
-    else
-        emojisForSearch[emoji.category] = [emoji];
+    if (emojisForSearch[emoji.category]) emojisForSearch[emoji.category].push(emoji);
+    else emojisForSearch[emoji.category] = [emoji];
 }
 
 class Emoji {
@@ -17,8 +15,7 @@ class Emoji {
 
     search(text: string): Record<string, EmojiType[]> {
         const { _cache: cache } = this;
-        if (cache.has(text))
-            return cache.get(text)!;
+        if (cache.has(text)) return cache.get(text)!;
 
         const result: Record<string, EmojiType[]> = {};
 
@@ -27,9 +24,8 @@ class Emoji {
                 includeScore: true,
                 keys: ['aliases', 'tags'],
             });
-            const list = fuse.search(text).map(i => i.item);
-            if (list.length)
-                result[category] = list;
+            const list = fuse.search(text).map((i) => i.item);
+            if (list.length) result[category] = list;
         });
         cache.set(text, result);
 

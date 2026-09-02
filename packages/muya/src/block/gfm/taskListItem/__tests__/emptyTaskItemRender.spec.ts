@@ -16,14 +16,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
 
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -41,12 +38,10 @@ function taskListItems(muya: Muya): Parent[] {
     const result: Parent[] = [];
 
     const visit = (block: Parent) => {
-        if (block.blockName === 'task-list-item')
-            result.push(block);
+        if (block.blockName === 'task-list-item') result.push(block);
 
         block.children?.forEach((child) => {
-            if (child.isParent())
-                visit(child as Parent);
+            if (child.isParent()) visit(child as Parent);
         });
     };
 
@@ -64,8 +59,8 @@ describe('task-list-item rendering', () => {
         expect(muya.domNode.querySelectorAll('li.mu-task-list-item')).toHaveLength(4);
         expect(muya.domNode.querySelectorAll('.mu-task-list-checkbox')).toHaveLength(4);
 
-        const contentTexts = items.map(item =>
-            (item.firstContentInDescendant() as Content | null)?.text,
+        const contentTexts = items.map(
+            (item) => (item.firstContentInDescendant() as Content | null)?.text,
         );
         expect(contentTexts).toEqual(['a', '', '', 'text']);
     });

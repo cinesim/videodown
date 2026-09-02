@@ -30,18 +30,17 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, options: Record<string, unknown> = {}): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
-    const muya = new MuyaClass(host, { markdown, ...options } as ConstructorParameters<typeof MuyaClass>[1]);
+    const muya = new MuyaClass(host, { markdown, ...options } as ConstructorParameters<
+        typeof MuyaClass
+    >[1]);
     muya.init();
     bootedHosts.push(muya.domNode);
     return muya;
@@ -88,7 +87,7 @@ describe('paste — replace a selected inline image (muyajs parity)', () => {
         selectWholeImage(muya);
 
         await muya.editor.clipboard.pasteHandler(pasteEvent(), '', '');
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         expect(muya.getMarkdown()).toBe('![](/tmp/new.png)\n');
     });
@@ -105,7 +104,11 @@ describe('paste — replace a selected inline image (muyajs parity)', () => {
         const block = muya.editor.scrollPage!.firstContentInDescendant() as Format;
         const raw = block.text;
         muya.editor.selection.selectImage({
-            token: { type: 'image', raw, range: { start: 0, end: raw.length } } as unknown as ImageToken,
+            token: {
+                type: 'image',
+                raw,
+                range: { start: 0, end: raw.length },
+            } as unknown as ImageToken,
             imageId: 'sel-img',
             block,
         });
@@ -120,7 +123,7 @@ describe('paste — replace a selected inline image (muyajs parity)', () => {
         });
 
         await muya.editor.clipboard.pasteHandler(pasteEvent(), '', '');
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         // The WHOLE image is replaced, not just the first character.
         expect(muya.getMarkdown()).toBe('![](/tmp/new.png)\n');
@@ -133,7 +136,7 @@ describe('paste — replace a selected inline image (muyajs parity)', () => {
         selectWholeImage(muya);
 
         await muya.editor.clipboard.pasteHandler(pasteEvent(), '', '');
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         const selected = muya.editor.selection.image;
         expect(selected).not.toBeNull();

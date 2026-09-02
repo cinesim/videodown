@@ -31,13 +31,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -54,7 +51,7 @@ function firstContent(muya: Muya): Content {
 }
 
 function flush(): Promise<void> {
-    return new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function backspace(content: Content): void {
@@ -70,14 +67,9 @@ function backspace(content: Content): void {
 // leaves when the caret sits right after a trailing inline image.
 function caretAfterInlineImage(muya: Muya): Content {
     const content = firstContent(muya);
-    const wrapper = muya.domNode.querySelector<HTMLElement>(
-        `span.${CLASS_NAMES.MU_INLINE_IMAGE}`,
-    )!;
-    const container = wrapper.querySelector<HTMLElement>(
-        `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-    )!;
-    if (!container.querySelector('img'))
-        container.appendChild(document.createElement('img'));
+    const wrapper = muya.domNode.querySelector<HTMLElement>(`span.${CLASS_NAMES.MU_INLINE_IMAGE}`)!;
+    const container = wrapper.querySelector<HTMLElement>(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)!;
+    if (!container.querySelector('img')) container.appendChild(document.createElement('img'));
 
     muya.editor.activeContentBlock = content;
     const range = document.createRange();
@@ -96,7 +88,10 @@ describe('backspace deletes a whole image', () => {
 
         backspace(content);
         expect(muya.editor.selection.type).toBe('image');
-        expect(muya.editor.selection.image?.token.range).toEqual({ start: 0, end: content.text.length });
+        expect(muya.editor.selection.image?.token.range).toEqual({
+            start: 0,
+            end: content.text.length,
+        });
         expect(muya.getMarkdown()).toContain('![alt](https://example.com/a.png)');
 
         // ImageSelection's document keydown listener deletes the selected image.

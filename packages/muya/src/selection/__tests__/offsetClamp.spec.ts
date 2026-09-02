@@ -51,9 +51,7 @@ describe('getLegalOffset', () => {
         const legal = getLegalOffset(node, offset);
 
         expect(legal).toBeLessThanOrEqual(
-            node.nodeType === Node.TEXT_NODE
-                ? (node as Text).length
-                : node.childNodes.length,
+            node.nodeType === Node.TEXT_NODE ? (node as Text).length : node.childNodes.length,
         );
         expect(legal).toBeGreaterThanOrEqual(0);
 

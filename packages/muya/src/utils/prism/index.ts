@@ -17,8 +17,7 @@ if (languages.cpp) {
     const existing = languages.cpp.alias;
     const alias = Array.isArray(existing) ? [...existing] : existing ? [existing] : [];
     for (const name of ['c++', 'h++']) {
-        if (!alias.includes(name))
-            alias.push(name);
+        if (!alias.includes(name)) alias.push(name);
     }
     languages.cpp.alias = alias;
 }
@@ -40,8 +39,7 @@ for (const name of Object.keys(languages)) {
                 name: lang.alias,
                 ...lang,
             });
-        }
-        else if (Array.isArray(lang.alias)) {
+        } else if (Array.isArray(lang.alias)) {
             langs.push(
                 ...lang.alias.map((a: string) => ({
                     name: a,
@@ -55,15 +53,17 @@ for (const name of Object.keys(languages)) {
 const loadLanguage = initLoadLanguage(Prism);
 
 function search(text: string) {
-    if (!text || typeof text !== 'string')
-        return [];
+    if (!text || typeof text !== 'string') return [];
 
     const fuse = new Fuse(langs, {
         includeScore: true,
         keys: ['name', 'title', 'alias'],
     });
 
-    return fuse.search(text).map(i => i.item).slice(0, 5);
+    return fuse
+        .search(text)
+        .map((i) => i.item)
+        .slice(0, 5);
 }
 
 // In LaTeX `\%` is an escaped literal percent, not a line comment, but
@@ -73,8 +73,7 @@ function search(text: string) {
 // one override covers all three.
 export function patchLatexEscapedPercent(prismInstance: typeof Prism) {
     const latex = prismInstance.languages.latex as { comment?: unknown } | undefined;
-    if (latex?.comment)
-        latex.comment = { pattern: /(^|[^\\])%.*/, lookbehind: true };
+    if (latex?.comment) latex.comment = { pattern: /(^|[^\\])%.*/, lookbehind: true };
 }
 
 // pre load latex and yaml and html for `math block` \ `front matter` and `html block`

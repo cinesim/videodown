@@ -36,8 +36,8 @@ const nonEnLocales: Array<[string, typeof en]> = [
 // coordinated refactor, but display values SHOULD use the correct casing.
 const TECHNICAL_TERMS: Record<string, string> = {
     'Front Matter': 'Front Matter',
-    'Mermaid': 'Mermaid',
-    'Plantuml': 'PlantUML', // key is misspelled upstream; display value uses correct casing
+    Mermaid: 'Mermaid',
+    Plantuml: 'PlantUML', // key is misspelled upstream; display value uses correct casing
 };
 
 const LATIN_SCRIPT_LOCALES = ['de', 'es', 'fr', 'nl', 'pt'];
@@ -64,13 +64,13 @@ describe('locale completeness', () => {
 
     describe('locale name tags', () => {
         const expected: Record<string, string> = {
-            'de': 'de',
-            'es': 'es',
-            'fr': 'fr',
-            'ja': 'ja',
-            'ko': 'ko',
-            'nl': 'nl',
-            'pt': 'pt',
+            de: 'de',
+            es: 'es',
+            fr: 'fr',
+            ja: 'ja',
+            ko: 'ko',
+            nl: 'nl',
+            pt: 'pt',
             'zh-CN': 'zh-CN',
             'zh-TW': 'zh-TW',
         };

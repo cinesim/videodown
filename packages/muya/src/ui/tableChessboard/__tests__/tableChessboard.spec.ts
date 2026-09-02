@@ -56,13 +56,23 @@ function stubReference(): HTMLElement {
     // BaseFloat computes position off the reference; happy-dom has no layout,
     // so a stubbed rect keeps autoUpdate from throwing.
     input.getBoundingClientRect = () =>
-        ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => '' }) as DOMRect;
+        ({
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            x: 0,
+            y: 0,
+            toJSON: () => '',
+        }) as DOMRect;
     document.body.appendChild(track(input));
     return input;
 }
 
 async function nextTick() {
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 describe('tableChessboard — plugin shape (restored, revert #4435)', () => {
@@ -93,8 +103,7 @@ describe('tableChessboard — muya-table-picker subscription + grid pick', () =>
         // down so listeners/observers/nodes don't leak across specs.
         picker.destroy();
         // Detach the host/reference nodes the fakes appended to <body>.
-        for (const node of appendedNodes.splice(0))
-            (node as ChildNode).remove?.();
+        for (const node of appendedNodes.splice(0)) (node as ChildNode).remove?.();
         vi.restoreAllMocks();
     });
 

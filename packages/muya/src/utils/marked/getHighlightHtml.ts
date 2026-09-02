@@ -11,21 +11,13 @@ import fm, { frontMatterRender } from './frontMatter';
 import { DEFAULT_OPTIONS } from './options';
 import walkTokens from './walkTokens';
 
-const DIAGRAM_TYPE = [
-    'mermaid',
-    'plantuml',
-    'vega-lite',
-    'flowchart',
-    'sequence',
-];
+const DIAGRAM_TYPE = ['mermaid', 'plantuml', 'vega-lite', 'flowchart', 'sequence'];
 
 function highlight(code: string, lang: string) {
     // Language may be undefined (GH#591)
-    if (!lang)
-        return code;
+    if (!lang) return code;
 
-    if (DIAGRAM_TYPE.includes(lang))
-        return code;
+    if (DIAGRAM_TYPE.includes(lang)) return code;
 
     const grammar = Prism.languages[lang];
     if (!grammar) {
@@ -37,8 +29,7 @@ function highlight(code: string, lang: string) {
 
 export function getHighlightHtml(src: string, options: ILexOption = {}) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
-    const { footnote, frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
-        = options;
+    const { footnote, frontMatter, math, isGitlabCompatibilityEnabled, superSubScript } = options;
 
     // Build a fresh Marked instance per call. `Marked.use({ walkTokens })`
     // chains rather than replaces, so reusing a module-level singleton would
@@ -66,11 +57,9 @@ export function getHighlightHtml(src: string, options: ILexOption = {}) {
         );
     }
 
-    if (superSubScript)
-        marked.use(superSubScriptExtension());
+    if (superSubScript) marked.use(superSubScriptExtension());
 
-    if (footnote)
-        marked.use(footnoteExtension());
+    if (footnote) marked.use(footnoteExtension());
 
     let html = '';
 

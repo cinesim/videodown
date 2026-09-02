@@ -8,7 +8,7 @@ export class LinkedList<T extends ILinkedNode> {
 
     length: number = 0;
 
-    * iterator(curNode = this.head, length = this.length) {
+    *iterator(curNode = this.head, length = this.length) {
         let count = 0;
 
         while (count < length && curNode) {
@@ -19,8 +19,7 @@ export class LinkedList<T extends ILinkedNode> {
     }
 
     append(...nodes: T[]) {
-        for (const node of nodes)
-            this.insertBefore(node);
+        for (const node of nodes) this.insertBefore(node);
     }
 
     contains(node: T) {
@@ -30,32 +29,26 @@ export class LinkedList<T extends ILinkedNode> {
         // eslint-disable-next-line no-cond-assign
         while ((data = it.next()).done !== true) {
             const { value } = data;
-            if (value === node)
-                return true;
+            if (value === node) return true;
         }
 
         return false;
     }
 
     insertBefore(node: T, refNode: T | null = null) {
-        if (!node)
-            return;
+        if (!node) return;
         node.next = refNode;
         if (refNode !== null) {
             node.prev = refNode.prev;
-            if (refNode.prev != null)
-                refNode.prev.next = node;
+            if (refNode.prev != null) refNode.prev.next = node;
 
             refNode.prev = node;
-            if (this.head === refNode)
-                this.head = node;
-        }
-        else if (this.tail != null) {
+            if (this.head === refNode) this.head = node;
+        } else if (this.tail != null) {
             this.tail.next = node;
             node.prev = this.tail;
             this.tail = node;
-        }
-        else {
+        } else {
             node.prev = null;
             this.head = this.tail = node;
         }
@@ -67,27 +60,21 @@ export class LinkedList<T extends ILinkedNode> {
     }
 
     remove(node: T) {
-    // If linkedList does not contain this node, just return
-        if (!this.contains(node))
-            return;
-        if (node.prev)
-            node.prev.next = node.next;
+        // If linkedList does not contain this node, just return
+        if (!this.contains(node)) return;
+        if (node.prev) node.prev.next = node.next;
 
-        if (node.next)
-            node.next.prev = node.prev;
+        if (node.next) node.next.prev = node.prev;
 
-        if (this.head === node)
-            this.head = node.next as T;
+        if (this.head === node) this.head = node.next as T;
 
-        if (this.tail === node)
-            this.tail = node.prev as T;
+        if (this.tail === node) this.tail = node.prev as T;
 
         this.length -= 1;
     }
 
     find(index: number) {
-        if (index < 0 || index >= this.length)
-            return null;
+        if (index < 0 || index >= this.length) return null;
 
         return [...this.iterator()][index];
     }
@@ -96,11 +83,7 @@ export class LinkedList<T extends ILinkedNode> {
         return [...this.iterator()].forEach(callback);
     }
 
-    forEachAt(
-        index: number,
-        length: number = this.length,
-        callback: (cur: T, i: number) => void,
-    ) {
+    forEachAt(index: number, length: number = this.length, callback: (cur: T, i: number) => void) {
         const curNode = this.find(index);
 
         return [...this.iterator(curNode, length)].forEach((node, i) => {

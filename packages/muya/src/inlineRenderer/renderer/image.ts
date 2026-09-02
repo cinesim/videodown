@@ -22,7 +22,7 @@ function renderIcon(h: H, className: string, icon: string) {
             'i.icon-inner',
             {
                 style: {
-                    'background': `url(${icon}) no-repeat`,
+                    background: `url(${icon}) no-repeat`,
                     'background-size': '100%',
                 },
             },
@@ -38,21 +38,14 @@ function shouldSyncSelectedImageId(
     src: string,
     id: string,
 ): selectedImage is IImageSelectionData {
-    return (
-        !!selectedImage
-        && selectedImage.token.attrs.src === src
-        && selectedImage.imageId !== id
-    );
+    return !!selectedImage && selectedImage.token.attrs.src === src && selectedImage.imageId !== id;
 }
 
-function isSmallImage(
-    naturalWidth: number | undefined,
-    naturalHeight: number | undefined,
-) {
+function isSmallImage(naturalWidth: number | undefined, naturalHeight: number | undefined) {
     return (
-        typeof naturalWidth === 'number'
-        && typeof naturalHeight === 'number'
-        && (naturalWidth < 100 || naturalHeight < 100)
+        typeof naturalWidth === 'number' &&
+        typeof naturalHeight === 'number' &&
+        (naturalWidth < 100 || naturalHeight < 100)
     );
 }
 
@@ -62,16 +55,15 @@ function isImageSelected(
     token: ImageToken,
     id: string,
 ) {
-    if (!selectedImage)
-        return false;
+    if (!selectedImage) return false;
 
     const { imageId, block: selectedBlock, token: selectedToken } = selectedImage;
 
     return (
-        imageId === `${id}_${token.range.start}`
-        && selectedBlock === block
-        && selectedToken.range.start === token.range.start
-        && selectedToken.range.end === token.range.end
+        imageId === `${id}_${token.range.start}` &&
+        selectedBlock === block &&
+        selectedToken.range.start === token.range.start &&
+        selectedToken.range.end === token.range.end
     );
 }
 
@@ -85,7 +77,7 @@ export default function image(
     const { i18n } = this.muya;
     const data = {
         attrs: {
-            'contenteditable': 'false',
+            contenteditable: 'false',
             'empty-text': i18n.t('Click to add an image'),
             'fail-text': i18n.t('Load image failed'),
         },
@@ -106,8 +98,13 @@ export default function image(
     const height = token.attrs.height;
 
     if (src) {
-        ({ id, isSuccess, url: resolvedUrl, width: naturalWidth, height: naturalHeight }
-            = this.loadImageAsync(imageSrc, token.attrs));
+        ({
+            id,
+            isSuccess,
+            url: resolvedUrl,
+            width: naturalWidth,
+            height: naturalHeight,
+        } = this.loadImageAsync(imageSrc, token.attrs));
     }
 
     // What the rendered <img> actually points at. For local files this is the
@@ -118,9 +115,7 @@ export default function image(
     let imgSrc = resolvedUrl ?? src;
 
     let wrapperSelector = id
-        ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${
-            CLASS_NAMES.MU_INLINE_IMAGE
-        }`
+        ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${CLASS_NAMES.MU_INLINE_IMAGE}`
         : `span.${CLASS_NAMES.MU_INLINE_IMAGE}`;
 
     const imageIcons = [
@@ -150,9 +145,8 @@ export default function image(
 
     // the src image is still loading, so use the url Map base64.
     if (this.urlMap.has(src)) {
-    // fix: it will generate a new id if the image is not loaded.
-        if (shouldSyncSelectedImageId(selectedImage, src, id))
-            selectedImage.imageId = id;
+        // fix: it will generate a new id if the image is not loaded.
+        if (shouldSyncSelectedImageId(selectedImage, src, id)) selectedImage.imageId = id;
 
         imgSrc = this.urlMap.get(src)!;
         isSuccess = true;
@@ -170,11 +164,10 @@ export default function image(
     }
 
     if (src) {
-    // image is loading...
+        // image is loading...
         if (typeof isSuccess === 'undefined') {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_LOADING}`;
-        }
-        else if (isSuccess === true) {
+        } else if (isSuccess === true) {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_SUCCESS}`;
             // Tag images whose natural size is below
             // 100px in either dimension. NOTE: no CSS in this package currently
@@ -188,8 +181,7 @@ export default function image(
             // visual treatment.
             if (isSmallImage(naturalWidth, naturalHeight))
                 wrapperSelector += `.${CLASS_NAMES.MU_SMALL_IMAGE}`;
-        }
-        else {
+        } else {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_FAIL}`;
         }
 
@@ -206,29 +198,26 @@ export default function image(
                 },
             };
 
-            if (typeof width === 'string' && width)
-                Object.assign(data.props, { width });
+            if (typeof width === 'string' && width) Object.assign(data.props, { width });
 
-            if (typeof height === 'string' && height)
-                Object.assign(data.props, { height });
+            if (typeof height === 'string' && height) Object.assign(data.props, { height });
 
             return h('img', data);
         };
 
         return isSuccess
             ? [
-                    h(wrapperSelector, data, [
-                        ...imageIcons,
-                        renderImageContainer(
-                            // An image description has inline elements as its contents.
-                            // When an image is rendered to HTML, this is used as the image’s alt attribute.
-                            renderImage(),
-                        ),
-                    ]),
-                ]
+                  h(wrapperSelector, data, [
+                      ...imageIcons,
+                      renderImageContainer(
+                          // An image description has inline elements as its contents.
+                          // When an image is rendered to HTML, this is used as the image’s alt attribute.
+                          renderImage(),
+                      ),
+                  ]),
+              ]
             : [h(wrapperSelector, data, [...imageIcons, renderImageContainer()])];
-    }
-    else {
+    } else {
         wrapperSelector += `.${CLASS_NAMES.MU_EMPTY_IMAGE}`;
 
         return [h(wrapperSelector, data, [...imageIcons, renderImageContainer()])];

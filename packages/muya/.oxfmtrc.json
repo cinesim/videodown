@@ -1,0 +1,20 @@
+{
+    "$schema": "../../node_modules/oxfmt/configuration_schema.json",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 100,
+    "trailingComma": "all",
+    "sortPackageJson": false,
+    "ignorePatterns": [
+        "test/spec/fixtures/**",
+        "test/spec/expected-failures.json",
+        "test/spec/conformance.md",
+        "examples/**",
+        "e2e/**",
+        "lib/**",
+        "docs/**",
+        "src/utils/diagram/sequence/sequence-diagram-snap.js",
+        "src/utils/diagram/sequence/sequence-diagram.css"
+    ]
+}

@@ -20,13 +20,7 @@ export default function referenceDefinition(
         rightTitleSpace,
     } = token;
     const { start, end } = token.range;
-    const leftBracketContent = this.highlight(
-        h,
-        block,
-        start,
-        start + leftBracket.length,
-        token,
-    );
+    const leftBracketContent = this.highlight(h, block, start, start + leftBracket.length, token);
     const labelContent = this.highlight(
         h,
         block,
@@ -68,13 +62,7 @@ export default function referenceDefinition(
             },
             labelContent,
         ),
-        ...this.backlashInToken(
-            h,
-            backlash,
-            CLASS_NAMES.MU_GRAY,
-            backlashStart,
-            token,
-        ),
+        ...this.backlashInToken(h, backlash, CLASS_NAMES.MU_GRAY, backlashStart, token),
         h(
             `span.${className}`,
             {

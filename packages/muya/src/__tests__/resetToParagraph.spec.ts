@@ -26,10 +26,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -57,7 +55,7 @@ describe('muya.resetToParagraph(block)', () => {
         await vi.waitFor(() => {
             const state = muya.getState();
             expect(state.length).toBe(3);
-            expect(state.every(b => b.name === 'paragraph')).toBe(true);
+            expect(state.every((b) => b.name === 'paragraph')).toBe(true);
         });
         const md = muya.getMarkdown();
         expect(md).toContain('one');
@@ -75,7 +73,7 @@ describe('muya.resetToParagraph(block)', () => {
         await vi.waitFor(() => {
             const state = muya.getState();
             expect(state.length).toBe(2);
-            expect(state.every(b => b.name === 'paragraph')).toBe(true);
+            expect(state.every((b) => b.name === 'paragraph')).toBe(true);
         });
     });
 });
@@ -93,7 +91,7 @@ describe('paragraph front menu — clicking the active list type unwraps the lis
         await vi.waitFor(() => {
             const state = muya.getState();
             expect(state.length).toBe(3);
-            expect(state.every(b => b.name === 'paragraph')).toBe(true);
+            expect(state.every((b) => b.name === 'paragraph')).toBe(true);
         });
     });
 });
@@ -138,9 +136,7 @@ describe('paragraph front menu — a single menu open performs at most one actio
         // list, but the menu still holds it in `_block`.
         menu.selectItem(new Event('click'), { label: 'order-list' });
 
-        expect(() =>
-            menu.selectItem(new Event('click'), { label: 'bullet-list' }),
-        ).not.toThrow();
+        expect(() => menu.selectItem(new Event('click'), { label: 'bullet-list' })).not.toThrow();
 
         await vi.waitFor(() => {
             const state = muya.getState();
@@ -161,9 +157,7 @@ describe('paragraph front menu — a single menu open performs at most one actio
 
         // The stale `_block` now points at the removed list; toggling again
         // must be a no-op, not a crash.
-        expect(() =>
-            menu.selectItem(new Event('click'), { label: 'bullet-list' }),
-        ).not.toThrow();
+        expect(() => menu.selectItem(new Event('click'), { label: 'bullet-list' })).not.toThrow();
     });
 
     // The deterministic real-world repro: an external command (the app menu bar)
@@ -182,9 +176,7 @@ describe('paragraph front menu — a single menu open performs at most one actio
         // list, but leaves the front menu open with its now-detached `_block`.
         muya.resetToParagraph(list);
 
-        expect(() =>
-            menu.selectItem(new Event('click'), { label: 'duplicate' }),
-        ).not.toThrow();
+        expect(() => menu.selectItem(new Event('click'), { label: 'duplicate' })).not.toThrow();
     });
 });
 

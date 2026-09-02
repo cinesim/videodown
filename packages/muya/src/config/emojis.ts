@@ -12979,4 +12979,4 @@ const emojis = [
 
 export default emojis;
 
-export type Emoji = typeof emojis[number];
+export type Emoji = (typeof emojis)[number];

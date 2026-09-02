@@ -20,18 +20,15 @@ import { readFileAsDataURL, resolveClipboardImagePath } from '../utils/paste';
  */
 function insertImageText(anchorBlock: Content, src: string, alt = ''): string {
     const cursor = anchorBlock.getCursor();
-    if (!cursor)
-        return '';
+    if (!cursor) return '';
 
     const { start, end } = cursor;
     const { text: content } = anchorBlock;
     const escapedSrc = encodeImageSrc(src);
     const imageText = `![${alt}](${escapedSrc})`;
 
-    anchorBlock.text
-        = content.substring(0, start.offset)
-            + imageText
-            + content.substring(end.offset);
+    anchorBlock.text =
+        content.substring(0, start.offset) + imageText + content.substring(end.offset);
 
     const offset = start.offset + imageText.length;
     anchorBlock.setCursor(offset, offset, true);
@@ -44,22 +41,17 @@ function insertImageText(anchorBlock: Content, src: string, alt = ''): string {
  * {@link insertImageText} with the final `![](src)`, once `imageAction`
  * resolved. The cursor is seated right after the swapped image.
  */
-function replacePlaceholderImage(
-    anchorBlock: Content,
-    placeholderText: string,
-    src: string,
-): void {
+function replacePlaceholderImage(anchorBlock: Content, placeholderText: string, src: string): void {
     const index = anchorBlock.text.indexOf(placeholderText);
-    if (index === -1)
-        return;
+    if (index === -1) return;
 
     const escapedSrc = encodeImageSrc(src);
     const imageText = `![](${escapedSrc})`;
 
-    anchorBlock.text
-        = anchorBlock.text.substring(0, index)
-            + imageText
-            + anchorBlock.text.substring(index + placeholderText.length);
+    anchorBlock.text =
+        anchorBlock.text.substring(0, index) +
+        imageText +
+        anchorBlock.text.substring(index + placeholderText.length);
 
     const offset = index + imageText.length;
     anchorBlock.setCursor(offset, offset, true);
@@ -97,8 +89,7 @@ async function insertImageSrc(
 
     let finalSrc = src;
     const resolved = await imageAction({ src, alt: '', title: '' });
-    if (resolved)
-        finalSrc = resolved;
+    if (resolved) finalSrc = resolved;
 
     replacePlaceholderImage(anchorBlock, placeholderText, finalSrc);
 }
@@ -110,14 +101,10 @@ async function resolveImageSrc(
     clipboard: Clipboard,
     imageFile: Nullable<File>,
 ): Promise<Nullable<string>> {
-    const imagePath = await resolveClipboardImagePath(
-        clipboard.muya.options.clipboardFilePath,
-    );
-    if (imagePath)
-        return imagePath;
+    const imagePath = await resolveClipboardImagePath(clipboard.muya.options.clipboardFilePath);
+    if (imagePath) return imagePath;
 
-    if (imageFile)
-        return readFileAsDataURL(imageFile);
+    if (imageFile) return readFileAsDataURL(imageFile);
 
     return null;
 }
@@ -133,18 +120,13 @@ async function resolveImageSrc(
  * active content block (the editor loses DOM focus during the menu/IPC
  * round-trip). No-ops when `src` is empty or no anchor block is available.
  */
-export async function pasteImageSrc(
-    clipboard: Clipboard,
-    src: string,
-): Promise<void> {
-    if (!src)
-        return;
+export async function pasteImageSrc(clipboard: Clipboard, src: string): Promise<void> {
+    if (!src) return;
 
-    const anchorBlock
-        = clipboard.selection.getSelection()?.anchor.block
-            ?? clipboard.muya.editor.activeContentBlock;
-    if (!anchorBlock)
-        return;
+    const anchorBlock =
+        clipboard.selection.getSelection()?.anchor.block ??
+        clipboard.muya.editor.activeContentBlock;
+    if (!anchorBlock) return;
 
     await insertImageSrc(clipboard, anchorBlock, src);
 }
@@ -160,8 +142,7 @@ export async function tryPasteImage(
     imageFile: Nullable<File>,
 ): Promise<boolean> {
     const src = await resolveImageSrc(clipboard, imageFile);
-    if (src == null)
-        return false;
+    if (src == null) return false;
 
     await insertImageSrc(clipboard, anchorBlock, src);
 
@@ -186,10 +167,7 @@ function spliceImageText(
     const escapedSrc = encodeImageSrc(src);
     const imageText = `![${alt}](${escapedSrc})`;
 
-    block.text
-        = block.text.substring(0, range.start)
-            + imageText
-            + block.text.substring(range.end);
+    block.text = block.text.substring(0, range.start) + imageText + block.text.substring(range.end);
 
     const offset = range.start + imageText.length;
     block.setCursor(offset, offset, true);
@@ -203,8 +181,7 @@ function spliceImageText(
 // `replacePlaceholderImage`, so the wrapper is already in the DOM.
 function findImageWrapper(block: Format, startOffset: number): Nullable<HTMLElement> {
     const { domNode } = block;
-    if (domNode == null)
-        return null;
+    if (domNode == null) return null;
 
     const images = domNode.querySelectorAll<HTMLElement>(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
     let wrapper: Nullable<HTMLElement> = images[images.length - 1] ?? null;
@@ -223,8 +200,7 @@ function findImageWrapper(block: Format, startOffset: number): Nullable<HTMLElem
 // image container's box, so this must run only once the image has loaded.
 function positionImageControls(clipboard: Clipboard, block: Format, wrapper: HTMLElement): void {
     const imageContainer = wrapper.querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`);
-    if (imageContainer == null)
-        return;
+    if (imageContainer == null) return;
 
     const imageInfo = getImageInfo(wrapper);
     const rect = imageContainer.getBoundingClientRect();
@@ -245,16 +221,14 @@ function positionImageControls(clipboard: Clipboard, block: Format, wrapper: HTM
 // it in, which never re-emits the positioning events on its own.
 function reselectImageAt(clipboard: Clipboard, block: Format, startOffset: number): void {
     const wrapper = findImageWrapper(block, startOffset);
-    if (wrapper == null)
-        return;
+    if (wrapper == null) return;
 
     clipboard.muya.editor.selection.selectImage(
         Object.assign({}, getImageInfo(wrapper), { block }),
     );
     block.update();
 
-    if (typeof requestAnimationFrame !== 'function')
-        return;
+    if (typeof requestAnimationFrame !== 'function') return;
 
     let attempts = 60;
     const positionWhenLoaded = (): void => {
@@ -264,8 +238,7 @@ function reselectImageAt(clipboard: Clipboard, block: Format, startOffset: numbe
 
             return;
         }
-        if (--attempts > 0)
-            requestAnimationFrame(positionWhenLoaded);
+        if (--attempts > 0) requestAnimationFrame(positionWhenLoaded);
     };
     requestAnimationFrame(positionWhenLoaded);
 }
@@ -294,8 +267,7 @@ async function replaceImageAt(
 
     let finalSrc = src;
     const resolved = await imageAction({ src, alt: '', title: '' });
-    if (resolved)
-        finalSrc = resolved;
+    if (resolved) finalSrc = resolved;
 
     replacePlaceholderImage(block, placeholderText, finalSrc);
     reselectImageAt(clipboard, block, range.start);
@@ -311,12 +283,10 @@ export async function tryReplaceSelectedImage(
     imageFile: Nullable<File>,
 ): Promise<boolean> {
     const selectedImage = clipboard.selection.image;
-    if (selectedImage == null)
-        return false;
+    if (selectedImage == null) return false;
 
     const src = await resolveImageSrc(clipboard, imageFile);
-    if (src == null)
-        return false;
+    if (src == null) return false;
 
     // Replace by the image token's character range directly — never via a DOM
     // text selection, which clamps across the atomic image and mangles the tag.

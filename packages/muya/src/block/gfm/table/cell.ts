@@ -21,9 +21,7 @@ class TableBodyCell extends Parent {
     static create(muya: Muya, state: ITableCellState) {
         const cell = new TableBodyCell(muya, state);
 
-        cell.append(
-            ScrollPage.loadBlock('table.cell.content').create(muya, state.text),
-        );
+        cell.append(ScrollPage.loadBlock('table.cell.content').create(muya, state.text));
 
         return cell;
     }

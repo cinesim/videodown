@@ -30,12 +30,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -68,7 +65,7 @@ function stubSameBlockSelection(muya: Muya, block: Content, start: number, end: 
 
 async function cut(muya: Muya): Promise<void> {
     muya.editor.clipboard.cutHandler();
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
 }
 
 describe('track C — same-block cut re-evaluates block type', () => {

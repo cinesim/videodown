@@ -40,12 +40,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
@@ -95,7 +92,7 @@ function stubSelection(
 // authoritative markdown to settle.
 async function cutAndRead(muya: Muya): Promise<string> {
     muya.editor.clipboard.cutHandler();
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
     return muya.getMarkdown();
 }
 
@@ -144,7 +141,7 @@ describe('track C — cross-block cut keeps both endpoint tails (leaf merge)', (
         const muya = bootMuya('```\ncodeline\n```\n\nhello\n');
         const blocks = contentBlocks(muya);
         // blocks: [language-input '', codeblock.content 'codeline', paragraph 'hello'].
-        const codeContent = blocks.find(b => b.blockName === 'codeblock.content')!;
+        const codeContent = blocks.find((b) => b.blockName === 'codeblock.content')!;
         const para = blocks[blocks.length - 1];
         // 'codeline'@2 -> 'co' merged with 'hello'@3 -> 'lo'.
         stubSelection(muya, codeContent, 2, para, 3);
@@ -187,7 +184,7 @@ describe('track C — cross-block cut keeps both endpoint tails (leaf merge)', (
         const muya = bootMuya('hello\n\n| a | b |\n| --- | --- |\n| 1 | 2 |\n');
         const blocks = contentBlocks(muya);
         const firstCell = blocks.find(
-            b => b.blockName === 'table.cell.content' && b.text === 'a',
+            (b) => b.blockName === 'table.cell.content' && b.text === 'a',
         )!;
         // 'hello'@2 -> 'he'; the table survives with cell 'a' emptied.
         stubSelection(muya, blocks[0], 2, firstCell, 1);
@@ -202,7 +199,7 @@ describe('track C — cross-block cut keeps both endpoint tails (leaf merge)', (
         const muya = bootMuya('| a | b |\n| --- | --- |\n| 1 | 2 |\n\nhello\n');
         const blocks = contentBlocks(muya);
         const firstCell = blocks.find(
-            b => b.blockName === 'table.cell.content' && b.text === 'a',
+            (b) => b.blockName === 'table.cell.content' && b.text === 'a',
         )!;
         const para = blocks[blocks.length - 1];
         // cell 'a'@0 -> '' merged with 'hello'@3 -> 'lo'.
@@ -224,8 +221,8 @@ describe('track C — cross-block cut keeps both endpoint tails (leaf merge)', (
     it('cell -> cell in the same table: grid kept, spanned cells emptied', async () => {
         const muya = bootMuya('| a | b |\n| --- | --- |\n| 1 | 2 |\n');
         const blocks = contentBlocks(muya);
-        const cellA = blocks.find(b => b.text === 'a')!;
-        const cell2 = blocks.find(b => b.text === '2')!;
+        const cellA = blocks.find((b) => b.text === 'a')!;
+        const cell2 = blocks.find((b) => b.text === '2')!;
         // 'a'@1 -> 'a' merged with '2'@0 -> '2'; cells between emptied.
         stubSelection(muya, cellA, 1, cell2, 0);
         const md = await cutAndRead(muya);
@@ -242,7 +239,7 @@ describe('track C — cross-block cut keeps both endpoint tails (leaf merge)', (
         const start = blocks[0];
         stubSelection(muya, start, 2, blocks[blocks.length - 1], 3);
         muya.editor.clipboard.cutHandler();
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
         // The caret is seated on the merged start block at the cut offset. The
         // happy-dom native selection does not round-trip, so assert on the
         // engine selection state that `setCursor` writes directly.
@@ -300,8 +297,7 @@ function cellDom(table: TableBlock, row: number, column: number): HTMLElement {
 
 function fireMouse(node: HTMLElement, type: string): void {
     const event = new MouseEvent(type, { bubbles: true, button: 0 });
-    if (!('x' in event))
-        Object.defineProperty(event, 'x', { value: 0, configurable: true });
+    if (!('x' in event)) Object.defineProperty(event, 'x', { value: 0, configurable: true });
     node.dispatchEvent(event);
 }
 
@@ -313,7 +309,7 @@ function dragSelect(table: TableBlock, r1: number, c1: number, r2: number, c2: n
 
 async function cutSelectionAndRead(muya: Muya): Promise<string> {
     muya.editor.clipboard.cutHandler();
-    await new Promise(r => setTimeout(r, 40));
+    await new Promise((r) => setTimeout(r, 40));
     return muya.getMarkdown();
 }
 
@@ -334,9 +330,7 @@ describe('track C — empty table row/column/whole-table cut is structural', () 
 
     it('cutting an already-empty whole row removes that row', async () => {
         // 4 body rows; the LAST body row is entirely empty.
-        const muya = bootMuya(
-            '| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n|  |  |\n',
-        );
+        const muya = bootMuya('| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n|  |  |\n');
         const table = firstTable(muya);
         const before = table.rowCount;
         dragSelect(table, before - 1, 0, before - 1, 1); // whole empty last row
@@ -345,9 +339,7 @@ describe('track C — empty table row/column/whole-table cut is structural', () 
     });
 
     it('cutting an empty whole table removes the table block', async () => {
-        const muya = bootMuya(
-            '|  |  |\n| --- | --- |\n|  |  |\n',
-        );
+        const muya = bootMuya('|  |  |\n| --- | --- |\n|  |  |\n');
         const table = firstTable(muya);
         dragSelect(table, 0, 0, table.rowCount - 1, table.columnCount - 1);
         const md = await cutSelectionAndRead(muya);
@@ -355,9 +347,7 @@ describe('track C — empty table row/column/whole-table cut is structural', () 
     });
 
     it('cutting a PARTIAL content selection only empties in place', async () => {
-        const muya = bootMuya(
-            '| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n',
-        );
+        const muya = bootMuya('| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n');
         const table = firstTable(muya);
         const beforeRows = table.rowCount;
         const beforeCols = table.columnCount;
@@ -373,9 +363,7 @@ describe('track C — empty table row/column/whole-table cut is structural', () 
     });
 
     it('cutting a whole table that still has content removes the table (muyajs parity)', async () => {
-        const muya = bootMuya(
-            '| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n',
-        );
+        const muya = bootMuya('| a1 | b1 |\n| --- | --- |\n| a2 | b2 |\n');
         const table = firstTable(muya);
         // whole table, with content
         dragSelect(table, 0, 0, table.rowCount - 1, table.columnCount - 1);

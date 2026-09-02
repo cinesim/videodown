@@ -231,8 +231,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         attachLinkMouseHandlers(muya);
 
         const link = document.createElement(tagName);
-        for (const c of classes)
-            link.classList.add(c);
+        for (const c of classes) link.classList.add(c);
         link.setAttribute('href', 'https://x.com');
         domNode.appendChild(link);
 
@@ -304,20 +303,23 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         ['mark', 'mark'],
         ['subscript', 'sub'],
         ['superscript', 'sup'],
-    ])('does NOT emit on mouseover of non-anchor inline HTML <%s class="mu-raw-html">', (_label, tagName) => {
-        const { muya, eventCenter, domNode } = makeMuya();
-        const emits = captureEmits(eventCenter);
-        attachLinkMouseHandlers(muya);
+    ])(
+        'does NOT emit on mouseover of non-anchor inline HTML <%s class="mu-raw-html">',
+        (_label, tagName) => {
+            const { muya, eventCenter, domNode } = makeMuya();
+            const emits = captureEmits(eventCenter);
+            attachLinkMouseHandlers(muya);
 
-        const el = document.createElement(tagName);
-        el.classList.add('mu-inline-rule', 'mu-raw-html');
-        el.dataset.raw = `<${tagName}>x</${tagName}>`;
-        el.textContent = 'x';
-        domNode.appendChild(el);
+            const el = document.createElement(tagName);
+            el.classList.add('mu-inline-rule', 'mu-raw-html');
+            el.dataset.raw = `<${tagName}>x</${tagName}>`;
+            el.textContent = 'x';
+            domNode.appendChild(el);
 
-        mouseover(el);
-        expect(emits).toHaveLength(0);
-    });
+            mouseover(el);
+            expect(emits).toHaveLength(0);
+        },
+    );
 
     it('does NOT emit when the link wrapper has no data-raw (getLinkInfo returns null)', () => {
         const { muya, eventCenter, domNode } = makeMuya();

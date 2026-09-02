@@ -8,8 +8,7 @@ beforeEach(() => {
     window.MUYA_VERSION = 'test';
 });
 afterEach(() => {
-    while (hosts.length)
-        hosts.pop()!.remove();
+    while (hosts.length) hosts.pop()!.remove();
     document.getSelection()?.removeAllRanges();
 });
 
@@ -179,17 +178,18 @@ describe('inline format — selection range & heading markers', () => {
         muya.editor.activeContentBlock = c;
         // muya.format() reads selection.getSelection(); happy-dom collapses the
         // DOM selection, so stub it to the whole-heading range the user dragged.
-        muya.editor.selection.getSelection = () => ({
-            anchor: { offset: 0, block: c, path: c.path },
-            focus: { offset: 7, block: c, path: c.path },
-            start: { offset: 0, block: c },
-            end: { offset: 7, block: c },
-            isSelectionInSameBlock: true,
-            isCollapsed: false,
-            direction: 'forward',
-            type: 'Range',
-            // eslint-disable-next-line ts/no-explicit-any
-        }) as any;
+        muya.editor.selection.getSelection = () =>
+            ({
+                anchor: { offset: 0, block: c, path: c.path },
+                focus: { offset: 7, block: c, path: c.path },
+                start: { offset: 0, block: c },
+                end: { offset: 7, block: c },
+                isSelectionInSameBlock: true,
+                isCollapsed: false,
+                direction: 'forward',
+                type: 'Range',
+                // eslint-disable-next-line ts/no-explicit-any
+            }) as any;
         stubDynamicCursor(muya, c); // Format.format reads getCursor after the clamp
         muya.format('strong');
         await vi.waitFor(() => expect(c.text).toBe('# **Title**')); // marker untouched

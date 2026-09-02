@@ -14,5 +14,5 @@ export function escapeLangInputInnerHtml(text: string, highlights: IHighlight[] 
         .replace(new RegExp(MARKER_HASH['<'], 'g'), '<')
         .replace(new RegExp(MARKER_HASH['>'], 'g'), '>')
         .replace(new RegExp(MARKER_HASH['"'], 'g'), '"')
-        .replace(new RegExp(MARKER_HASH['\''], 'g'), '\'');
+        .replace(new RegExp(MARKER_HASH["'"], 'g'), "'");
 }

@@ -22,7 +22,7 @@ function boot(markdown: string): Muya {
 }
 
 function codeTexts(muya: Muya): string[] {
-    return [...muya.domNode!.querySelectorAll('td code')].map(c => c.textContent ?? '');
+    return [...muya.domNode!.querySelectorAll('td code')].map((c) => c.textContent ?? '');
 }
 
 function roundTrip(md: string): string {
@@ -30,13 +30,7 @@ function roundTrip(md: string): string {
     return new ExportMarkdown({ listIndentation: 1 }).generate(states);
 }
 
-const TABLE = [
-    '| a | b |',
-    '| --- | --- |',
-    '| `\\|` | x |',
-    '| `\\|\\|` | y |',
-    '',
-].join('\n');
+const TABLE = ['| a | b |', '| --- | --- |', '| `\\|` | x |', '| `\\|\\|` | y |', ''].join('\n');
 
 describe('#4849: escaped pipe in a table cell', () => {
     it('renders `\\|` inside code as | (no backslash) in the editor', () => {

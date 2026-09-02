@@ -10,8 +10,7 @@ export function matchString(text: string, value: string, options: ISearchOption)
     let regStr = value;
     let flag = 'g';
 
-    if (!isCaseSensitive)
-        flag += 'i';
+    if (!isCaseSensitive) flag += 'i';
 
     if (!isRegexp) {
         regStr = value.replace(SPECIAL_CHAR_REG, (p) => {
@@ -19,16 +18,14 @@ export function matchString(text: string, value: string, options: ISearchOption)
         });
     }
 
-    if (isWholeWord)
-        regStr = `\\b${regStr}\\b`;
+    if (isWholeWord) regStr = `\\b${regStr}\\b`;
 
     try {
-    // Add try catch expression because not all string can generate a valid RegExp. for example `\`.
+        // Add try catch expression because not all string can generate a valid RegExp. for example `\`.
         SEARCH_REG = new RegExp(regStr, flag);
 
         return execAll(SEARCH_REG, text);
-    }
-    catch {
+    } catch {
         return [];
     }
 }
@@ -39,8 +36,7 @@ export function buildRegexValue(match: IMatch, value: string) {
     if (Array.isArray(groups) && groups.length) {
         for (const group of groups) {
             const index = Number.parseInt(group.replace(/^\$/, ''));
-            if (index === 0)
-                value = value.replace(group, match.match);
+            if (index === 0) value = value.replace(group, match.match);
             else if (index > 0 && index <= match.subMatches.length)
                 value = value.replace(group, match.subMatches[index - 1]);
         }

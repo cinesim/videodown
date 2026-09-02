@@ -32,12 +32,8 @@ describe('footnote post-processing in MarkdownToHtml export', () => {
     it('numbers inline references as <sup class="footnote-ref">', async () => {
         const out = await renderExport(MD);
 
-        expect(out).toMatch(
-            /<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/,
-        );
-        expect(out).toMatch(
-            /<sup class="footnote-ref"><a href="#fn-2" id="fnref-2">2<\/a><\/sup>/,
-        );
+        expect(out).toMatch(/<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/);
+        expect(out).toMatch(/<sup class="footnote-ref"><a href="#fn-2" id="fnref-2">2<\/a><\/sup>/);
         // The literal `[^1]` / `[^2]` markers are gone from the prose.
         expect(out).not.toMatch(/ref\[\^1\]/);
         expect(out).not.toMatch(/another\[\^2\]/);

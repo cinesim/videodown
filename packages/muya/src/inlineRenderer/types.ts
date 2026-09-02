@@ -45,27 +45,27 @@ export interface ITokenRange {
     end: number;
 }
 
-export type Token
-    = | BeginRuleToken
-        | ReferenceDefinitionToken
-        | TextToken
-        | BacklashToken
-        | StrongEmToken
-        | CodeEmojiMathToken
-        | DelToken
-        | SuperSubScriptToken
-        | FootnoteIdentifierToken
-        | ImageToken
-        | LinkToken
-        | ReferenceLinkToken
-        | ReferenceImageToken
-        | HTMLEscapeToken
-        | AutoLinkExtensionToken
-        | AutoLinkToken
-        | HTMLTagToken
-        | SoftLineBreakToken
-        | HardLineBreakToken
-        | TailHeaderToken;
+export type Token =
+    | BeginRuleToken
+    | ReferenceDefinitionToken
+    | TextToken
+    | BacklashToken
+    | StrongEmToken
+    | CodeEmojiMathToken
+    | DelToken
+    | SuperSubScriptToken
+    | FootnoteIdentifierToken
+    | ImageToken
+    | LinkToken
+    | ReferenceLinkToken
+    | ReferenceImageToken
+    | HTMLEscapeToken
+    | AutoLinkExtensionToken
+    | AutoLinkToken
+    | HTMLTagToken
+    | SoftLineBreakToken
+    | HardLineBreakToken
+    | TailHeaderToken;
 
 export interface IBaseToken {
     raw: string;

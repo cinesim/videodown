@@ -37,12 +37,9 @@ beforeEach(() => {
 
 afterEach(() => {
     vi.restoreAllMocks();
-    while (bootedMuyas.length)
-        bootedMuyas.pop()!.destroy();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedMuyas.length) bootedMuyas.pop()!.destroy();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 interface ITrackedEndpoints {
@@ -60,8 +57,7 @@ function mirrorLiveSelection(muya: Muya): void {
 
     vi.spyOn(selection, 'getSelection').mockImplementation((): ISelection | null => {
         const { anchorBlock, focusBlock, anchor, focus } = text;
-        if (!anchorBlock || !focusBlock || anchor == null || focus == null)
-            return null;
+        if (!anchorBlock || !focusBlock || anchor == null || focus == null) return null;
 
         const isSelectionInSameBlock = anchorBlock === focusBlock;
         const isCollapsed = isSelectionInSameBlock && anchor.offset === focus.offset;

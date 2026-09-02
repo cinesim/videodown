@@ -1,11 +1,12 @@
 /* eslint-disable no-fallthrough */
-import type {
-    CodeEmojiMathToken,
-    TextToken,
-    Token,
-} from '../../inlineRenderer/types';
+import type { CodeEmojiMathToken, TextToken, Token } from '../../inlineRenderer/types';
 import type { IContentCursor, IRenderCursor } from '../../selection/types';
-import type { IBulletListState, IListItemState, IOrderListState, IParagraphState } from '../../state/types';
+import type {
+    IBulletListState,
+    IListItemState,
+    IOrderListState,
+    IParagraphState,
+} from '../../state/types';
 import type { Nullable } from '../../types';
 import type { IImageInfo } from '../../utils/image';
 import type AtxHeading from '../commonMark/atxHeading';
@@ -63,32 +64,23 @@ const INLINE_UPDATE_REG = new RegExp(INLINE_UPDATE_FRAGMENTS.join('|'), 'i');
 // (strong/em/code/math/html_tag). `open`/`close` are the opening/closing
 // marker lengths; for the symmetric inline markers they are equal.
 function markeredOffset(dis: number, len: number, open: number, close: number) {
-    if (dis < 0)
-        return 0;
-    if (dis < open)
-        return -dis;
-    if (dis <= len - close)
-        return -open;
-    if (dis <= len)
-        return len - dis - open - close;
+    if (dis < 0) return 0;
+    if (dis < open) return -dis;
+    if (dis <= len - close) return -open;
+    if (dis <= len) return len - dis - open - close;
     return -open - close;
 }
 
 function linkOffset(dis: number, anchorLen: number) {
-    if (dis < 1)
-        return 0;
-    if (dis <= 1 + anchorLen)
-        return -1;
+    if (dis < 1) return 0;
+    if (dis <= 1 + anchorLen) return -1;
     return anchorLen - dis;
 }
 
 function imageOffset(dis: number, altLen: number) {
-    if (dis < 1)
-        return 0;
-    if (dis < 2)
-        return -1;
-    if (dis <= 2 + altLen)
-        return -2;
+    if (dis < 1) return 0;
+    if (dis < 2) return -1;
+    if (dis <= 2 + altLen) return -2;
     return altLen - dis;
 }
 
@@ -204,11 +196,9 @@ function clearFormat(token: Token, cursor: IContentCursor) {
 function checkTokenIsInlineFormat(token: Token) {
     const { type } = token;
 
-    if (FORMAT_TYPES.includes(type))
-        return true;
+    if (FORMAT_TYPES.includes(type)) return true;
 
-    if (type === 'html_tag')
-        return /^(?:u|sub|sup|mark)$/i.test(token.tag);
+    if (type === 'html_tag') return /^(?:u|sub|sup|mark)$/i.test(token.tag);
 
     return false;
 }
@@ -234,18 +224,12 @@ class Format extends Content {
 
         const travel = (tokens: Token[]) => {
             for (const token of tokens) {
-                if (token.range.start > offset)
-                    break;
+                if (token.range.start > offset) break;
 
-                if (
-                    token.type === type
-                    && offset > token.range.start
-                    && offset < token.range.end
-                ) {
+                if (token.type === type && offset > token.range.start && offset < token.range.end) {
                     result = token;
                     break;
-                }
-                else if ('children' in token && Array.isArray(token.children)) {
+                } else if ('children' in token && Array.isArray(token.children)) {
                     travel(token.children);
                 }
             }
@@ -269,47 +253,44 @@ class Format extends Content {
         const cache: Record<string, number> = {};
 
         for (const { type } of oldTokens) {
-            if (oldCache[type])
-                oldCache[type]++;
-            else
-                oldCache[type] = 1;
+            if (oldCache[type]) oldCache[type]++;
+            else oldCache[type] = 1;
         }
 
         for (const { type } of tokens) {
-            if (cache[type])
-                cache[type]++;
-            else
-                cache[type] = 1;
+            if (cache[type]) cache[type]++;
+            else cache[type] = 1;
         }
 
-        if (Object.keys(oldCache).length !== Object.keys(cache).length)
-            return true;
+        if (Object.keys(oldCache).length !== Object.keys(cache).length) return true;
 
         for (const key of Object.keys(oldCache)) {
-            if (!cache[key] || oldCache[key] !== cache[key])
-                return true;
+            if (!cache[key] || oldCache[key] !== cache[key]) return true;
         }
 
         return false;
     }
 
     // TODO: @JOCS remove use this.selection directly
-    checkNeedRender(cursor: IRenderCursor = { anchor: this.selection.anchor ?? undefined, focus: this.selection.focus ?? undefined }) {
+    checkNeedRender(
+        cursor: IRenderCursor = {
+            anchor: this.selection.anchor ?? undefined,
+            focus: this.selection.focus ?? undefined,
+        },
+    ) {
         const { labels } = this.inlineRenderer;
         const { text } = this;
         const { start: cStart, end: cEnd, anchor, focus } = cursor;
         const anchorOffset = cStart ? cStart.offset : anchor?.offset;
         const focusOffset = cEnd ? cEnd.offset : focus?.offset;
-        if (anchorOffset == null || focusOffset == null)
-            return false;
+        if (anchorOffset == null || focusOffset == null) return false;
         const NO_NEED_TOKEN_REG = /text|hard_line_break|soft_line_break/;
 
         for (const token of tokenizer(text, {
             labels,
             options: this.muya.options,
         })) {
-            if (NO_NEED_TOKEN_REG.test(token.type))
-                continue;
+            if (NO_NEED_TOKEN_REG.test(token.type)) continue;
 
             const { start, end } = token.range;
             const textLen = text.length;
@@ -318,8 +299,8 @@ class Format extends Content {
                 conflict(
                     [Math.max(0, start - 1), Math.min(textLen, end + 1)],
                     [anchorOffset, anchorOffset],
-                )
-                || conflict(
+                ) ||
+                conflict(
                     [Math.max(0, start - 1), Math.min(textLen, end + 1)],
                     [focusOffset, focusOffset],
                 )
@@ -334,8 +315,7 @@ class Format extends Content {
     override blurHandler() {
         super.blurHandler();
         const needRender = this.checkNeedRender();
-        if (needRender)
-            this.update();
+        if (needRender) this.update();
     }
 
     /**
@@ -343,19 +323,14 @@ class Format extends Content {
      * @param {string} text emoji text
      */
     setEmoji(text: string) {
-    // TODO: @JOCS remove use this.selection directly.
+        // TODO: @JOCS remove use this.selection directly.
         const { anchor } = this.selection;
-        const editEmoji = this._checkCursorInTokenType(
-            this.text,
-            anchor!.offset,
-            'emoji',
-        );
+        const editEmoji = this._checkCursorInTokenType(this.text, anchor!.offset, 'emoji');
 
         if (editEmoji) {
             const { start, end } = editEmoji.range;
             const oldText = this.text;
-            this.text
-                = `${oldText.substring(0, start)}:${text}:${oldText.substring(end)}`;
+            this.text = `${oldText.substring(0, start)}:${text}:${oldText.substring(end)}`;
             const offset = start + text.length + 2;
             this.setCursor(offset, offset, true);
         }
@@ -368,27 +343,22 @@ class Format extends Content {
         let imageText = '';
         if (type === 'image') {
             imageText = '![';
-            if (alt)
-                imageText += alt;
+            if (alt) imageText += alt;
 
             imageText += '](';
-            if (src)
-                imageText += encodeImageSrc(src);
+            if (src) imageText += encodeImageSrc(src);
 
-            if (title)
-                imageText += ` "${title}"`;
+            if (title) imageText += ` "${title}"`;
 
             imageText += ')';
-        }
-        else if (type === 'html_tag') {
+        } else if (type === 'html_tag') {
             const { attrs } = token;
             Object.assign(attrs, { alt, src, title });
             imageText = '<img ';
 
             for (const attr of Object.keys(attrs)) {
                 let value = attrs[attr];
-                if (value && attr === 'src')
-                    value = correctImageSrc(value);
+                if (value && attr === 'src') value = correctImageSrc(value);
 
                 imageText += `${attr}="${escapeHTML(String(value))}" `;
             }
@@ -396,18 +366,13 @@ class Format extends Content {
             imageText += ' />';
         }
 
-        this.text
-            = oldText.substring(0, start) + imageText + oldText.substring(end);
+        this.text = oldText.substring(0, start) + imageText + oldText.substring(end);
 
         this.update();
     }
 
-    updateImage(
-        { imageId, token }: IImageInfo,
-        attrName: string,
-        attrValue: string,
-    ) {
-    // inline/left/center/right
+    updateImage({ imageId, token }: IImageInfo, attrName: string, attrValue: string) {
+        // inline/left/center/right
         const { start, end } = token.range;
         const oldText = this.text;
         let imageText = '';
@@ -418,29 +383,27 @@ class Format extends Content {
 
         for (const attr of Object.keys(attrs)) {
             let value = attrs[attr];
-            if (value && attr === 'src')
-                value = correctImageSrc(value);
+            if (value && attr === 'src') value = correctImageSrc(value);
 
             imageText += `${attr}="${escapeHTML(String(value))}" `;
         }
         imageText = imageText.trim();
         imageText += ' />';
-        this.text
-            = oldText.substring(0, start) + imageText + oldText.substring(end);
+        this.text = oldText.substring(0, start) + imageText + oldText.substring(end);
 
         this.update();
 
-        const selector = `#${imageId.includes('_') ? imageId : `${imageId}_${token.range.start}`
+        const selector = `#${
+            imageId.includes('_') ? imageId : `${imageId}_${token.range.start}`
         } img`;
         // Scope the lookup to this block: identical-src images share a DOM id,
         // so a document-wide query would re-click the first occurrence. Within a
         // single block the `_${range.start}` suffix is unique.
-        const image: Nullable<HTMLElement>
-            = this.domNode?.querySelector<HTMLElement>(selector)
-                ?? document.querySelector<HTMLElement>(selector);
+        const image: Nullable<HTMLElement> =
+            this.domNode?.querySelector<HTMLElement>(selector) ??
+            document.querySelector<HTMLElement>(selector);
 
-        if (image)
-            image.click();
+        if (image) image.click();
     }
 
     // Replace the link's source text (e.g. `[Anthropic](https://…)`) with the
@@ -448,8 +411,7 @@ class Format extends Content {
     // around it. We keep the visible text rather than substituting the URL,
     // matching the contemporary norm (Notion, GDocs, Slack).
     unlink({ range, text }: { range: { start: number; end: number } | null; text: string }) {
-        if (!range)
-            return;
+        if (!range) return;
 
         const oldText = this.text;
         this.text = oldText.substring(0, range.start) + text + oldText.substring(range.end);
@@ -471,19 +433,17 @@ class Format extends Content {
     }
 
     override clickHandler(event: Event): void {
-        if (!isMouseEvent(event))
-            return;
+        if (!isMouseEvent(event)) return;
 
         // Handler click inline math and inline ruby html. Use `Element`, not
         // `HTMLElement` — inline-math KaTeX output is SVG, and a click that
         // lands on an `<svg>` path still has to walk up to the wrapping
         // `.mu-math-render` HTMLElement.
         const { target } = event;
-        if (!(target instanceof Element))
-            return;
-        const inlineRuleRenderEle
-            = target.closest<HTMLElement>(`.${CLASS_NAMES.MU_MATH_RENDER}`)
-                || target.closest<HTMLElement>(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
+        if (!(target instanceof Element)) return;
+        const inlineRuleRenderEle =
+            target.closest<HTMLElement>(`.${CLASS_NAMES.MU_MATH_RENDER}`) ||
+            target.closest<HTMLElement>(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
 
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
@@ -494,8 +454,7 @@ class Format extends Content {
         const footnoteEl = target.closest<HTMLElement>(
             `.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}`,
         );
-        if (footnoteEl)
-            this._emitFootnoteToolEvent(footnoteEl);
+        if (footnoteEl) this._emitFootnoteToolEvent(footnoteEl);
 
         requestAnimationFrame(() => {
             // TODO: @JOCS, remove use this.selection directly.
@@ -506,21 +465,19 @@ class Format extends Content {
 
             const currentCursor = this.getCursor();
 
-            if (!currentCursor)
-                return;
+            if (!currentCursor) return;
 
             const cursor = Object.assign({}, currentCursor, {
                 block: this,
             });
 
             // TODO: The codes bellow maybe is wrong? and remove use this.selection directly
-            const needRender
-                = this.selection.anchorBlock === this
+            const needRender =
+                this.selection.anchorBlock === this
                     ? this.checkNeedRender(cursor) || this.checkNeedRender()
                     : this.checkNeedRender(cursor);
 
-            if (needRender)
-                this.update(cursor);
+            if (needRender) this.update(cursor);
 
             this.setCursor(currentCursor.anchor.offset, currentCursor.focus.offset);
 
@@ -537,25 +494,16 @@ class Format extends Content {
     }
 
     override keyupHandler(): void {
-        if (this.isComposed)
-            return;
+        if (this.isComposed) return;
 
         // TODO: @JOCS remove use this.selection directly
-        const {
-            anchor: oldAnchor,
-            focus: oldFocus,
-            isSelectionInSameBlock,
-        } = this.selection;
+        const { anchor: oldAnchor, focus: oldFocus, isSelectionInSameBlock } = this.selection;
 
-        if (!isSelectionInSameBlock)
-            return;
+        if (!isSelectionInSameBlock) return;
 
         const { anchor, focus } = this.getCursor()!;
 
-        if (
-            anchor.offset !== oldAnchor?.offset
-            || focus.offset !== oldFocus?.offset
-        ) {
+        if (anchor.offset !== oldAnchor?.offset || focus.offset !== oldFocus?.offset) {
             // Also check the previously committed selection (no-arg default):
             // a held arrow fires one keyup on release, so the caret can leap
             // clear of a token in a single step and leave its markers stuck
@@ -563,18 +511,13 @@ class Format extends Content {
             const needUpdate = this.checkNeedRender({ anchor, focus }) || this.checkNeedRender();
             const cursor = { anchor, focus, block: this };
 
-            if (needUpdate)
-                this.update(cursor);
+            if (needUpdate) this.update(cursor);
 
             this.setCursor(anchor.offset, focus.offset);
         }
 
         // Check not edit emoji
-        const editEmoji = this._checkCursorInTokenType(
-            this.text,
-            anchor.offset,
-            'emoji',
-        );
+        const editEmoji = this._checkCursorInTokenType(this.text, anchor.offset, 'emoji');
 
         if (!editEmoji) {
             this.muya.eventCenter.emit('muya-emoji-picker', {
@@ -598,13 +541,9 @@ class Format extends Content {
         // invoke this method — `event.inputType` may legitimately be `undefined`
         // (CompositionEvent doesn't expose it). Use `'inputType' in event` to
         // read it from whichever event shape the runtime hands us.
-        const inputType = 'inputType' in event && typeof event.inputType === 'string'
-            ? event.inputType
-            : '';
-        if (
-            this.isComposed
-            || /historyUndo|historyRedo/.test(inputType)
-        ) {
+        const inputType =
+            'inputType' in event && typeof event.inputType === 'string' ? event.inputType : '';
+        if (this.isComposed || /historyUndo|historyRedo/.test(inputType)) {
             return;
         }
 
@@ -635,8 +574,7 @@ class Format extends Content {
             'format',
         );
 
-        if (this._checkNotSameToken(this.text, text))
-            needRender = true;
+        if (this._checkNotSameToken(this.text, text)) needRender = true;
 
         const inputData = 'data' in event && typeof event.data === 'string' ? event.data : null;
         this.muya.editor.history.markInputBoundary(inputType, inputData);
@@ -655,20 +593,12 @@ class Format extends Content {
 
         const checkMarkedUpdate = this.checkNeedRender(cursor);
 
-        if (checkMarkedUpdate || needRender)
-            this.update(cursor);
+        if (checkMarkedUpdate || needRender) this.update(cursor);
 
         this.setCursor(start.offset, end.offset);
         // check edit emoji
-        if (
-            inputType !== 'insertFromPaste'
-            && inputType !== 'deleteByCut'
-        ) {
-            const emojiToken = this._checkCursorInTokenType(
-                this.text,
-                start.offset,
-                'emoji',
-            );
+        if (inputType !== 'insertFromPaste' && inputType !== 'deleteByCut') {
+            const emojiToken = this._checkCursorInTokenType(this.text, start.offset, 'emoji');
             if (emojiToken && isEmojiToken(emojiToken)) {
                 const { content: emojiText } = emojiToken;
                 const reference = getCursorReference();
@@ -687,8 +617,7 @@ class Format extends Content {
     // Re-evaluate this block's type from its text (a leading `# `, `- `, `> `…
     // promotes/demotes it). Table cells never reinterpret their text as markdown.
     checkInlineUpdate(): void {
-        if (this.blockName !== 'table.cell.content')
-            this._convertIfNeeded();
+        if (this.blockName !== 'table.cell.content') this._convertIfNeeded();
     }
 
     private _convertIfNeeded() {
@@ -707,8 +636,8 @@ class Format extends Content {
         ] = text.match(INLINE_UPDATE_REG) || [];
 
         switch (true) {
-            case !!thematicBreak
-                && new Set(thematicBreak.split('').filter(i => /\S/.test(i))).size === 1:
+            case !!thematicBreak &&
+                new Set(thematicBreak.split('').filter((i) => /\S/.test(i))).size === 1:
                 this._convertToThematicBreak();
                 break;
 
@@ -749,9 +678,8 @@ class Format extends Content {
 
     // Thematic Break
     private _convertToThematicBreak() {
-    // If the block is already thematic break, no need to update.
-        if (this.parent?.blockName === 'thematic-break')
-            return;
+        // If the block is already thematic break, no need to update.
+        if (this.parent?.blockName === 'thematic-break') return;
 
         const { hasSelection } = this;
         const { start, end } = this.getCursor()!;
@@ -763,17 +691,13 @@ class Format extends Content {
         let thematicLineHasPushed = false;
 
         for (const l of lines) {
-            const THEMATIC_BREAK_REG
-
-                = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ *\-_]*$/;
+            const THEMATIC_BREAK_REG = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ *\-_]*$/;
             if (THEMATIC_BREAK_REG.test(l) && !thematicLineHasPushed) {
                 thematicLine = l;
                 thematicLineHasPushed = true;
-            }
-            else if (!thematicLineHasPushed) {
+            } else if (!thematicLineHasPushed) {
                 preParagraphLines.push(l);
-            }
-            else {
+            } else {
                 postParagraphLines.push(l);
             }
         }
@@ -786,9 +710,10 @@ class Format extends Content {
             const preParagraphState = Object.assign({}, PARAGRAPH_STATE, {
                 text: preParagraphLines.join('\n'),
             });
-            const preParagraphBlock = ScrollPage.loadBlock(
-                preParagraphState.name,
-            ).create(muya, preParagraphState);
+            const preParagraphBlock = ScrollPage.loadBlock(preParagraphState.name).create(
+                muya,
+                preParagraphState,
+            );
             this.parent!.parent!.insertBefore(preParagraphBlock, this.parent);
         }
 
@@ -796,16 +721,14 @@ class Format extends Content {
             const postParagraphState = Object.assign({}, PARAGRAPH_STATE, {
                 text: postParagraphLines.join('\n'),
             });
-            const postParagraphBlock = ScrollPage.loadBlock(
-                postParagraphState.name,
-            ).create(muya, postParagraphState);
+            const postParagraphBlock = ScrollPage.loadBlock(postParagraphState.name).create(
+                muya,
+                postParagraphState,
+            );
             this.parent!.parent!.insertAfter(postParagraphBlock, this.parent);
         }
 
-        const thematicBlock = ScrollPage.loadBlock(newNodeState.name).create(
-            muya,
-            newNodeState,
-        );
+        const thematicBlock = ScrollPage.loadBlock(newNodeState.name).create(muya, newNodeState);
 
         this.parent!.replaceWith(thematicBlock);
 
@@ -829,9 +752,7 @@ class Format extends Content {
         // (and including) the newline before the marker, so a `*` inside e.g.
         // `**bold**` on an earlier soft-line is never mistaken for the bullet
         // marker (#2429).
-        const matches = text.match(
-            /^([\s\S]*\n)? {0,3}([*+-]|\d{1,9}(?:\.|\))) {1,4}([\s\S]*)$/,
-        );
+        const matches = text.match(/^([\s\S]*\n)? {0,3}([*+-]|\d{1,9}(?:\.|\))) {1,4}([\s\S]*)$/);
         const isOrdered = /\d/.test(matches![2]);
 
         if (matches![1]) {
@@ -860,35 +781,33 @@ class Format extends Content {
 
         const listState: IOrderListState | IBulletListState = isOrdered
             ? {
-                    name: 'order-list',
-                    meta: {
-                        loose: preferLooseListItem,
-                        delimiter: matches![2].slice(-1),
-                        start: Number(matches![2].slice(0, -1)),
-                    },
-                    children,
-                }
+                  name: 'order-list',
+                  meta: {
+                      loose: preferLooseListItem,
+                      delimiter: matches![2].slice(-1),
+                      start: Number(matches![2].slice(0, -1)),
+                  },
+                  children,
+              }
             : {
-                    name: 'bullet-list',
-                    meta: {
-                        loose: preferLooseListItem,
-                        marker: matches![2],
-                    },
-                    children,
-                };
+                  name: 'bullet-list',
+                  meta: {
+                      loose: preferLooseListItem,
+                      marker: matches![2],
+                  },
+                  children,
+              };
 
         const list = ScrollPage.loadBlock(listState.name).create(muya, listState);
         parent!.replaceWith(list);
 
         const firstContent = list.firstContentInDescendant();
 
-        if (hasSelection)
-            firstContent.setCursor(0, 0, true);
+        if (hasSelection) firstContent.setCursor(0, 0, true);
 
         // convert `[*-+] \[[xX ]\] ` to task list.
         const TASK_LIST_REG = /^\[[x ]\] {1,4}/i;
-        if (TASK_LIST_REG.test(firstContent.text))
-            firstContent._convertToTaskList();
+        if (TASK_LIST_REG.test(firstContent.text)) firstContent._convertToTaskList();
     }
 
     private _convertToTaskList() {
@@ -899,10 +818,10 @@ class Format extends Content {
         const matches = text.match(/^\[([x ])\] {1,4}([\s\S]*)$/i);
 
         if (
-            !list
-            || list.blockName !== 'bullet-list'
-            || !parent!.isFirstChild()
-            || matches == null
+            !list ||
+            list.blockName !== 'bullet-list' ||
+            !parent!.isFirstChild() ||
+            matches == null
         ) {
             return;
         }
@@ -925,11 +844,9 @@ class Format extends Content {
                                 name: 'paragraph',
                                 text: matches[2],
                             };
-                        }
-                        else if (node.isParent()) {
+                        } else if (node.isParent()) {
                             return node.getState();
-                        }
-                        else {
+                        } else {
                             // Content leaves under a list item don't carry a
                             // full state, but in practice every nested item
                             // is a Parent at runtime (paragraph / inner-list).
@@ -940,10 +857,7 @@ class Format extends Content {
             ],
         };
 
-        const newTaskList = ScrollPage.loadBlock(listState.name).create(
-            muya,
-            listState,
-        );
+        const newTaskList = ScrollPage.loadBlock(listState.name).create(muya, listState);
 
         switch (true) {
             case listItem.isOnlyChild():
@@ -973,8 +887,7 @@ class Format extends Content {
                 list.forEachAt(offset + 1, undefined, (node) => {
                     if (node.isParent()) {
                         const childState = node.getState();
-                        if (isListItemState(childState))
-                            bulletListState.children.push(childState);
+                        if (isListItemState(childState)) bulletListState.children.push(childState);
                     }
                     node.remove();
                 });
@@ -990,16 +903,15 @@ class Format extends Content {
             }
         }
 
-        if (hasSelection)
-            newTaskList.firstContentInDescendant().setCursor(0, 0, true);
+        if (hasSelection) newTaskList.firstContentInDescendant().setCursor(0, 0, true);
     }
 
     // ATX Heading
     private _convertToAtxHeading(atxHeading: string) {
         const level = atxHeading.length;
         if (
-            this.parent!.blockName === 'atx-heading'
-            && (this.parent as AtxHeading).meta.level === level
+            this.parent!.blockName === 'atx-heading' &&
+            (this.parent as AtxHeading).meta.level === level
         ) {
             return;
         }
@@ -1017,11 +929,9 @@ class Format extends Content {
             if (/^ {0,3}#{1,6}(?=\s+|$)/.test(l) && !atxLineHasPushed) {
                 atxLine = l;
                 atxLineHasPushed = true;
-            }
-            else if (!atxLineHasPushed) {
+            } else if (!atxLineHasPushed) {
                 preParagraphLines.push(l);
-            }
-            else {
+            } else {
                 postParagraphLines.push(l);
             }
         }
@@ -1031,9 +941,10 @@ class Format extends Content {
                 name: 'paragraph',
                 text: preParagraphLines.join('\n'),
             };
-            const preParagraphBlock = ScrollPage.loadBlock(
-                preParagraphState.name,
-            ).create(muya, preParagraphState);
+            const preParagraphBlock = ScrollPage.loadBlock(preParagraphState.name).create(
+                muya,
+                preParagraphState,
+            );
             this.parent!.parent!.insertBefore(preParagraphBlock, this.parent);
         }
 
@@ -1042,9 +953,10 @@ class Format extends Content {
                 name: 'paragraph',
                 text: postParagraphLines.join('\n'),
             };
-            const postParagraphBlock = ScrollPage.loadBlock(
-                postParagraphState.name,
-            ).create(muya, postParagraphState);
+            const postParagraphBlock = ScrollPage.loadBlock(postParagraphState.name).create(
+                muya,
+                postParagraphState,
+            );
             this.parent!.parent!.insertAfter(postParagraphBlock, this.parent);
         }
 
@@ -1056,10 +968,7 @@ class Format extends Content {
             text: atxLine,
         };
 
-        const atxHeadingBlock = ScrollPage.loadBlock(newNodeState.name).create(
-            muya,
-            newNodeState,
-        );
+        const atxHeadingBlock = ScrollPage.loadBlock(newNodeState.name).create(muya, newNodeState);
 
         this.parent!.replaceWith(atxHeadingBlock);
 
@@ -1079,8 +988,8 @@ class Format extends Content {
     private _convertToSetextHeading(setextHeading: string) {
         const level = /=/.test(setextHeading) ? 1 : 2;
         if (
-            this.parent?.blockName === 'setext-heading'
-            && (this.parent as SetextHeading).meta.level === level
+            this.parent?.blockName === 'setext-heading' &&
+            (this.parent as SetextHeading).meta.level === level
         ) {
             return;
         }
@@ -1095,10 +1004,8 @@ class Format extends Content {
         for (const l of lines) {
             if (/^ {0,3}(?:={3,}|-{3,})(?= +|$)/.test(l) && !setextLineHasPushed)
                 setextLineHasPushed = true;
-            else if (!setextLineHasPushed)
-                setextLines.push(l);
-            else
-                postParagraphLines.push(l);
+            else if (!setextLineHasPushed) setextLines.push(l);
+            else postParagraphLines.push(l);
         }
 
         const newNodeState = {
@@ -1122,13 +1029,11 @@ class Format extends Content {
                 name: 'paragraph',
                 text: postParagraphLines.join('\n'),
             };
-            const postParagraphBlock = ScrollPage.loadBlock(
-                postParagraphState.name,
-            ).create(muya, postParagraphState);
-            setextHeadingBlock.parent.insertAfter(
-                postParagraphBlock,
-                setextHeadingBlock,
+            const postParagraphBlock = ScrollPage.loadBlock(postParagraphState.name).create(
+                muya,
+                postParagraphState,
             );
+            setextHeadingBlock.parent.insertAfter(postParagraphBlock, setextHeadingBlock);
         }
 
         if (hasSelection) {
@@ -1154,11 +1059,9 @@ class Format extends Content {
                 const tokens = /( *> *)(.*)/.exec(l);
                 delta = tokens![1].length;
                 quoteLines.push(tokens![2]);
-            }
-            else if (!quoteLinesHasPushed) {
+            } else if (!quoteLinesHasPushed) {
                 preParagraphLines.push(l);
-            }
-            else {
+            } else {
                 quoteLines.push(l);
             }
         }
@@ -1170,15 +1073,13 @@ class Format extends Content {
                 meta: (this.parent as SetextHeading).meta,
                 text: quoteLines.join('\n'),
             };
-        }
-        else if (this.blockName === 'atxheading.content') {
+        } else if (this.blockName === 'atxheading.content') {
             quoteParagraphState = {
                 name: 'atx-heading',
                 meta: (this.parent as AtxHeading).meta,
                 text: quoteLines.join(' '),
             };
-        }
-        else {
+        } else {
             quoteParagraphState = {
                 name: 'paragraph',
                 text: quoteLines.join('\n'),
@@ -1190,10 +1091,7 @@ class Format extends Content {
             children: [quoteParagraphState],
         };
 
-        const quoteBlock = ScrollPage.loadBlock(newNodeState.name).create(
-            muya,
-            newNodeState,
-        );
+        const quoteBlock = ScrollPage.loadBlock(newNodeState.name).create(muya, newNodeState);
 
         this.parent!.replaceWith(quoteBlock);
 
@@ -1202,9 +1100,10 @@ class Format extends Content {
                 name: 'paragraph',
                 text: preParagraphLines.join('\n'),
             };
-            const preParagraphBlock = ScrollPage.loadBlock(
-                preParagraphState.name,
-            ).create(muya, preParagraphState);
+            const preParagraphBlock = ScrollPage.loadBlock(preParagraphState.name).create(
+                muya,
+                preParagraphState,
+            );
             quoteBlock.parent.insertBefore(preParagraphBlock, quoteBlock);
         }
 
@@ -1230,8 +1129,7 @@ class Format extends Content {
         for (const l of lines) {
             if (/^ {4,}/.test(l) && canBeCodeLine) {
                 codeLines.push(l.replace(/^ {4}/, ''));
-            }
-            else {
+            } else {
                 canBeCodeLine = false;
                 paragraphLines.push(l);
             }
@@ -1246,10 +1144,7 @@ class Format extends Content {
             text: codeLines.join('\n'),
         };
 
-        const codeBlock = ScrollPage.loadBlock(codeState.name).create(
-            muya,
-            codeState,
-        );
+        const codeBlock = ScrollPage.loadBlock(codeState.name).create(muya, codeState);
         this.parent!.replaceWith(codeBlock);
 
         if (paragraphLines.length > 0) {
@@ -1273,9 +1168,8 @@ class Format extends Content {
     // Paragraph
     protected convertToParagraph(force = false) {
         if (
-            !force
-            && (this.parent!.blockName === 'setext-heading'
-                || this.parent!.blockName === 'paragraph')
+            !force &&
+            (this.parent!.blockName === 'setext-heading' || this.parent!.blockName === 'paragraph')
         ) {
             return;
         }
@@ -1288,10 +1182,7 @@ class Format extends Content {
             text,
         };
 
-        const paragraphBlock = ScrollPage.loadBlock(newNodeState.name).create(
-            muya,
-            newNodeState,
-        );
+        const paragraphBlock = ScrollPage.loadBlock(newNodeState.name).create(muya, newNodeState);
 
         this.parent!.replaceWith(paragraphBlock);
 
@@ -1304,8 +1195,7 @@ class Format extends Content {
     override backspaceHandler(event: Event): void {
         const { start, end } = this.getCursor() ?? {};
         // Let input handler to handle this case.
-        if (!start || !end || start?.offset !== end?.offset)
-            return;
+        if (!start || !end || start?.offset !== end?.offset) return;
 
         this.muya.editor.history.markInputBoundary('deleteContentBackward', null);
 
@@ -1321,8 +1211,10 @@ class Format extends Content {
         // `contenteditable=false` inline image; resolve the real offset from the
         // DOM so the scan can match the image token like any other caret.
         const offset = this._caretOffsetOnInlineImage() ?? start.offset;
-        const { needRender, imageToken, referenceImageToken }
-            = this._scanBackspaceTokens(tokens, offset);
+        const { needRender, imageToken, referenceImageToken } = this._scanBackspaceTokens(
+            tokens,
+            offset,
+        );
 
         if (referenceImageToken) {
             event.preventDefault();
@@ -1361,7 +1253,10 @@ class Format extends Content {
     // `raw` for the inline-syntax-marker cases (#113) so the caller can
     // regenerate text; reports image / reference-image hits for the caller to
     // delete or select.
-    private _scanBackspaceTokens(tokens: Token[], offset: number): {
+    private _scanBackspaceTokens(
+        tokens: Token[],
+        offset: number,
+    ): {
         needRender: boolean;
         imageToken: Token | null;
         referenceImageToken: Token | null;
@@ -1370,9 +1265,8 @@ class Format extends Content {
             // An inline image followed by other content: the caret lands on the
             // next node at the image's end offset. Select the whole image so the
             // next Backspace deletes it as a unit (matching muyajs interaction).
-            const isImageToken
-                = token.type === 'image'
-                    || (token.type === 'html_tag' && token.tag === 'img');
+            const isImageToken =
+                token.type === 'image' || (token.type === 'html_tag' && token.tag === 'img');
             if (token.range.end === offset && isImageToken)
                 return { needRender: false, imageToken: token, referenceImageToken: null };
 
@@ -1412,23 +1306,17 @@ class Format extends Content {
     // this returns null and the raw caret offset is used.
     private _caretOffsetOnInlineImage(): number | null {
         const selection = document.getSelection();
-        if (!selection || selection.rangeCount === 0 || !selection.isCollapsed)
-            return null;
+        if (!selection || selection.rangeCount === 0 || !selection.isCollapsed) return null;
 
         const { anchorNode } = selection;
-        if (!anchorNode)
-            return null;
+        if (!anchorNode) return null;
 
-        const element = isHTMLElement(anchorNode)
-            ? anchorNode
-            : anchorNode.parentElement;
-        const imageWrapper = element?.closest<HTMLElement>(
-            `.${CLASS_NAMES.MU_INLINE_IMAGE}`,
-        );
+        const element = isHTMLElement(anchorNode) ? anchorNode : anchorNode.parentElement;
+        const imageWrapper = element?.closest<HTMLElement>(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
         if (
-            !imageWrapper
-            || !this.domNode!.contains(imageWrapper)
-            || !this._isTrailingInlineImage(imageWrapper)
+            !imageWrapper ||
+            !this.domNode!.contains(imageWrapper) ||
+            !this._isTrailingInlineImage(imageWrapper)
         ) {
             return null;
         }
@@ -1441,8 +1329,7 @@ class Format extends Content {
     private _isTrailingInlineImage(imageWrapper: HTMLElement): boolean {
         let sibling = imageWrapper.nextSibling;
         while (sibling) {
-            if ((sibling.textContent ?? '').length > 0)
-                return false;
+            if ((sibling.textContent ?? '').length > 0) return false;
             sibling = sibling.nextSibling;
         }
 
@@ -1455,9 +1342,11 @@ class Format extends Content {
         event.preventDefault();
         event.stopPropagation();
         const imageInfo = getImageInfo(imageWrapper);
-        this.muya.editor.selection.selectImage(Object.assign({}, imageInfo, {
-            block: this,
-        }));
+        this.muya.editor.selection.selectImage(
+            Object.assign({}, imageInfo, {
+                block: this,
+            }),
+        );
         // Re-render so the inline image picks up the selected highlight class.
         this.update();
     }
@@ -1466,8 +1355,7 @@ class Format extends Content {
         const { start, end } = this.getCursor()!;
         const { text } = this;
         // Let input handler to handle this case.
-        if (start.offset !== end.offset || start.offset !== text.length)
-            return;
+        if (start.offset !== end.offset || start.offset !== text.length) return;
 
         this.muya.editor.history.markInputBoundary('deleteContentForward', null);
 
@@ -1507,9 +1395,9 @@ class Format extends Content {
 
         let needRemovedBlock: Nullable<Parent> = paragraphBlock;
         while (
-            needRemovedBlock
-            && needRemovedBlock.isOnlyChild()
-            && !needRemovedBlock.isScrollPage
+            needRemovedBlock &&
+            needRemovedBlock.isOnlyChild() &&
+            !needRemovedBlock.isScrollPage
         ) {
             needRemovedBlock = needRemovedBlock.parent;
         }
@@ -1522,8 +1410,7 @@ class Format extends Content {
 
         const { text: oldText } = this;
         const { start, end } = this.getCursor()!;
-        this.text
-            = `${oldText.substring(0, start.offset)}\n${oldText.substring(end.offset)}`;
+        this.text = `${oldText.substring(0, start.offset)}\n${oldText.substring(end.offset)}`;
         this.setCursor(start.offset + 1, end.offset + 1, true);
     }
 
@@ -1552,8 +1439,7 @@ class Format extends Content {
     }
 
     getFormatsInRange(cursor: IContentCursor | null = this.getCursor()) {
-        if (cursor == null)
-            return { formats: [], tokens: [], neighbors: [] };
+        if (cursor == null) return { formats: [], tokens: [], neighbors: [] };
 
         const { start, end } = cursor;
 
@@ -1567,27 +1453,23 @@ class Format extends Content {
         (function iterator(tks) {
             for (const token of tks) {
                 if (
-                    checkTokenIsInlineFormat(token)
-                    && start.offset >= token.range.start
-                    && end.offset <= token.range.end
+                    checkTokenIsInlineFormat(token) &&
+                    start.offset >= token.range.start &&
+                    end.offset <= token.range.end
                 ) {
                     formats.push(token);
                 }
 
                 if (
-                    checkTokenIsInlineFormat(token)
-                    && ((start.offset >= token.range.start
-                        && start.offset <= token.range.end)
-                    || (end.offset >= token.range.start
-                        && end.offset <= token.range.end)
-                    || (start.offset <= token.range.start
-                        && token.range.end <= end.offset))
+                    checkTokenIsInlineFormat(token) &&
+                    ((start.offset >= token.range.start && start.offset <= token.range.end) ||
+                        (end.offset >= token.range.start && end.offset <= token.range.end) ||
+                        (start.offset <= token.range.start && token.range.end <= end.offset))
                 ) {
                     neighbors.push(token);
                 }
 
-                if ('children' in token && Array.isArray(token.children))
-                    iterator(token.children);
+                if ('children' in token && Array.isArray(token.children)) iterator(token.children);
             }
         })(tokens);
 
@@ -1596,8 +1478,7 @@ class Format extends Content {
 
     format(type: string) {
         const cursor = this.getCursor();
-        if (cursor == null)
-            return;
+        if (cursor == null) return;
 
         const start = cursor.start as IOffsetWithDelta;
         const end = cursor.end as IOffsetWithDelta;
@@ -1608,40 +1489,33 @@ class Format extends Content {
         start.delta = end.delta = 0;
         const { formats, tokens, neighbors } = this.getFormatsInRange(cursor);
 
-        const [currentFormats, currentNeighbors] = [formats, neighbors].map(
-            item =>
-                item
-                    .filter((format) => {
-                        return (
-                            format.type === type
-                            || (format.type === 'html_tag' && format.tag === type)
-                        );
-                    })
-                    .reverse(),
+        const [currentFormats, currentNeighbors] = [formats, neighbors].map((item) =>
+            item
+                .filter((format) => {
+                    return (
+                        format.type === type || (format.type === 'html_tag' && format.tag === type)
+                    );
+                })
+                .reverse(),
         );
 
         // cache delta
         if (type === 'clear') {
-            for (const neighbor of neighbors)
-                clearFormat(neighbor, cursor);
+            for (const neighbor of neighbors) clearFormat(neighbor, cursor);
 
             start.offset += start.delta;
             end.offset += end.delta;
 
             this.text = generator(tokens, true);
-        }
-        else if (currentFormats.length) {
-            for (const token of currentFormats)
-                clearFormat(token, cursor);
+        } else if (currentFormats.length) {
+            for (const token of currentFormats) clearFormat(token, cursor);
 
             start.offset += start.delta;
             end.offset += end.delta;
             this.text = generator(tokens, true);
-        }
-        else {
+        } else {
             if (currentNeighbors.length) {
-                for (const neighbor of currentNeighbors)
-                    clearFormat(neighbor, cursor);
+                for (const neighbor of currentNeighbors) clearFormat(neighbor, cursor);
             }
 
             start.offset += start.delta;
@@ -1668,8 +1542,8 @@ class Format extends Content {
                         const imageWrapper = startNode.closest<HTMLElement>('.mu-inline-image');
 
                         if (
-                            imageWrapper
-                            && imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE)
+                            imageWrapper &&
+                            imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE)
                         ) {
                             const imageInfo = getImageInfo(imageWrapper);
                             const rect = imageWrapper.getBoundingClientRect();
@@ -1694,10 +1568,7 @@ class Format extends Content {
         this.setCursor(start.offset, end.offset, true);
     }
 
-    private _addFormat(
-        type: string,
-        { start, end }: { start: IOffset; end: IOffset },
-    ) {
+    private _addFormat(type: string, { start, end }: { start: IOffset; end: IOffset }) {
         switch (type) {
             case 'em':
 
@@ -1710,12 +1581,12 @@ class Format extends Content {
             case 'inline_math': {
                 const MARKER = FORMAT_MARKER_MAP[type];
                 const oldText = this.text;
-                this.text
-                    = oldText.substring(0, start.offset)
-                        + MARKER
-                        + oldText.substring(start.offset, end.offset)
-                        + MARKER
-                        + oldText.substring(end.offset);
+                this.text =
+                    oldText.substring(0, start.offset) +
+                    MARKER +
+                    oldText.substring(start.offset, end.offset) +
+                    MARKER +
+                    oldText.substring(end.offset);
                 // Shift both offsets past the opening marker. A collapsed
                 // cursor stays between the markers (toggle-then-type lands
                 // INSIDE the format); a non-empty selection keeps the
@@ -1734,12 +1605,12 @@ class Format extends Content {
             case 'u': {
                 const MARKER = FORMAT_TAG_MAP[type];
                 const oldText = this.text;
-                this.text
-                    = oldText.substring(0, start.offset)
-                        + MARKER.open
-                        + oldText.substring(start.offset, end.offset)
-                        + MARKER.close
-                        + oldText.substring(end.offset);
+                this.text =
+                    oldText.substring(0, start.offset) +
+                    MARKER.open +
+                    oldText.substring(start.offset, end.offset) +
+                    MARKER.close +
+                    oldText.substring(end.offset);
                 // Shift both offsets past the opening tag: a collapsed cursor
                 // stays between the tags, a non-empty selection keeps the
                 // wrapped text selected.
@@ -1753,12 +1624,11 @@ class Format extends Content {
             case 'image': {
                 const oldText = this.text;
                 const anchorTextLen = end.offset - start.offset;
-                this.text
-                    = `${oldText.substring(0, start.offset)
-                    + (type === 'link' ? '[' : '![')
-                    + oldText.substring(start.offset, end.offset)
-                    }]()${
-                        oldText.substring(end.offset)}`;
+                this.text = `${
+                    oldText.substring(0, start.offset) +
+                    (type === 'link' ? '[' : '![') +
+                    oldText.substring(start.offset, end.offset)
+                }]()${oldText.substring(end.offset)}`;
                 // put cursor between `()`
                 start.offset += type === 'link' ? 3 + anchorTextLen : 4 + anchorTextLen;
                 end.offset = start.offset;
@@ -1768,10 +1638,7 @@ class Format extends Content {
     }
 
     // Click the rendering of inline syntax, such as Inline Math, and select the math formula.
-    private _handleClickInlineRuleRender(
-        event: Event,
-        inlineRuleRenderEle: Element,
-    ) {
+    private _handleClickInlineRuleRender(event: Event, inlineRuleRenderEle: Element) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -1784,21 +1651,18 @@ class Format extends Content {
     private _emitFootnoteToolEvent(reference: HTMLElement) {
         const identifier = reference.id.replace(/^noteref-/, '');
         const { scrollPage } = this.muya.editor;
-        if (!scrollPage)
-            return;
+        if (!scrollPage) return;
 
         // Collect the first definition for each identifier — duplicates in
         // the document share the same `#fn-{N}` target on the HTML side.
         const footnotes = new Map<string, unknown>();
         scrollPage.breadthFirstTraverse((node) => {
-            if (node.blockName !== 'footnote')
-                return;
+            if (node.blockName !== 'footnote') return;
             // Footnote blocks carry `meta: { identifier }`, but the breadth-
             // first traversal hands us the base TreeNode shape. Read via a
             // structural view rather than the `as unknown as` double-cast.
             const id = (node as TreeNode & { meta?: { identifier?: string } }).meta?.identifier;
-            if (typeof id === 'string' && !footnotes.has(id))
-                footnotes.set(id, node);
+            if (typeof id === 'string' && !footnotes.has(id)) footnotes.set(id, node);
         });
 
         // Snapshot the bounding rect now: the requestAnimationFrame later in

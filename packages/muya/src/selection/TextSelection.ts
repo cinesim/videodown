@@ -7,10 +7,7 @@ import type Selection from './index';
 import type { IAnchorFocusInfo, INodeOffset, ISelection } from './types';
 import { BLOCK_DOM_PROPERTY } from '../config';
 import { isHTMLElement, isMouseEvent } from '../utils';
-import {
-    buildSelectionAffiliation,
-    endpointBlockInfo,
-} from './affiliation';
+import { buildSelectionAffiliation, endpointBlockInfo } from './affiliation';
 import { getCursorCoords } from './cursorCoords';
 import {
     compareParagraphsOrder,
@@ -44,8 +41,7 @@ function computeCaretType(
     focusBlock: Nullable<Content>,
     isCollapsed: boolean,
 ): SelectionCaretType {
-    if (!anchorBlock && !focusBlock)
-        return SelectionCaretType.NONE;
+    if (!anchorBlock && !focusBlock) return SelectionCaretType.NONE;
 
     return isCollapsed ? SelectionCaretType.CARET : SelectionCaretType.RANGE;
 }
@@ -68,7 +64,10 @@ class TextSelection {
         selection: null,
     };
 
-    constructor(private _muya: Muya, private _selection: Selection) {
+    constructor(
+        private _muya: Muya,
+        private _selection: Selection,
+    ) {
         this._listenSelectActions();
     }
 
@@ -79,8 +78,7 @@ class TextSelection {
     private get _isCollapsed() {
         const { anchorBlock, focusBlock, anchor, focus } = this;
 
-        if (anchor == null || focus == null)
-            return false;
+        if (anchor == null || focus == null) return false;
 
         return anchorBlock === focusBlock && anchor.offset === focus.offset;
     }
@@ -88,8 +86,7 @@ class TextSelection {
     get isSelectionInSameBlock() {
         const { anchorBlock, focusBlock, anchor, focus } = this;
 
-        if (anchor == null || focus == null)
-            return false;
+        if (anchor == null || focus == null) return false;
 
         return anchorBlock === focusBlock;
     }
@@ -106,8 +103,7 @@ class TextSelection {
         if (anchor == null || focus == null || !anchorBlock || !focusBlock)
             return SelectionDirection.NONE;
 
-        if (isCollapsed)
-            return SelectionDirection.NONE;
+        if (isCollapsed) return SelectionDirection.NONE;
 
         return computeDirection(
             anchorBlock,
@@ -140,8 +136,7 @@ class TextSelection {
         const aBlock = scrollPage?.firstContentInDescendant();
         const fBlock = scrollPage?.lastContentInDescendant();
 
-        if (aBlock == null || fBlock == null)
-            return;
+        if (aBlock == null || fBlock == null) return;
 
         this.setSelection(
             { offset: 0, block: aBlock, path: aBlock.path },
@@ -155,30 +150,25 @@ class TextSelection {
     getSelection(): ISelection | null {
         const selection = this._doc.getSelection();
 
-        if (!selection)
-            return null;
+        if (!selection) return null;
 
         const { anchorNode, anchorOffset, focusNode, focusOffset } = selection;
 
-        if (!anchorNode || !focusNode)
-            return null;
+        if (!anchorNode || !focusNode) return null;
 
         const anchorDomNode = findContentDOM(anchorNode);
         const focusDomNode = findContentDOM(focusNode);
 
-        if (!anchorDomNode || !focusDomNode)
-            return null;
+        if (!anchorDomNode || !focusDomNode) return null;
 
         const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as Content | undefined;
         const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as Content | undefined;
         // An `mu-content` span cloned by the browser's native edit
         // behavior is not linked back to a block. Bail out instead of
         // crashing — the caller treats null the same as "no selection".
-        if (!anchorBlock || !focusBlock)
-            return null;
+        if (!anchorBlock || !focusBlock) return null;
 
-        if (!anchorBlock.outMostBlock || !focusBlock.outMostBlock)
-            return null;
+        if (!anchorBlock.outMostBlock || !focusBlock.outMostBlock) return null;
 
         const anchorPath = anchorBlock.path;
         const focusPath = focusBlock.path;
@@ -222,7 +212,12 @@ class TextSelection {
     }
 
     private _emitSelectionChange() {
-        const { _isCollapsed: isCollapsed, isSelectionInSameBlock, _direction: direction, _type: type } = this;
+        const {
+            _isCollapsed: isCollapsed,
+            isSelectionInSameBlock,
+            _direction: direction,
+            _type: type,
+        } = this;
         const anchorBlock = this.anchorBlock ?? null;
         const focusBlock = this.focusBlock ?? null;
 
@@ -232,10 +227,10 @@ class TextSelection {
         // Duck-type the Format block — a value import of Format here would
         // create a selection -> format circular dependency.
         const anchorBlockRef = anchorBlock as Format | null;
-        const formats
-            = isSelectionInSameBlock
-                && anchorBlockRef
-                && typeof anchorBlockRef.getFormatsInRange === 'function'
+        const formats =
+            isSelectionInSameBlock &&
+            anchorBlockRef &&
+            typeof anchorBlockRef.getFormatsInRange === 'function'
                 ? anchorBlockRef.getFormatsInRange().formats
                 : [];
 
@@ -274,7 +269,10 @@ class TextSelection {
 
         const handleMouseupOrLeave = () => {
             if (this._selectInfo.selection)
-                this.setSelection(this._selectInfo.selection.anchor, this._selectInfo.selection.focus);
+                this.setSelection(
+                    this._selectInfo.selection.anchor,
+                    this._selectInfo.selection.focus,
+                );
 
             this._selectInfo = {
                 isSelect: false,
@@ -283,19 +281,15 @@ class TextSelection {
         };
 
         const handleMousemoveOrClick = (event: Event) => {
-            if (!isMouseEvent(event))
-                return;
+            if (!isMouseEvent(event)) return;
 
             const { type, shiftKey } = event;
-            if (type === 'mousemove' && !this._selectInfo.isSelect)
-                return;
+            if (type === 'mousemove' && !this._selectInfo.isSelect) return;
 
-            if (type === 'click' && !shiftKey)
-                return;
+            if (type === 'click' && !shiftKey) return;
 
             const selection = this.getSelection();
-            if (!selection)
-                return;
+            if (!selection) return;
 
             const { anchor, focus, isSelectionInSameBlock } = selection;
 
@@ -305,13 +299,20 @@ class TextSelection {
 
             const anchorBlock = anchor.block;
             const focusBlock = focus.block;
-            const endpointAnchor = { offset: anchor.offset, block: anchorBlock, path: anchorBlock.path };
-            const endpointFocus = { offset: focus.offset, block: focusBlock, path: focusBlock.path };
+            const endpointAnchor = {
+                offset: anchor.offset,
+                block: anchorBlock,
+                path: anchorBlock.path,
+            };
+            const endpointFocus = {
+                offset: focus.offset,
+                block: focusBlock,
+                path: focusBlock.path,
+            };
 
             if (type === 'mousemove')
                 this._selectInfo.selection = { anchor: endpointAnchor, focus: endpointFocus };
-            else
-                this.setSelection(endpointAnchor, endpointFocus);
+            else this.setSelection(endpointAnchor, endpointFocus);
         };
 
         eventCenter.attachDOMEvent(domNode, 'mousedown', handleMousedown);
@@ -330,18 +331,12 @@ class TextSelection {
         }
     }
 
-    private _select(
-        startNode: Node,
-        startOffset: number,
-        endNode?: Node,
-        endOffset?: number,
-    ) {
+    private _select(startNode: Node, startOffset: number, endNode?: Node, endOffset?: number) {
         const range = this._doc.createRange();
         range.setStart(startNode, getLegalOffset(startNode, startOffset));
         if (endNode && typeof endOffset === 'number')
             range.setEnd(endNode, getLegalOffset(endNode, endOffset));
-        else
-            range.collapse(true);
+        else range.collapse(true);
 
         this._selectRange(range);
 
@@ -350,8 +345,7 @@ class TextSelection {
 
     private _setFocus(focusNode: Node, focusOffset: number) {
         const selection = this._doc.getSelection();
-        if (selection)
-            selection.extend(focusNode, getLegalOffset(focusNode, focusOffset));
+        if (selection) selection.extend(focusNode, getLegalOffset(focusNode, focusOffset));
     }
 
     private _updateSelection() {
@@ -368,8 +362,7 @@ class TextSelection {
         if (!anchor || !focus) {
             const selection = this._doc.getSelection();
 
-            if (selection)
-                selection.removeAllRanges();
+            if (selection) selection.removeAllRanges();
 
             return;
         }
@@ -377,15 +370,12 @@ class TextSelection {
         const anchorParagraph = anchorBlock
             ? anchorBlock.domNode
             : scrollPage?.queryBlock(anchorPath);
-        const focusParagraph = focusBlock
-            ? focusBlock.domNode
-            : scrollPage?.queryBlock(focusPath);
+        const focusParagraph = focusBlock ? focusBlock.domNode : scrollPage?.queryBlock(focusPath);
 
         // getNodeAndOffset expects a DOM Node. The fallback branch can hand
         // back a Parent/Content block (from scrollPage.queryBlock); narrow to
         // an actual Node here, preserving the existing not-found behavior.
-        if (!(anchorParagraph instanceof Node) || !(focusParagraph instanceof Node))
-            return;
+        if (!(anchorParagraph instanceof Node) || !(focusParagraph instanceof Node)) return;
         const { node: anchorNode, offset: anchorOffset } = getNodeAndOffset(
             anchorParagraph,
             anchor.offset,

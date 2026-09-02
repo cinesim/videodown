@@ -56,10 +56,7 @@ function makeAnchorBlock(initialText = '', cursor = 0) {
     return block as unknown as Content & { setCursor: ReturnType<typeof vi.fn> };
 }
 
-function makeClipboard(
-    options: Record<string, unknown>,
-    anchorBlock: Content,
-) {
+function makeClipboard(options: Record<string, unknown>, anchorBlock: Content) {
     const clipboard = new Clipboard({ options } as unknown as Muya);
     Object.defineProperty(clipboard, 'selection', {
         get: () => ({
@@ -119,9 +116,7 @@ describe('clipboard.pasteHandler — clipboardFilePath hook', () => {
     });
 
     it('escapes spaces and # in the resolved path', async () => {
-        const clipboardFilePath = vi
-            .fn()
-            .mockResolvedValue('/tmp/my shot#1.png');
+        const clipboardFilePath = vi.fn().mockResolvedValue('/tmp/my shot#1.png');
         const anchorBlock = makeAnchorBlock('', 0);
         const clipboard = makeClipboard({ clipboardFilePath }, anchorBlock);
         const { event } = makePasteEvent();

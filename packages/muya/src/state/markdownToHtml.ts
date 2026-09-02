@@ -30,16 +30,16 @@ const CDN_STYLESHEET_LINKS = `  <!-- https://cdnjs.com/libraries/github-markdown
 export class MarkdownToHtml {
     private _exportContainer: HTMLDivElement | null = null;
 
-    constructor(public markdown: string, private _muya?: Muya) {}
+    constructor(
+        public markdown: string,
+        private _muya?: Muya,
+    ) {}
 
     private async _renderMermaid() {
-        const codes = this._exportContainer!.querySelectorAll(
-            'code.language-mermaid',
-        );
+        const codes = this._exportContainer!.querySelectorAll('code.language-mermaid');
         for (const code of codes) {
             const preEle = code.parentNode;
-            if (!isHTMLElement(preEle))
-                continue;
+            if (!isHTMLElement(preEle)) continue;
             const mermaidContainer = document.createElement('div');
             mermaidContainer.innerHTML = sanitize(
                 unescapeHTML(code.innerHTML),
@@ -50,8 +50,7 @@ export class MarkdownToHtml {
             preEle.replaceWith(mermaidContainer);
         }
         const nodes = [...this._exportContainer!.querySelectorAll('div.mermaid')];
-        if (nodes.length === 0)
-            return;
+        if (nodes.length === 0) return;
 
         const mermaid = await loadRenderer('mermaid');
         // We only export light theme, so set mermaid theme to `default`, in the future, we can choose which theme to export.
@@ -67,8 +66,7 @@ export class MarkdownToHtml {
         for (const node of nodes) {
             try {
                 await mermaid.run({ nodes: [node] });
-            }
-            catch {
+            } catch {
                 node.innerHTML = '< Invalid Diagram >';
             }
         }
@@ -81,26 +79,21 @@ export class MarkdownToHtml {
     }
 
     private async _renderDiagram() {
-        const selector
-            = 'code.language-vega-lite, code.language-plantuml, code.language-flowchart, code.language-sequence';
+        const selector =
+            'code.language-vega-lite, code.language-plantuml, code.language-flowchart, code.language-sequence';
         const codes = this._exportContainer!.querySelectorAll(selector);
 
         for (const code of codes) {
             const rawCode = unescapeHTML(code.innerHTML);
             const functionType = (() => {
-                if (/plantuml/.test(code.className))
-                    return 'plantuml';
-                else if (/flowchart/.test(code.className))
-                    return 'flowchart';
-                else if (/sequence/.test(code.className))
-                    return 'sequence';
-                else
-                    return 'vega-lite';
+                if (/plantuml/.test(code.className)) return 'plantuml';
+                else if (/flowchart/.test(code.className)) return 'flowchart';
+                else if (/sequence/.test(code.className)) return 'sequence';
+                else return 'vega-lite';
             })();
             const render = await loadRenderer(functionType);
             const preParent = code.parentNode;
-            if (!isHTMLElement(preParent))
-                continue;
+            if (!isHTMLElement(preParent)) continue;
             const diagramContainer = document.createElement('div');
             diagramContainer.classList.add(functionType);
             preParent.replaceWith(diagramContainer);
@@ -118,8 +111,7 @@ export class MarkdownToHtml {
                     // chart renders as `< Invalid Diagram >`.
                     ast: true,
                 });
-            }
-            else if (functionType === 'sequence') {
+            } else if (functionType === 'sequence') {
                 Object.assign(options, {
                     theme: this._muya?.options.sequenceTheme ?? 'hand',
                 });
@@ -130,17 +122,14 @@ export class MarkdownToHtml {
                     const diagram = render.parse(rawCode, this._muya?.options.plantumlServer);
                     diagramContainer.innerHTML = '';
                     diagram.insertImgElement(diagramContainer);
-                }
-                else if (functionType === 'flowchart' || functionType === 'sequence') {
+                } else if (functionType === 'flowchart' || functionType === 'sequence') {
                     const diagram = render.parse(rawCode);
                     diagramContainer.innerHTML = '';
                     diagram.drawSVG(diagramContainer, options);
-                }
-                else if (functionType === 'vega-lite') {
+                } else if (functionType === 'vega-lite') {
                     await render(diagramContainer, JSON.parse(rawCode), options);
                 }
-            }
-            catch {
+            } catch {
                 diagramContainer.innerHTML = '< Invalid Diagram >';
             }
         }
@@ -160,19 +149,16 @@ export class MarkdownToHtml {
         // Reserve any pre-existing ids first so generated slugs never collide
         // with them.
         for (const heading of headings) {
-            if (heading.id)
-                seen.add(heading.id);
+            if (heading.id) seen.add(heading.id);
         }
 
         for (const heading of headings) {
-            if (heading.id)
-                continue;
+            if (heading.id) continue;
 
             const base = generateGithubSlug(heading.textContent ?? '') || 'heading';
             let slug = base;
             let n = 1;
-            while (seen.has(slug))
-                slug = `${base}-${n++}`;
+            while (seen.has(slug)) slug = `${base}-${n++}`;
 
             seen.add(slug);
             heading.id = slug;
@@ -185,8 +171,7 @@ export class MarkdownToHtml {
         let html = getHighlightHtml(this.markdown, {
             superSubScript: this._muya?.options?.superSubScript ?? true,
             footnote,
-            isGitlabCompatibilityEnabled:
-        this._muya?.options?.isGitlabCompatibilityEnabled ?? true,
+            isGitlabCompatibilityEnabled: this._muya?.options?.isGitlabCompatibilityEnabled ?? true,
             math: this._muya?.options?.math ?? true,
         });
 
@@ -194,13 +179,11 @@ export class MarkdownToHtml {
         // numbered <sup> refs + bottom <section class="footnotes"> with
         // backrefs). Must run before DOMPurify strips the `data-identifier`
         // marker the marked footnote extension emits.
-        if (footnote)
-            html = transformFootnotes(html);
+        if (footnote) html = transformFootnotes(html);
 
         html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 
-        const exportContainer = (this._exportContainer
-            = document.createElement('div'));
+        const exportContainer = (this._exportContainer = document.createElement('div'));
         exportContainer.classList.add('mu-render-container');
         exportContainer.innerHTML = html;
         document.body.appendChild(exportContainer);
@@ -224,8 +207,7 @@ export class MarkdownToHtml {
         const def = '<defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">';
         result = result.replace(def, () => {
             let str = '';
-            for (const path of paths)
-                str += path.outerHTML;
+            for (const path of paths) str += path.outerHTML;
 
             return `${def}${str}`;
         });
@@ -272,10 +254,9 @@ export class MarkdownToHtml {
             // loads on export, never in the editor bundle.
             const { embedKatexFonts } = await import('../utils/embedKatexFonts');
             baseStyles = [githubMarkdownCss, embedKatexFonts(katexCss), prismCss]
-                .map(css => `  <style>${css}</style>`)
+                .map((css) => `  <style>${css}</style>`)
                 .join('\n');
-        }
-        else {
+        } else {
             baseStyles = CDN_STYLESHEET_LINKS;
         }
 

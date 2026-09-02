@@ -90,12 +90,7 @@ function makeWrapper(blockName: string) {
     return wrapper;
 }
 
-function makeAnchorBlock(
-    blockName: string,
-    text: string,
-    wrapper: any,
-    cursor = text.length,
-) {
+function makeAnchorBlock(blockName: string, text: string, wrapper: any, cursor = text.length) {
     const block: any = {
         blockName,
         text,
@@ -113,7 +108,11 @@ function makeAnchorBlock(
 function makeClipboard(
     anchorBlock: any,
     options: Record<string, unknown> = {},
-    tableStub: { hasSelection: boolean; getStateForCopy: () => any; clear: ReturnType<typeof vi.fn> } = {
+    tableStub: {
+        hasSelection: boolean;
+        getStateForCopy: () => any;
+        clear: ReturnType<typeof vi.fn>;
+    } = {
         hasSelection: false,
         getStateForCopy: () => null,
         clear: vi.fn(),
@@ -166,10 +165,12 @@ describe('pasteHandler - whitespace-only plain text paste', () => {
         const anchor = makeAnchorBlock('paragraph.content', 'AB', wrapper, 1);
         const clipboard = makeClipboard(anchor);
 
-        await clipboard.pasteHandler(makePasteEvent({
-            'text/html': '<span>  </span>',
-            'text/plain': '  ',
-        }));
+        await clipboard.pasteHandler(
+            makePasteEvent({
+                'text/html': '<span>  </span>',
+                'text/plain': '  ',
+            }),
+        );
 
         expect(created).toHaveLength(0);
         expect(anchor.text).toBe('A  B');
@@ -187,7 +188,7 @@ describe('pasteHandler — single-line markdown parses into real blocks (sub-ite
 
         await clipboard.pasteHandler(makePasteEvent({ 'text/plain': '# Title' }));
 
-        const names = created.map(b => b.name);
+        const names = created.map((b) => b.name);
         expect(names).toContain('atx-heading');
         expect(anchor.text).toBe('');
     });
@@ -201,7 +202,7 @@ describe('pasteHandler — single-line markdown parses into real blocks (sub-ite
 
         await clipboard.pasteHandler(makePasteEvent({ 'text/plain': '- item' }));
 
-        expect(created.map(b => b.name)).toContain('bullet-list');
+        expect(created.map((b) => b.name)).toContain('bullet-list');
     });
 
     it('pastes `1. one` into an empty paragraph as an order-list block', async () => {
@@ -213,7 +214,7 @@ describe('pasteHandler — single-line markdown parses into real blocks (sub-ite
 
         await clipboard.pasteHandler(makePasteEvent({ 'text/plain': '1. one' }));
 
-        expect(created.map(b => b.name)).toContain('order-list');
+        expect(created.map((b) => b.name)).toContain('order-list');
     });
 
     it('pastes `> quote` into an empty paragraph as a block-quote block', async () => {
@@ -225,7 +226,7 @@ describe('pasteHandler — single-line markdown parses into real blocks (sub-ite
 
         await clipboard.pasteHandler(makePasteEvent({ 'text/plain': '> quote' }));
 
-        expect(created.map(b => b.name)).toContain('block-quote');
+        expect(created.map((b) => b.name)).toContain('block-quote');
     });
 
     it('pastes a single-line GFM table into an empty paragraph as a table block', async () => {
@@ -238,7 +239,7 @@ describe('pasteHandler — single-line markdown parses into real blocks (sub-ite
         const md = '| a | b |\n| - | - |\n| 1 | 2 |';
         await clipboard.pasteHandler(makePasteEvent({ 'text/plain': md }));
 
-        expect(created.map(b => b.name)).toContain('table');
+        expect(created.map((b) => b.name)).toContain('table');
     });
 });
 
@@ -297,10 +298,10 @@ describe('pasteHandler — block-level HTML becomes a live html-block (sub-item 
             makePasteEvent({ 'text/plain': '<ul><li>a</li><li>b</li></ul>' }),
         );
 
-        const requested = spy.mock.calls.map(c => c[0]);
+        const requested = spy.mock.calls.map((c) => c[0]);
         expect(requested).toContain('html-block');
-        expect(created.some(b => b.name === 'html-block')).toBe(true);
-        expect(created.some(b => b.state?.meta?.lang === 'html')).toBe(false);
+        expect(created.some((b) => b.name === 'html-block')).toBe(true);
+        expect(created.some((b) => b.state?.meta?.lang === 'html')).toBe(false);
     });
 });
 
@@ -327,9 +328,7 @@ describe('pasteHandler — table-cell paste guards (sub-item 4)', () => {
         const anchor = makeAnchorBlock('table.cell.content', 'old', wrapper, 3);
         const clipboard = makeClipboardWithTableSelection(anchor, true, true);
 
-        await clipboard.pasteHandler(
-            makePasteEvent({ 'text/plain': 'line1\nline2' }),
-        );
+        await clipboard.pasteHandler(makePasteEvent({ 'text/plain': 'line1\nline2' }));
 
         expect(anchor.text).toBe('line1<br/>line2');
     });
@@ -340,9 +339,7 @@ describe('pasteHandler — table-cell paste guards (sub-item 4)', () => {
         const anchor = makeAnchorBlock('table.cell.content', 'keep', wrapper, 4);
         const clipboard = makeClipboardWithTableSelection(anchor, true, false);
 
-        await clipboard.pasteHandler(
-            makePasteEvent({ 'text/plain': 'pasted' }),
-        );
+        await clipboard.pasteHandler(makePasteEvent({ 'text/plain': 'pasted' }));
 
         expect(anchor.text).toBe('keep');
     });

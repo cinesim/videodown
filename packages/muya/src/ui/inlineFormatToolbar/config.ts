@@ -77,6 +77,6 @@ const icons = [
     },
 ];
 
-export type FormatToolIcon = typeof icons[number];
+export type FormatToolIcon = (typeof icons)[number];
 
 export default icons;

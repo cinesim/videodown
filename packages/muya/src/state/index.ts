@@ -34,11 +34,7 @@ class JSONState {
         return json1.type.compose(op1, op2);
     }
 
-    static transform(
-        op: JSONOpList,
-        otherOp: JSONOpList,
-        type: 'left' | 'right',
-    ) {
+    static transform(op: JSONOpList, otherOp: JSONOpList, type: 'left' | 'right') {
         return json1.type.transform(op, otherOp, type);
     }
 
@@ -52,7 +48,10 @@ class JSONState {
 
     private _state: TState[] = [];
 
-    constructor(private _muya: Muya, stateOrMarkdown: TState[] | string) {
+    constructor(
+        private _muya: Muya,
+        stateOrMarkdown: TState[] | string,
+    ) {
         this.setContent(stateOrMarkdown);
     }
 
@@ -60,8 +59,7 @@ class JSONState {
         // ot-json1's noop is the literal `null`. `json1.type.apply` accepts it
         // and returns the doc unchanged — short-circuit instead so the rest of
         // the call site can treat `op` as definitely applied.
-        if (op === null)
-            return;
+        if (op === null) return;
         this._state = asState(json1.type.apply(asDoc(this._state), op));
     }
 
@@ -76,10 +74,8 @@ class JSONState {
         }
         this._operationCache = [];
 
-        if (typeof content === 'object')
-            this._setState(content);
-        else
-            this._setMarkdown(content);
+        if (typeof content === 'object') this._setState(content);
+        else this._setMarkdown(content);
     }
 
     private _setState(state: TState[]) {
@@ -129,27 +125,20 @@ class JSONState {
         nextState: TState[];
     } {
         const prevState = this.getState();
-        const nextState
-            = typeof content === 'string' ? this.markdownToState(content) : deepClone(content);
+        const nextState =
+            typeof content === 'string' ? this.markdownToState(content) : deepClone(content);
 
         const components: JSONOpList[] = [];
         const max = Math.max(prevState.length, nextState.length);
 
         for (let i = 0; i < max; i++) {
             if (i < prevState.length && i < nextState.length) {
-                if (
-                    JSON.stringify(prevState[i]) !== JSON.stringify(nextState[i])
-                ) {
+                if (JSON.stringify(prevState[i]) !== JSON.stringify(nextState[i])) {
                     components.push(
-                        json1.replaceOp(
-                            [i],
-                            asDoc(prevState[i]),
-                            asDoc(nextState[i]),
-                        )!,
+                        json1.replaceOp([i], asDoc(prevState[i]), asDoc(nextState[i]))!,
                     );
                 }
-            }
-            else if (i < nextState.length) {
+            } else if (i < nextState.length) {
                 components.push(json1.insertOp([i], asDoc(nextState[i]))!);
             }
         }
@@ -165,8 +154,7 @@ class JSONState {
         // normalize the final result to the empty op `[]` when nothing changed
         // (the documents were identical) so callers can rely on `op.length`.
         let composed: JSONOp = null;
-        for (const component of components)
-            composed = json1.type.compose(composed, component);
+        for (const component of components) composed = json1.type.compose(composed, component);
 
         const op: JSONOpList = composed ?? [];
 
@@ -243,8 +231,7 @@ class JSONState {
     }
 
     private _emitStateChange() {
-        if (this._rafId !== null)
-            return;
+        if (this._rafId !== null) return;
 
         this._rafId = requestAnimationFrame(() => {
             this._rafId = null;
@@ -256,8 +243,7 @@ class JSONState {
     // frame. Lets a tab switch persist the outgoing tab's last keystroke before
     // `setContent` replaces the document, otherwise that edit is lost (#2938).
     flush() {
-        if (this._rafId === null)
-            return;
+        if (this._rafId === null) return;
 
         cancelAnimationFrame(this._rafId);
         this._rafId = null;
@@ -265,8 +251,7 @@ class JSONState {
     }
 
     private _flushOperationCache() {
-        if (!this._operationCache.length)
-            return;
+        if (!this._operationCache.length) return;
 
         // Wrap compose in a lambda — `Array.prototype.reduce` passes
         // (acc, current, index, array) to the callback, but
@@ -286,8 +271,7 @@ class JSONState {
         // a fresh batch instead of mutating the one being flushed.
         this._operationCache = [];
 
-        if (op === null)
-            return;
+        if (op === null) return;
 
         this._muya.eventCenter.emit('json-change', {
             op,

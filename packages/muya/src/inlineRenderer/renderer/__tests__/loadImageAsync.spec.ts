@@ -6,7 +6,9 @@ import loadImageAsync from '../loadImageAsync';
 
 // Narrow cast for the fake renderer used in every test below — it only
 // implements the two Map fields loadImageAsync touches.
-function asRenderer(r: IFakeRenderer | { loadImageMap: Map<string, unknown>; urlMap: Map<string, string> }): Renderer {
+function asRenderer(
+    r: IFakeRenderer | { loadImageMap: Map<string, unknown>; urlMap: Map<string, string> },
+): Renderer {
     return r as unknown as Renderer;
 }
 
@@ -143,7 +145,7 @@ describe('loadImageAsync — local file cache-busting', () => {
 
     it('uses a different URL on each fresh load so a cleared cache refetches from disk', async () => {
         const { loadImage } = await import('../../../utils/image');
-        vi.mocked(loadImage).mockImplementation(url =>
+        vi.mocked(loadImage).mockImplementation((url) =>
             Promise.resolve({ url, width: 10, height: 10 }),
         );
         const r = makeRenderer();
@@ -154,7 +156,7 @@ describe('loadImageAsync — local file cache-busting', () => {
             { isUnknownType: false, src: 'file:///tmp/pic.png' },
             {},
         );
-        await new Promise<void>(resolve => setTimeout(resolve, 0));
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
         // The cache is keyed by the plain src so ordinary re-renders hit it.
         expect(r.loadImageMap.has('file:///tmp/pic.png')).toBe(true);
 
@@ -189,7 +191,9 @@ describe('loadImageAsync — small image class on first load', () => {
 
     async function runLoad(loadResult: { url: string; width: number; height: number }) {
         const { loadImage } = await import('../../../utils/image');
-        vi.mocked(loadImage).mockResolvedValueOnce(loadResult as unknown as Awaited<ReturnType<typeof loadImage>>);
+        vi.mocked(loadImage).mockResolvedValueOnce(
+            loadResult as unknown as Awaited<ReturnType<typeof loadImage>>,
+        );
 
         const r = {
             loadImageMap: new Map(),
@@ -215,7 +219,7 @@ describe('loadImageAsync — small image class on first load', () => {
         document.body.appendChild(wrapper);
 
         // Flush the loadImage promise + the .then handler.
-        await new Promise<void>(resolve => setTimeout(resolve, 0));
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
 
         return wrapper;
     }

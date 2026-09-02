@@ -40,4 +40,4 @@ const icons = [
 
 export default icons;
 
-export type Icon = typeof icons[number];
+export type Icon = (typeof icons)[number];

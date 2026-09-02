@@ -41,4 +41,4 @@ export const toolList = {
     ],
 };
 
-export type MenuItem = typeof toolList['right'][number];
+export type MenuItem = (typeof toolList)['right'][number];

@@ -24,8 +24,7 @@ function collectLabels(states: TState[]) {
                         });
                     }
                 }
-            }
-            else if ((st as TContainerState).children) {
+            } else if ((st as TContainerState).children) {
                 visit((st as TContainerState).children);
             }
         }
@@ -60,9 +59,15 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
         const md = `foo [bar][1]\n\n[1]: https://example.com "title"\n`;
         const { states } = parse(md);
 
-        const paragraphs = states.filter(s => s.name === 'paragraph') as Array<{ name: 'paragraph'; text: string }>;
-        const defParagraph = paragraphs.find(p => /^\s*\[1\]:/.test(p.text));
-        expect(defParagraph, 'reference definition should be preserved as a paragraph').toBeDefined();
+        const paragraphs = states.filter((s) => s.name === 'paragraph') as Array<{
+            name: 'paragraph';
+            text: string;
+        }>;
+        const defParagraph = paragraphs.find((p) => /^\s*\[1\]:/.test(p.text));
+        expect(
+            defParagraph,
+            'reference definition should be preserved as a paragraph',
+        ).toBeDefined();
         expect(defParagraph!.text).toContain('[1]: https://example.com');
         expect(defParagraph!.text).toContain('"title"');
     });
@@ -81,20 +86,32 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         expect(labels.get('1')?.href).toBe('https://example.com');
 
-        const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('foo')) as { text: string };
+        const para = (states as Array<{ name: string; text?: string }>).find(
+            (s) => s.name === 'paragraph' && s.text!.startsWith('foo'),
+        ) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refTok = tokens.find(t => t.type === 'reference_link');
-        expect(refTok, 'reference_link token should be emitted once labels are known').toBeDefined();
-        expect((refTok as Extract<typeof tokens[number], { type: 'reference_link' }>).label).toBe('1');
+        const refTok = tokens.find((t) => t.type === 'reference_link');
+        expect(
+            refTok,
+            'reference_link token should be emitted once labels are known',
+        ).toBeDefined();
+        expect((refTok as Extract<(typeof tokens)[number], { type: 'reference_link' }>).label).toBe(
+            '1',
+        );
     });
 
     it('case 4 — inline tokenize: Full / Collapsed / Shortcut forms all produce reference_link tokens', () => {
         const md = `A [full][1] and [collapsed][] and [shortcut] here.\n\n[1]: https://a.example\n[collapsed]: https://b.example\n[shortcut]: https://c.example\n`;
         const { states, labels } = parse(md);
 
-        const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('A ')) as { text: string };
+        const para = (states as Array<{ name: string; text?: string }>).find(
+            (s) => s.name === 'paragraph' && s.text!.startsWith('A '),
+        ) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refToks = tokens.filter(t => t.type === 'reference_link') as Extract<typeof tokens[number], { type: 'reference_link' }>[];
+        const refToks = tokens.filter((t) => t.type === 'reference_link') as Extract<
+            (typeof tokens)[number],
+            { type: 'reference_link' }
+        >[];
         expect(refToks.length).toBe(3);
         expect(refToks[0].isFullLink).toBe(true);
         expect(refToks[1].isFullLink).toBe(false);
@@ -116,9 +133,11 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         expect(labels.get('ref')?.href).toBe('https://example.com');
 
-        const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('foo')) as { text: string };
+        const para = (states as Array<{ name: string; text?: string }>).find(
+            (s) => s.name === 'paragraph' && s.text!.startsWith('foo'),
+        ) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refTok = tokens.find(t => t.type === 'reference_link');
+        const refTok = tokens.find((t) => t.type === 'reference_link');
         expect(refTok, 'reference_link must match label irrespective of case').toBeDefined();
     });
 
@@ -135,11 +154,16 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         expect(labels.size).toBe(0);
 
-        const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph') as { text: string };
+        const para = (states as Array<{ name: string; text?: string }>).find(
+            (s) => s.name === 'paragraph',
+        ) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refTok = tokens.find(t => t.type === 'reference_link');
-        expect(refTok, 'no reference_link token should fire without a matching definition').toBeUndefined();
-        const raw = tokens.map(t => t.raw).join('');
+        const refTok = tokens.find((t) => t.type === 'reference_link');
+        expect(
+            refTok,
+            'no reference_link token should fire without a matching definition',
+        ).toBeUndefined();
+        const raw = tokens.map((t) => t.raw).join('');
         expect(raw).toContain('[missing][nope]');
     });
 });

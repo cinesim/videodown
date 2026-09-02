@@ -27,10 +27,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 const TABLE_MD = [
@@ -67,8 +65,7 @@ function fireMouse(node: HTMLElement, type: string): void {
     // (`'x' in event`) keys off; define them so the controller treats the
     // synthetic event like a real pointer event (real browsers and the e2e
     // expose `x` natively).
-    if (!('x' in event))
-        Object.defineProperty(event, 'x', { value: 0, configurable: true });
+    if (!('x' in event)) Object.defineProperty(event, 'x', { value: 0, configurable: true });
 
     node.dispatchEvent(event);
 }

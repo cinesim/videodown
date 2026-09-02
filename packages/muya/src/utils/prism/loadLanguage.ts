@@ -10,12 +10,7 @@ export interface ILangLoadStatus {
  *
  * @type {Set<string>}
  */
-export const loadedLanguages = new Set([
-    'markup',
-    'css',
-    'clike',
-    'javascript',
-]);
+export const loadedLanguages = new Set(['markup', 'css', 'clike', 'javascript']);
 
 const { languages } = components;
 
@@ -26,15 +21,11 @@ export function transformAliasToOrigin(langs: string[]) {
     for (const lang of langs) {
         if (languages[lang]) {
             result.push(lang);
-        }
-        else {
+        } else {
             const language = Object.keys(languages).find((name) => {
                 const l = languages[name];
                 if (l.alias) {
-                    return (
-                        l.alias === lang
-                        || (Array.isArray(l.alias) && l.alias.includes(lang))
-                    );
+                    return l.alias === lang || (Array.isArray(l.alias) && l.alias.includes(lang));
                 }
 
                 return false;
@@ -42,8 +33,7 @@ export function transformAliasToOrigin(langs: string[]) {
 
             if (language) {
                 result.push(language);
-            }
-            else {
+            } else {
                 // The lang is not exist, the will handle in `initLoadLanguage`
                 result.push(lang);
             }
@@ -61,9 +51,8 @@ interface IPrismLike {
 
 function initLoadLanguage(Prism: IPrismLike) {
     return async function loadLanguages(langs?: string[] | string) {
-    // If no argument is passed, load all components
-        if (!langs)
-            langs = Object.keys(languages).filter(lang => lang !== 'meta');
+        // If no argument is passed, load all components
+        if (!langs) langs = Object.keys(languages).filter((lang) => lang !== 'meta');
 
         if (langs && !langs.length) {
             return Promise.reject(
@@ -73,8 +62,7 @@ function initLoadLanguage(Prism: IPrismLike) {
             );
         }
 
-        if (!Array.isArray(langs))
-            langs = [langs];
+        if (!Array.isArray(langs)) langs = [langs];
 
         const statuses: ILangLoadStatus[] = [];
         // The user might have loaded languages via some other way or used `prism.js` which already includes some
@@ -91,9 +79,7 @@ function initLoadLanguage(Prism: IPrismLike) {
                 return;
             }
             delete Prism.languages[lang];
-            await import(
-                `../../../node_modules/prismjs/components/prism-${lang}.js`,
-            );
+            await import(`../../../node_modules/prismjs/components/prism-${lang}.js`);
             loadedLanguages.add(lang);
             statuses.push({ lang, status: 'loaded' });
         };
@@ -107,8 +93,7 @@ function initLoadLanguage(Prism: IPrismLike) {
         // `undefined` and throws "Cannot set properties of undefined (setting
         // 'class-name')", which also left the load promise unresolved (a hang).
         await getLoader(components, langs, loaded).load(loadComponent, {
-            series: (before: Promise<void>, after: () => Promise<void>) =>
-                before.then(after),
+            series: (before: Promise<void>, after: () => Promise<void>) => before.then(after),
             parallel: (values: Promise<void>[]) => Promise.all(values),
         });
 

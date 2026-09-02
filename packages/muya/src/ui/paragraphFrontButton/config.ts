@@ -36,11 +36,11 @@ const HEADING_ICONS = [
 ];
 
 const DIAGRAM_ICONS = {
-    'plantuml': plantumlIcon,
-    'mermaid': mermaidIcon,
+    plantuml: plantumlIcon,
+    mermaid: mermaidIcon,
     'vega-lite': vegaIcon,
-    'flowchart': flowchartIcon,
-    'sequence': sequenceIcon,
+    flowchart: flowchartIcon,
+    sequence: sequenceIcon,
 };
 
 export function getIcon(block: Parent) {

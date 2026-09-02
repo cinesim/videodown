@@ -30,11 +30,7 @@ interface IFakeCell {
     insertTab: () => void;
 }
 
-function makeFakeCodeContent(initial: {
-    text: string;
-    lang: string;
-    cursorAt: number;
-}): IFakeCell {
+function makeFakeCodeContent(initial: { text: string; lang: string; cursorAt: number }): IFakeCell {
     return {
         text: initial.text,
         _lang: initial.lang,

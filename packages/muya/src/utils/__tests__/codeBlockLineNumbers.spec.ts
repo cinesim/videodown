@@ -131,13 +131,13 @@ describe('repositionLineNumberSpans', () => {
         const origRangeRect = rangeProto.getBoundingClientRect;
         rangeProto.getBoundingClientRect = () => ({ top: tops[call++] });
         // The wrapper's own rect must no longer influence the result.
-        (wrapper as unknown as { getBoundingClientRect: () => { top: number } })
-            .getBoundingClientRect = () => ({ top: 999 });
+        (
+            wrapper as unknown as { getBoundingClientRect: () => { top: number } }
+        ).getBoundingClientRect = () => ({ top: 999 });
 
         try {
             repositionLineNumberSpans(wrapper, codeEl);
-        }
-        finally {
+        } finally {
             rangeProto.getBoundingClientRect = origRangeRect;
         }
 

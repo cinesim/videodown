@@ -10,7 +10,7 @@ import { tokenizer } from '../lexer';
 // the start of an emoji shortcode.
 
 function emojiTokens(src: string) {
-    return tokenizer(src).filter(t => t.type === 'emoji');
+    return tokenizer(src).filter((t) => t.type === 'emoji');
 }
 
 describe('emoji detection — word boundary (#1677)', () => {

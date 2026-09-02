@@ -35,18 +35,17 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    while (bootedHosts.length)
-        bootedHosts.pop()!.remove();
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    while (bootedHosts.length) bootedHosts.pop()!.remove();
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string, options: Record<string, unknown> = {}): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
-    const muya = new MuyaClass(host, { markdown, ...options } as ConstructorParameters<typeof MuyaClass>[1]);
+    const muya = new MuyaClass(host, { markdown, ...options } as ConstructorParameters<
+        typeof MuyaClass
+    >[1]);
     muya.init();
     bootedHosts.push(muya.domNode);
     return muya;
@@ -72,7 +71,7 @@ describe('paste as plain text — block-level HTML is literal (A8, muyajs parity
         });
 
         await muya.editor.clipboard.pasteAsPlainText();
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         // The HTML merged into the paragraph as literal text — one block, no
         // separate html-block.
@@ -95,7 +94,7 @@ describe('paste as plain text — block-level HTML is literal (A8, muyajs parity
         });
 
         await muya.editor.clipboard.pasteAsPlainText();
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
 
         // muyajs: line 0 folds into 'foo' as literal text, the remaining lines
         // become a single live html-block — two blocks, not three paragraphs.

@@ -120,15 +120,14 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 text: 'plain text',
             });
 
-            const list = captured.find(c => c.label === 'bullet-list')!;
+            const list = captured.find((c) => c.label === 'bullet-list')!;
             expect(list).toBeTruthy();
             expect(list.state.name).toBe('bullet-list');
             expect(list.state.children).toHaveLength(1);
             expect(list.state.children[0].name).toBe('list-item');
             expect(list.state.children[0].children[0].name).toBe('paragraph');
             expect(list.state.children[0].children[0].text).toBe('plain text');
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -146,10 +145,9 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 text: '- foo',
             });
 
-            const list = captured.find(c => c.label === 'bullet-list')!;
+            const list = captured.find((c) => c.label === 'bullet-list')!;
             expect(list.state.children[0].children[0].text).toBe('- foo');
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -164,10 +162,9 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 text: '1. foo',
             });
 
-            const list = captured.find(c => c.label === 'order-list')!;
+            const list = captured.find((c) => c.label === 'order-list')!;
             expect(list.state.children[0].children[0].text).toBe('1. foo');
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -185,13 +182,10 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 text: 'first line\nsecond line\nthird',
             });
 
-            const list = captured.find(c => c.label === 'bullet-list')!;
+            const list = captured.find((c) => c.label === 'bullet-list')!;
             expect(list.state.children).toHaveLength(1);
-            expect(list.state.children[0].children[0].text).toBe(
-                'first line\nsecond line\nthird',
-            );
-        }
-        finally {
+            expect(list.state.children[0].children[0].text).toBe('first line\nsecond line\nthird');
+        } finally {
             restore();
         }
     });
@@ -206,12 +200,11 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 text: 'todo item',
             });
 
-            const list = captured.find(c => c.label === 'task-list')!;
+            const list = captured.find((c) => c.label === 'task-list')!;
             expect(list.state.children[0].name).toBe('task-list-item');
             expect(list.state.children[0].meta).toEqual({ checked: false });
             expect(list.state.children[0].children[0].text).toBe('todo item');
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -228,10 +221,9 @@ describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext
                 });
             }).not.toThrow();
 
-            const list = captured.find(c => c.label === 'bullet-list')!;
+            const list = captured.find((c) => c.label === 'bullet-list')!;
             expect(list.state.children[0].children[0].text).toBe('');
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -285,8 +277,7 @@ describe('replaceBlockByLabel — frontmatter clears the `/` trigger text', () =
             expect(update).toHaveBeenCalled();
             // Front matter is prepended, never an in-place replace of the cursor block.
             expect(replaceWith).not.toHaveBeenCalled();
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -353,10 +344,9 @@ describe('replaceBlockByLabel — in-editor "table" shows the grid picker (rever
             expect(typeof handler).toBe('function');
 
             // ...and NO default table block is built up-front.
-            expect(captured.find(c => c.label === 'table')).toBeUndefined();
+            expect(captured.find((c) => c.label === 'table')).toBeUndefined();
             expect(createTable).not.toHaveBeenCalled();
-        }
-        finally {
+        } finally {
             restore();
         }
     });
@@ -417,10 +407,8 @@ afterEach(() => {
         const host = bootedHosts.pop()!;
         host.remove();
     }
-    if (hadVersion)
-        window.MUYA_VERSION = originalVersion as string;
-    else
-        delete (window as Partial<Window>).MUYA_VERSION;
+    if (hadVersion) window.MUYA_VERSION = originalVersion as string;
+    else delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(frontmatterType: string): Muya {
@@ -453,7 +441,8 @@ describe('replaceBlockByLabel — quick-insert frontmatter serializes the right 
     for (const c of FRONTMATTER_CASES) {
         it(`frontmatterType '${c.type}' -> ${c.label}`, async () => {
             const muya = bootMuya(c.type);
-            const block = muya.editor.scrollPage!.firstContentInDescendant()!.outMostBlock! as unknown as Parent;
+            const block = muya.editor.scrollPage!.firstContentInDescendant()!
+                .outMostBlock! as unknown as Parent;
 
             replaceBlockByLabel({ block, muya, label: 'frontmatter' });
 
@@ -471,12 +460,16 @@ describe('replaceBlockByLabel — quick-insert frontmatter serializes the right 
 
     it('the inserted frontmatter block carries the lang derived from frontmatterType', async () => {
         const muya = bootMuya('+');
-        const block = muya.editor.scrollPage!.firstContentInDescendant()!.outMostBlock! as unknown as Parent;
+        const block = muya.editor.scrollPage!.firstContentInDescendant()!
+            .outMostBlock! as unknown as Parent;
 
         replaceBlockByLabel({ block, muya, label: 'frontmatter' });
 
         await vi.waitFor(() => {
-            const fm = muya.getState()[0] as { name: string; meta: { lang: string; style: string } };
+            const fm = muya.getState()[0] as {
+                name: string;
+                meta: { lang: string; style: string };
+            };
             expect(fm.name).toBe('frontmatter');
             // '+' must map to toml/'+' — not fall through to json (the #4429 bug).
             expect(fm.meta.lang).toBe('toml');
