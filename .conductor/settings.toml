@@ -1,0 +1,24 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+setup = "bun install --frozen-lockfile"
+run_mode = "concurrent"
+archive = """
+case "${CONDUCTOR_WORKSPACE_ID:-}" in
+  ""|*[!A-Za-z0-9_-]*)
+    echo "Refusing to clean up an invalid Conductor workspace ID." >&2
+    exit 1
+    ;;
+esac
+
+rm -rf -- "/tmp/videodown-conductor-${CONDUCTOR_WORKSPACE_ID}"
+"""
+
+[scripts.run.dev]
+available_in = ["local"]
+command = 'bun run dev -- -- --user-data-dir="/tmp/videodown-conductor-${CONDUCTOR_WORKSPACE_ID}"'
+default = true
+icon = "monitor"
+
+[scripts.run.dev.options]
+cwd = "packages/desktop"
