@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -109,16 +107,6 @@
 <h2 align="center">支持 videodown</h2>
 
 videodown 是一款由社群支持驅動的開源 Markdown 編輯器。如果 videodown 改善了您的工作流程，請考慮[贊助本專案](https://github.com/sponsors/videodown)。感謝所有贊助者 ❤️
-
-**特別贊助商**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [透過我們快速、便捷且完整的 API 抓取 Google 及其他搜尋引擎的資料。](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                    |
-
-## 截圖
-
-![](../assets/videodown.png?raw=true)
 
 ## 功能
 

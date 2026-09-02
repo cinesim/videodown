@@ -4,8 +4,6 @@
 
 videodown is a realtime preview editor for markdown with various markdown extensions. You can simply write and edit text and videodown hides all unnecessary syntax elements. When you first start videodown an empty editor window is shown. You can see [key bindings](KEYBINDINGS.md) or command palette (<kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) for all available commands or just type `@` to get an overlay with available text elements. videodown provides a minimal and simple interface and in the next sections you can learn more about the interface and features.
 
-![](../assets/videodown-default.png)
-
 ### Interface
 
 #### Toggle sidebar
@@ -24,8 +22,6 @@ videodown can be used as a single editor but opens all files in a separate tab. 
 
 You can hide tabs and use key bindings such as <kbd>CmdOrCtrl</kbd>+<kbd>Tab</kbd> to cycle through tabs or the sidebar _opened files_ panel.
 
-![](../assets/videodown-interface-1.png)
-
 #### Switch between editor modes
 
 You can use <kbd>CmdOrCtrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> to switch between the preview and source-code editor. The realtime preview editor is the default editor with many features. A detailed overview of all features can be found [here](EDITING.md).
@@ -33,12 +29,6 @@ You can use <kbd>CmdOrCtrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> to switch between t
 #### Typewriter and focus mode
 
 Use <kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> to enter distraction free focus mode or <kbd>CmdOrCtrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> for typewriter.
-
-<h4 align="center">:smile_cat:Edit modes:dog:</h4>
-
-|        Source Code        |          Typewriter           |          Focus           |
-| :-----------------------: | :---------------------------: | :----------------------: |
-| ![](../assets/source.gif) | ![](../assets/typewriter.gif) | ![](../assets/focus.gif) |
 
 ## Open and modify markdown files
 
@@ -54,8 +44,6 @@ After some modifications you can save your file via <kbd>CmdOrCtrl</kbd>+<kbd>S<
 
 videodown also has support to open a directory via <kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> or the sidebar button _Open Folder_. After opening a directory all files and directories are shown in the sidebar tree view. The tree view allows you to open further files, browse and modify files or directories inside the opened root directory. Above the tree view are all opened files located. You can also use quick open (<kbd>CmdOrCtrl</kbd>+<kbd>P</kbd>) to quickly open a file from the opened root directory or editor and navigate via arrow keys or select a file via mouse. To view another sidebar panel like find in files click on the left sidebar icons.
 
-![](../assets/videodown-interface-2.png)
-
 ## Themes
 
 You can change the application theme by clicking on an entry under the themes application menu.
@@ -69,5 +57,3 @@ You can control and modify all preferences in the settings window or edit `prefe
 - Markdown related settings
 - The application theme
 - Options how images are handled
-
-![](../assets/videodown-settings.png)

@@ -14,8 +14,6 @@ You can select text with your mouse cursor, double click on a word or use the ke
 
 The format overlay is a pop-up that automatically appears when you're selecting text. You can easily transform text and inline markdown, and remove formatting.
 
-![](../assets/videodown-format-popup.png)
-
 - Bold
 - Italics
 - Underline
@@ -38,9 +36,7 @@ You can configure videodown to autocomplete markdown syntax, brackets and quotes
 
 ## Links
 
-Links are displayed by default as normal text, but if you click on a link it is shown as a markdown link with title and URL, as shown below:
-
-![](../assets/videodown-link-preview.png)
+Links are displayed by default as normal text, but if you click on a link it is shown as a markdown link with title and URL.
 
 ## Formatting
 
@@ -52,13 +48,9 @@ videodown will automatically format your markdown document according CommonMark 
 
 When you start a new line, just type / to access a pop-up with all available markdown features. At this point, you can choose an entry and the line is transformed into the selected attribute.
 
-![](../assets/videodown-quick-insert.png)
-
 #### Line transformer
 
-You can transform a line into another type by clicking on the highlighted icon in the image below and select `Turn Into`. Furthermore, you can duplicate the selected line, create a paragraph above the selected line or delete the line.
-
-![](../assets/videodown-line-transformer.png)
+You can transform a line into another type by clicking its type icon and selecting `Turn Into`. Furthermore, you can duplicate the selected line, create a paragraph above the selected line or delete the line.
 
 #### Table tools
 
@@ -68,31 +60,19 @@ It's sometimes hard to write and manage tables in markdown. In videodown you can
 
 You can insert or delete a new row or column by clicking on an existing cell and clicking on the menu on the right side for rows or bottom for columns.
 
-![](../assets/videodown-table_drag_drop.png)
-
 **Move table cells:**
 
-You can simply move a row or column by clicking on the cell menu (like above) and dragging it by holding your left mouse button like this:
-
-![](../assets/videodown-table-gif.gif)
+You can move a row or column by clicking on the cell menu and dragging it while holding your left mouse button.
 
 #### Image tools
 
-![](../assets/videodown-image-viewer.png)
-
 videodown provides an image viewer and a pop-up to select and label images. You can resize any image using your mouse cursor; changes are applied in realtime. By clicking on an image or writing `![]()` a pop-up automatically appears that allows you to select an image from disk, or paste a path or URL. Images can be automatically uploaded to cloud, or moved to a relative or absolute path on your local disk. Even pasting images that are not located on disk is supported and these images are stored in the background. In addition, you can control the image alignment whether inline, left, centered or right.
-
-![](../assets/videodown-image-popup.png)
 
 #### Emoji picker
 
 Instantly add emojis to your markdown document without long searches. While typing, the application automatically refreshes the list of available emojis.
 
-![](../assets/videodown-emoji-picker.png)
-
 #### Focus mode
-
-![](../assets/videodown-focus-mode.png)
 
 The focus mode will help you to focus on the currently line only by fading out other lines. To activate the focus mode, simply press <kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd>.
 

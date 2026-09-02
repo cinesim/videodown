@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -108,16 +106,6 @@
 <h2 align="center">videodown unterstützen</h2>
 
 videodown ist ein Open-Source-Markdown-Editor, der von seiner Community unterstützt wird. Wenn videodown Ihren Workflow verbessert, erwägen Sie bitte, [das Projekt zu sponsern](https://github.com/sponsors/videodown). Vielen Dank an alle Sponsoren ❤️
-
-**Besonderer Sponsor**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [Extrahieren Sie Daten von Google und anderen Suchmaschinen über unsere schnelle, einfache und vollständige API.](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                                                                  |
-
-## Screenshot
-
-![](../assets/videodown.png?raw=true)
 
 ## Funktionen
 

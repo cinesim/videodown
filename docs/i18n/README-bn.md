@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -110,15 +108,6 @@
 <h2 align="center">স্পনসর</h2>
 
 videodown একটি ওপেন-সোর্স Markdown এডিটর, যা এর কমিউনিটির সহায়তায় এগিয়ে চলছে। videodown যদি আপনার কাজের ধারা উন্নত করে থাকে, তাহলে অনুগ্রহ করে [প্রজেক্টটিকে স্পনসর করার](https://github.com/sponsors/videodown) কথা বিবেচনা করুন। সব স্পনসরকে ধন্যবাদ ❤️
-
-**বিশেষ স্পনসর**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [আমাদের দ্রুত, সহজ এবং পূর্ণাঙ্গ API দিয়ে Google ও অন্যান্য সার্চ ইঞ্জিন থেকে ফলাফল সংগ্রহ করুন।](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-
-## স্ক্রিনশট
-
-![](../assets/videodown.png?raw=true)
 
 ## বৈশিষ্ট্য
 

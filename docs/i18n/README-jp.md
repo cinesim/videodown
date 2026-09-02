@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -109,16 +107,6 @@
 <h2 align="center">videodown を支援する</h2>
 
 videodown はコミュニティの支援によって成り立つオープンソースの Markdown エディターです。videodown があなたのワークフローを改善するなら、[プロジェクトへのスポンサー](https://github.com/sponsors/videodown)をご検討ください。すべてのスポンサーに感謝します ❤️
-
-**スペシャルスポンサー**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [高速で使いやすく完全な API で Google や他の検索エンジンからデータを取得できます。](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                                    |
-
-## スクリーンショット
-
-![](../assets/videodown.png?raw=true)
 
 ## 機能
 

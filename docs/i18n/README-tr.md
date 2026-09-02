@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -109,16 +107,6 @@
 <h2 align="center">videodown'e Destek Olun</h2>
 
 videodown, topluluğunun desteğiyle hayata geçirilmiş açık kaynaklı bir Markdown editörüdür. videodown iş akışınızı iyileştiriyorsa, lütfen [projeye destek olmayı](https://github.com/sponsors/videodown) düşünün. Tüm destekçilere teşekkürler ❤️
-
-**Özel Destekçi**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [Hızlı, kolay ve kapsamlı API'miz ile Google ve diğer arama motorlarından veri çekin.](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                                       |
-
-## Ekran Görüntüsü
-
-![](../assets/videodown.png?raw=true)
 
 ## Özellikler
 

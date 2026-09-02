@@ -2,15 +2,9 @@
 
 ## Main interface
 
-![](../assets/videodown-interface.png)
-
-- Green: titlebar
-- Orange: sidebar
-- Red: editor with tabs and per-tab notification at the bottom
-
 ### Titlebar
 
-The titlebar is located at the top of the window and shows the current opened file path and the menu on Linux and Windows. On macOS we're using client-side decorations (CSD) that look similar to the picture above. On Linux and Windows there are two type of titlebar: a custom CSD that you can see in the image above and the native one.
+The titlebar is located at the top of the window and shows the current opened file path and the menu on Linux and Windows. On macOS we're using client-side decorations (CSD). On Linux and Windows there are two types of titlebar: a custom CSD and the native one.
 
 ### Sidebar
 

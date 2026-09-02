@@ -55,32 +55,6 @@ You can switch themes in several ways:
 2. **Preferences**: Open `Preferences` → `Theme` tab to preview and select themes
 3. **Follow System**: Enable "Follow System Theme" to automatically switch between light and dark themes based on your system settings
 
-## Theme Screenshots
-
-### Light Themes
-
-| Cadmium Light                                      | Graphite Light                                       |
-| -------------------------------------------------- | ---------------------------------------------------- |
-| ![Cadmium Light](../themeImages/cadmium-light.png) | ![Graphite Light](../themeImages/graphite-light.png) |
-
-| Ulysses Light                                      | Catppuccin Latte                                         |
-| -------------------------------------------------- | -------------------------------------------------------- |
-| ![Ulysses Light](../themeImages/ulysses-light.png) | ![Catppuccin Latte](../themeImages/catppuccin-latte.png) |
-
-### Dark Themes
-
-| Dark                             | Material Dark                                      |
-| -------------------------------- | -------------------------------------------------- |
-| ![Dark](../themeImages/dark.png) | ![Material Dark](../themeImages/material-dark.png) |
-
-| One Dark                                 | Dracula                                |
-| ---------------------------------------- | -------------------------------------- |
-| ![One Dark](../themeImages/one-dark.png) | ![Dracula](../themeImages/dracula.png) |
-
-| Nord                             | Tokyo Night                                    |
-| -------------------------------- | ---------------------------------------------- |
-| ![Nord](../themeImages/nord.png) | ![Tokyo Night](../themeImages/tokyo-night.png) |
-
 ## Custom Themes
 
 Custom theme support is planned for a future release. In the meantime, you can use the "Custom CSS" option in Preferences → Theme to override theme styles.

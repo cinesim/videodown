@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 dir="rtl" align="center">videodown</h1>
 
 <div dir="rtl" align="center">
@@ -108,16 +106,6 @@
 <h2 dir="rtl" align="center">دعم videodown</h2>
 
 videodown هو محرر Markdown مفتوح المصدر يعتمد على دعم مجتمعه. إذا كان videodown يُحسّن سير عملك، يُرجى التفكير في [دعم المشروع](https://github.com/sponsors/videodown). شكراً لجميع الداعمين ❤️
-
-**الراعي المميز**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [استخرج نتائج Google ومحركات البحث الأخرى من خلال واجهة برمجية سريعة وسهلة وشاملة.](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                                    |
-
-## لقطة شاشة
-
-![](../assets/videodown.png?raw=true)
 
 ## الميزات
 

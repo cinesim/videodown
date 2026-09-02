@@ -2,8 +2,6 @@
 
 Welcome to the end-user documentation of videodown.
 
-![](assets/videodown-interface-2.png)
-
 **Quick start:**
 
 - [Basics](end-user/BASICS.md)

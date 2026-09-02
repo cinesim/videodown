@@ -22,8 +22,4 @@ videodown allows you to select a page theme before exporting. You can learn more
 
 ### Header and footer
 
-You can include a header and/or footer in the exported document if you choose PDF or printing and also adjust the header/footer style. You can select between no, a single or a three cell header in export options. The header and/or footer appear on each page when defined and the header can be multiline but the footer only single line. Unfortunately, page numbering is currently not supported. An example can be seen below.
-
-![](../assets/videodown-export-header.png)
-
-![](../assets/videodown-export-pdf.png)
+You can include a header and/or footer in the exported document if you choose PDF or printing and also adjust the header/footer style. You can select between no, a single or a three cell header in export options. The header and/or footer appear on each page when defined and the header can be multiline but the footer only single line. Unfortunately, page numbering is currently not supported.

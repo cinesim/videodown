@@ -1,5 +1,3 @@
-<p align="center"><img src="../assets/logo-small.png" alt="videodown" width="100" height="100"></p>
-
 <h1 align="center">videodown</h1>
 
 <div align="center">
@@ -109,16 +107,6 @@
 <h2 align="center">videodown 지원</h2>
 
 videodown는 커뮤니티의 지원으로 운영되는 오픈소스 Markdown 편집기입니다. videodown가 작업 흐름을 개선한다면 [프로젝트 후원](https://github.com/sponsors/videodown)을 고려해 주세요. 모든 후원자 여러분께 감사드립니다 ❤️
-
-**특별 후원사**
-
-| [<img src="../assets/sponsors/serpapi.png" width="150">](https://serpapi.com/?utm_source=videodown) | [빠르고 쉬우며 완전한 API로 Google 및 기타 검색 엔진에서 데이터를 수집하세요.](https://serpapi.com/?utm_source=videodown) |
-| --------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| [<img src="../assets/sponsors/ukey.png" width="150">](https://www.ukey.com)                         | [Secure hardware wallet made simple.](https://www.ukey.com)                                                               |
-
-## 스크린샷
-
-![](../assets/videodown.png?raw=true)
 
 ## 기능
 
