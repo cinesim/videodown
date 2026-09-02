@@ -32,7 +32,7 @@ Be kind, assume good intent, and keep discussions on-topic. Personal attacks, ha
 **Prerequisites**
 
 - Node.js ≥18 for everyday development. **Releases require Node ≥20.19, ≥22.13, or ≥24** (the changelog plugin pins `^20.19.0 || ^22.13.0 || >=24.0.0`).
-- [pnpm](https://pnpm.io/) ≥8.5. The repo is pinned to `pnpm@10.22.0` via `packageManager` — install the matching version (e.g. `corepack enable && corepack prepare pnpm@10.22.0 --activate`).
+- [Bun](https://bun.com/) ≥1.3. The repository pins its version through the root `packageManager` field.
 - A Chromium-based browser for the dev demo and Playwright E2E suite.
 
 **First-time setup**
@@ -46,13 +46,13 @@ cd muya
 git remote add upstream git@github.com:marktext/muya.git
 
 # 3. Install dependencies (also wires up husky git hooks).
-pnpm install
+bun install
 
 # 4. Boot the examples app to try your changes in a real editor.
-pnpm dev
+bun run --cwd packages/muya/examples dev:demo
 ```
 
-`pnpm dev` runs `turbo dev:demo`, which starts the Vite dev server in `examples/` and serves `@muyajs/core` directly from `packages/core/src/` — no rebuild step needed while iterating.
+The demo command starts Vite in `examples/` and serves `@muyajs/core` directly from source, so no rebuild step is needed while iterating.
 
 ## Repository layout
 
@@ -77,42 +77,42 @@ Run from the repo root — Turbo fans tasks out across packages.
 
 | Command | What it does |
 | --- | --- |
-| `pnpm dev` | Boot the examples Vite dev server (`turbo dev:demo`). |
-| `pnpm build` | `tsc && vite build` in `packages/core`. Emits `lib/{es,umd,cjs}` and `lib/types`. |
-| `pnpm test` | Vitest unit tests (`--passWithNoTests`). |
-| `pnpm coverage` | Vitest with Istanbul coverage (`@vitest/coverage-istanbul`). |
-| `pnpm lint` / `pnpm lint:fix` | ESLint (antfu base) over `packages/`. |
-| `pnpm lint:types` | `tsc --noEmit` per package. |
-| `pnpm lint:css` | Stylelint over all CSS. |
-| `pnpm check-circular` | `madge --circular packages/core/src/index.ts` — CI enforces this. |
-| `pnpm e2e` | Playwright suite (Chromium, port 5174). See `e2e/README.md`. |
-| `pnpm e2e:ui` | Playwright UI mode for interactive debugging. |
+| `bun run --cwd packages/muya/examples dev:demo` | Boot the examples Vite dev server. |
+| `bun run --cwd packages/muya build` | `tsc && vite build`. Emits `lib/{es,umd,cjs}` and `lib/types`. |
+| `bun run --cwd packages/muya test` | Vitest unit tests. |
+| `bun run --cwd packages/muya coverage` | Vitest with Istanbul coverage. |
+| `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` | ESLint (antfu base). |
+| `bun run --cwd packages/muya lint:types` | `tsc --noEmit`. |
+| `bun run --cwd packages/muya lint:css` | Stylelint over all CSS. |
+| `bun run --cwd packages/muya check-circular` | `madge --circular src/index.ts` — CI enforces this. |
+| `bun run --cwd packages/muya/e2e e2e` | Playwright suite. See `e2e/README.md`. |
+| `bun run --cwd packages/muya/e2e e2e:ui` | Playwright UI mode for interactive debugging. |
 
 Scoped runs:
 
 ```sh
 # Run one Vitest file in core.
-pnpm --filter @muyajs/core exec vitest run path/to/file.test.ts
+bun run --cwd packages/muya vitest run path/to/file.test.ts
 
 # Watch a single package while iterating.
-pnpm --filter @muyajs/core test:watch
+bun run --cwd packages/muya test:watch
 
 # Run only the CommonMark / GFM conformance fixtures (baseline locked by
 # packages/core/test/spec/expected-failures.json).
-pnpm --filter @muyajs/core test:spec:commonmark
-pnpm --filter @muyajs/core test:spec:gfm
+bun run --cwd packages/muya test:spec:commonmark
+bun run --cwd packages/muya test:spec:gfm
 ```
 
 ## Coding conventions
 
-ESLint and Stylelint enforce most of these — `pnpm lint:fix` is the source of truth — but a few are worth knowing up front:
+ESLint and Stylelint enforce most of these — `bun run --cwd packages/muya lint:fix` is the source of truth — but a few are worth knowing up front:
 
 - **TypeScript first.** All new source goes in `.ts`. Public types belong in `packages/core/src/types.ts`.
 - **4-space indent, semicolons required.** The antfu config in `eslint.config.mjs` configures this for the repo.
 - **Interface names start with `I`** followed by an uppercase letter or digit (e.g. `IMuyaOptions`, `IPlugin`). The `@typescript-eslint/naming-convention` rule flags violations.
 - **Private class members are prefixed with `_`** (e.g. `_uiPlugins`, `_activeContentBlock`).
 - **Complexity caps.** `complexity ≤ 20` and `max-lines-per-function ≤ 200` are warnings for non-test TS. Refactor rather than disable.
-- **No circular imports.** `pnpm check-circular` runs in CI; adding a cycle into `packages/core/src/index.ts` fails the build.
+- **No circular imports.** `bun run --cwd packages/muya check-circular` runs in CI; adding a cycle into `src/index.ts` fails the build.
 - **Block registration.** New block types must be registered in `packages/core/src/block/index.ts::registerBlocks()`. `ScrollPage.loadBlock(name)` returns `undefined` and warns otherwise.
 - **No new code paths producing `ILinkReferenceDefinitionState`.** Reference link/image definitions round-trip through paragraph state — see `markdownToState.ts` and `CLAUDE.md`.
 - **Avoid backwards-compat shims** (renaming unused vars to `_var`, leaving "removed" comments, re-exporting deleted types). Delete unused code outright.
@@ -145,14 +145,14 @@ Scope is optional but encouraged for `packages/core/` work (`core`, `inline`, `s
 3. Run the quality gates locally:
 
    ```sh
-   pnpm lint
-   pnpm lint:types
-   pnpm test
-   pnpm check-circular
+   bun run --cwd packages/muya lint
+   bun run --cwd packages/muya lint:types
+   bun run --cwd packages/muya test
+   bun run --cwd packages/muya check-circular
    ```
 
-4. If your change touches the UI or editing surface, run `pnpm e2e` and add coverage for the new behavior under `e2e/tests/`.
-5. If your change affects markdown parsing or HTML output, check the conformance baseline doesn't regress: `pnpm --filter @muyajs/core test:spec`. Conformance can only go up — see `packages/core/test/spec/expected-failures.json`.
+4. If your change touches the UI or editing surface, run `bun run --cwd packages/muya/e2e e2e` and add coverage for the new behavior under `e2e/tests/`.
+5. If your change affects markdown parsing or HTML output, check the conformance baseline doesn't regress: `bun run --cwd packages/muya test:spec`. Conformance can only go up — see `test/spec/expected-failures.json`.
 
 **Opening the PR**
 
@@ -166,7 +166,7 @@ Maintainers will review and may ask for changes. PRs are merged via **squash mer
 ## Testing
 
 - **Unit tests** live next to their source in `packages/core/src/**/__tests__/` or `*.test.ts`, run with Vitest. Vitest has no global `environment` set — tests run under the default Node environment by default, and DOM-dependent tests opt into happy-dom with a `// @vitest-environment happy-dom` directive at the top of the file. New parser logic, state transforms, and pure helpers should ship with unit coverage.
-- **Conformance fixtures.** `pnpm --filter @muyajs/core test:spec` runs the CommonMark 0.31 and GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. The expected-failures list is locked — making a failing fixture pass requires removing it from the list in the same PR.
+- **Conformance fixtures.** `bun run --cwd packages/muya test:spec` runs the CommonMark 0.31 and GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. The expected-failures list is locked — making a failing fixture pass requires removing it from the list in the same PR.
 - **E2E tests.** Playwright suite in `e2e/`. Real browser, real contenteditable. Use this for behaviors that depend on selection, IME, clipboard, or floating UI positioning — anything `happy-dom` can't fake. See `e2e/README.md` for the helper API and `e2e/BACKLOG.md` for what's still uncovered.
 
 ## Where to ask questions

@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import type { Options as AutolinkOptions } from 'rehype-autolink-headings'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
@@ -42,6 +43,12 @@ const SANITIZE_SCHEMA: typeof defaultSchema = {
   }
 }
 
+const AUTOLINK_OPTIONS: AutolinkOptions = {
+  behavior: 'append',
+  properties: { className: ['anchor'], ariaHidden: 'true', tabIndex: -1 },
+  content: { type: 'text', value: '#' }
+}
+
 const FILE_TO_SLUG = new Map<string, string>(
   ALL_PAGES.map((p) => [p.file.toLowerCase(), '/docs/' + p.slug.join('/')])
 )
@@ -69,11 +76,7 @@ export async function renderMarkdown(source: string, ownerFile: string): Promise
     .use(rehypeRaw)
     .use(rehypeSanitize, SANITIZE_SCHEMA)
     .use(rehypeSlug)
-    .use(rehypeAutolinkHeadings, {
-      behavior: 'append',
-      properties: { className: ['anchor'], ariaHidden: true, tabIndex: -1 },
-      content: { type: 'text', value: '#' }
-    })
+    .use(rehypeAutolinkHeadings, AUTOLINK_OPTIONS)
     .use(rehypePrettyCode, {
       theme: { dark: 'github-dark-dimmed', light: 'github-light' },
       defaultLang: 'plaintext',
@@ -198,8 +201,6 @@ function addClass(node: Element, cls: string) {
   const current = props.className
   if (Array.isArray(current)) {
     if (!current.includes(cls)) current.push(cls)
-  } else if (typeof current === 'string') {
-    if (!current.split(/\s+/).includes(cls)) props.className = current + ' ' + cls
   } else {
     props.className = [cls]
   }
@@ -209,7 +210,6 @@ function hasClass(node: ElementContent, cls: string): boolean {
   if (node.type !== 'element') return false
   const c = node.properties?.className
   if (Array.isArray(c)) return c.includes(cls)
-  if (typeof c === 'string') return c.split(/\s+/).includes(cls)
   return false
 }
 
@@ -311,7 +311,7 @@ function calloutIcon(kind: AlertKind): Element {
       viewBox: '0 0 24 24',
       fill: 'none',
       stroke: 'currentColor',
-      strokeWidth: 2,
+      strokeWidth: '2',
       strokeLinecap: 'round',
       strokeLinejoin: 'round'
     },
@@ -351,12 +351,12 @@ function wrapCodeBlock(pre: Element): Element {
               viewBox: '0 0 24 24',
               fill: 'none',
               stroke: 'currentColor',
-              strokeWidth: 2,
+              strokeWidth: '2',
               strokeLinecap: 'round',
               strokeLinejoin: 'round'
             },
             children: [
-              { type: 'element', tagName: 'rect', properties: { x: 9, y: 9, width: 13, height: 13, rx: 2, ry: 2 }, children: [] },
+              { type: 'element', tagName: 'rect', properties: { x: '9', y: '9', width: '13', height: '13', rx: '2', ry: '2' }, children: [] },
               { type: 'element', tagName: 'path', properties: { d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1' }, children: [] }
             ]
           },

@@ -26,22 +26,21 @@ MarkText is a WYSIWYG markdown editor built on Electron + Vue 3. It supports Com
 | UI library         | Element Plus                                                                      |
 | Unit tests         | Vitest 4                                                                          |
 | E2E tests          | Playwright                                                                        |
-| Package manager    | pnpm >=10 workspace (`packageManager: pnpm@10.33.4`)                              |
-| Repo layout        | pnpm monorepo — see Directory Structure                                           |
+| Package manager    | Bun >=1.3 workspace (`packageManager: bun@1.3.13`)                                |
+| Repo layout        | Bun monorepo — see Directory Structure                                            |
 | Node.js minimum    | >=20.19.0 (PR CI: Node 22.21.1 · release CI: Node 24.14.1)                        |
 
 ## Directory Structure
 
-This is a pnpm workspace. Three packages live under `packages/`, and the
+This is a Bun workspace. Three packages live under `packages/`, and the
 root holds only shared tooling and CI-facing scripts.
 
 ```
 <repo-root>/
   package.json              Workspace orchestrator — every CI-facing script
-                            proxies to packages/desktop via `pnpm --filter
+                            proxies to packages/desktop via `bun run --filter
                             marktext ...`. CI invocations are unchanged.
-  pnpm-workspace.yaml       `packages: ['packages/*']` plus allowBuilds.
-  pnpm-lock.yaml            Single lockfile, shared across all packages.
+  bun.lock                  Single lockfile, shared across all packages.
   eslint.config.js          Root ESLint v9 flat config (covers desktop +
                             muyajs; website has its own ESLint v8 config
                             and is ignored here).
@@ -63,16 +62,16 @@ root holds only shared tooling and CI-facing scripts.
       electron-builder.yml  directories.output points at ../../dist.
       tsconfig.json / tsconfig.base.json
       vitest.config.ts
-      patches/              pnpm patches consumed by patch-package.
+      patches/              Dependency patches consumed by patch-package.
       build/                electron-builder resources (icons, entitlements,
                             NSIS scripts).
       static/               Static assets bundled into the app
                             (icons, themes, locales).
       out/                  electron-vite output (git-ignored).
       test/
-        unit/               Vitest specs → pnpm test / pnpm test:unit
+        unit/               Vitest specs → bun run test / bun run test:unit
         e2e/                Playwright specs + playwright.config.ts
-                            → pnpm test:e2e
+                            → bun run test:e2e
       src/
         common/             Pure Node.js utilities usable from main, preload,
                             and renderer.
@@ -124,7 +123,7 @@ root holds only shared tooling and CI-facing scripts.
       src/                  TS source. Public entrypoint src/index.ts.
       test/spec/            CommonMark 0.31 + GFM 0.29-gfm conformance.
       examples/             muya-examples — vite vanilla-TS dev demo
-                            (listed in pnpm-workspace.yaml).
+                            (listed in the root package.json workspaces).
       e2e/                  muya-e2e — Playwright suite. CI runs Chromium
                             only via muya-e2e.yml; Firefox + WebKit are
                             wired in playwright.config.ts but deferred
@@ -142,50 +141,50 @@ The root has no `src/`, `test/`, `static/`, or `build/` of its own anymore — t
 ## Development Workflow
 
 All commands run from the repo root. The root `package.json` proxies every
-desktop-specific script to `packages/desktop` via `pnpm --filter marktext`,
+desktop-specific script to `packages/desktop` via `bun run --filter marktext`,
 so the names and behavior are unchanged from the pre-monorepo layout.
 
 ```bash
 # Install dependencies (runs scripts/postinstall.ts automatically — patches
 # native-keymap, downloads Electron, rebuilds native modules, minifies locales)
-pnpm install
+bun install
 
 # Run in development mode
 # Renderer hot-reloads automatically. Pressing Ctrl+R in the dev window reloads
 # the renderer (which re-runs the preload script); changes to the main process
-# require restarting `pnpm run dev`.
-pnpm run dev
+# require restarting `bun run dev`.
+bun run dev
 
 # Preview the last electron-vite build (no rebuild). PERF_TESTING=true is set automatically.
-pnpm run start
+bun run start
 
 # Build without packaging — fast path for verifying the renderer/main compile
-pnpm run build:unpack
+bun run build:unpack
 
 # Auto-format the repo with Prettier (separate from `lint`, which only checks)
-pnpm run format
+bun run format
 
 # Minify locale files (required for production builds, skip during dev)
-pnpm run minify-locales
+bun run minify-locales
 
 # Performance debugging — exposes a Node inspector on :5858 against the previewed build
-pnpm run perf:inspect       # attach when ready
-pnpm run perf:inspect-brk   # break on first line
+bun run perf:inspect       # attach when ready
+bun run perf:inspect-brk   # break on first line
 
 # Website (not yet wired into CI)
-pnpm --filter marktext-website dev      # Vite dev server
-pnpm --filter marktext-website build    # static build → packages/website/build/
+bun run --filter marktext-website dev      # Next.js dev server
+bun run --filter marktext-website build    # production build → packages/website/.next/
 ```
 
 If you need to invoke a script directly inside a package, use
-`pnpm --filter <name> <script>` or `pnpm -C packages/<name> <script>`.
+`bun run --filter <name> <script>` or `bun run --cwd packages/<name> <script>`.
 
 ## Build Commands
 
 ```bash
-pnpm run build:win    # Windows x64 — NSIS installer + zip
-pnpm run build:mac    # macOS x64 + arm64 — DMG + zip
-pnpm run build:linux  # Linux — AppImage, snap, deb, rpm, tar.gz
+bun run build:win    # Windows x64 — NSIS installer + zip
+bun run build:mac    # macOS x64 + arm64 — DMG + zip
+bun run build:linux  # Linux — AppImage, snap, deb, rpm, tar.gz
 ```
 
 All platform build scripts automatically run `minify-locales` and `electron-rebuild` before packaging.
@@ -193,25 +192,24 @@ All platform build scripts automatically run `minify-locales` and `electron-rebu
 ## Testing
 
 ```bash
-pnpm run test          # All unit tests (Vitest)
-pnpm run test:unit     # Unit tests only
-pnpm run test:e2e      # End-to-end tests (Playwright)
-pnpm run lint          # ESLint (run before committing; CI enforces)
-pnpm run typecheck     # vue-tsc --noEmit (CI enforces)
+bun run test          # All unit tests (Vitest)
+bun run test:unit     # Unit tests only
+bun run test:e2e      # End-to-end tests (Playwright)
+bun run lint          # ESLint (run before committing; CI enforces)
+bun run typecheck     # vue-tsc --noEmit (CI enforces)
 
-# Run a single spec — paths are relative to packages/desktop. Use `-C` so
-# pnpm resolves the spec path inside the desktop package's vitest config.
-pnpm -C packages/desktop exec vitest run test/unit/specs/markdown-basic.spec.ts
-pnpm -C packages/desktop exec vitest run -t 'partial test name'
+# Run a single spec — paths are relative to packages/desktop.
+bun run --cwd packages/desktop vitest run test/unit/specs/markdown-basic.spec.ts
+bun run --cwd packages/desktop vitest run -t 'partial test name'
 
 # Single Playwright spec (playwright.config.ts lives in test/e2e/)
-pnpm -C packages/desktop exec playwright test test/e2e/launch.spec.ts
-pnpm -C packages/desktop exec playwright test -g 'partial test name'
+bun run --cwd packages/desktop playwright test test/e2e/launch.spec.ts
+bun run --cwd packages/desktop playwright test -g 'partial test name'
 ```
 
 ## Code Style
 
-Enforced by ESLint + Prettier. Run `pnpm run lint` and `pnpm run typecheck` before committing.
+Enforced by ESLint + Prettier. Run `bun run lint` and `bun run typecheck` before committing.
 
 - 2-space indentation
 - No semicolons
@@ -275,15 +273,15 @@ See `packages/website/content/docs/dev/IPC.md` for conventions and examples.
 - `INTERFACE.md` — Muya and renderer public interfaces
 - `IPC.md` — full IPC channel catalog and `mt::` conventions
 - `LINUX_DEV.md` — Linux-specific dev environment setup
-- `PERFORMANCE.md` — perf measurement workflow (pairs with `pnpm run perf:inspect`)
+- `PERFORMANCE.md` — perf measurement workflow (pairs with `bun run perf:inspect`)
 - `RELEASE.md` / `RELEASE_HOTFIX.md` — release process
 
 ## Important Build Notes
 
 - **CommonJS vs ESM**: `main` and `preload` compile to CommonJS; `renderer` is ESM-only. Do not use `require()` in renderer code.
-- **Minify locales**: `pnpm run minify-locales` must run before production builds. It is included in `build:win/mac/linux` but not in `dev`.
-- **Native modules**: After changing Electron version, run `pnpm run rebuild-native` (`electron-rebuild -f`).
-- **Hot reload**: The renderer hot-reloads via Vite HMR. `Ctrl+R` in the dev window reloads the renderer and re-runs the preload script. Changes to `main/` source are NOT picked up by a window reload — restart `pnpm run dev` to pick them up.
+- **Minify locales**: `bun run minify-locales` must run before production builds. It is included in `build:win/mac/linux` but not in `dev`.
+- **Native modules**: After changing Electron version, run `bun run rebuild-native` (`electron-rebuild -f`).
+- **Hot reload**: The renderer hot-reloads via Vite HMR. `Ctrl+R` in the dev window reloads the renderer and re-runs the preload script. Changes to `main/` source are NOT picked up by a window reload — restart `bun run dev` to pick them up.
 - **electron-builder output**: `directories.output` in `packages/desktop/electron-builder.yml` is set to `../../dist` so installers land in the repo-root `dist/` (where CI artifact globs look for them). `out/` from electron-vite stays inside `packages/desktop/`.
 - **Path aliases** (defined in `packages/desktop/electron.vite.config.ts`, mirrored in `vitest.config.ts` and `tsconfig.base.json`):
   - `@` → `packages/desktop/src/renderer/src`
@@ -297,6 +295,6 @@ See `packages/website/content/docs/dev/IPC.md` for conventions and examples.
 
 - Submit PRs to the **`develop`** branch (not `main`).
 - Reference the related issue in the PR description.
-- Run `pnpm run lint` before submitting.
+- Run `bun run lint` before submitting.
 - All PRs must pass CI before merge.
 - See `.github/CONTRIBUTING.md` for the full contributing guide.

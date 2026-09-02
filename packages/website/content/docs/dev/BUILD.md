@@ -27,9 +27,9 @@ apt-get install -y -t bookworm-backports python3.12
 apt-get install -y libx11-dev libxkbfile-dev libsecret-1-dev libfontconfig-dev rpm
 
 cd /mnt
-corepack enable
-pnpm install
-pnpm run build
+curl -fsSL https://bun.com/install | bash
+bun install
+bun run build
 
 exit
 # container should now be terminated
@@ -44,7 +44,7 @@ Below are the complete build instructions, which may help you troubleshoot the a
 
 Before you can get started developing, you need set up your build environment:
 
-- Node.js `>=20.19.0` and pnpm `>=10`
+- Node.js `>=20.19.0` and Bun `>=1.3`
 - Python `>=3.12` for node-gyp
 - C++ compiler and development tools
 - Build is supported on Linux, macOS and Windows
@@ -71,8 +71,8 @@ On Arch Linux: `sudo pacman -S libx11 libxkbfile libsecret fontconfig`
 ### Let's build
 
 1. Go to `marktext` folder
-2. Install dependencies: `pnpm install`
-3. Build MarkText binaries and packages: `pnpm run build`
+2. Install dependencies: `bun install`
+3. Build MarkText binaries and packages: `bun run build`
 4. MarkText binary is located under `dist` folder (electron-builder output)
 
 Copy the build app to applications folder, or if on Windows run the executable installer.
@@ -80,7 +80,7 @@ Copy the build app to applications folder, or if on Windows run the executable i
 ### Important scripts
 
 ```
-$ pnpm run <script>
+$ bun run <script>
 ```
 
 | Script  | Description                                      |
@@ -95,7 +95,7 @@ For more scripts please see `package.json`.
 > [!TIP]
 > To improve efficiency during development:
 >
-> 1. Use `pnpm run dev` for development mode. This will automatically reload the window when source code is modified.
+> 1. Use `bun run dev` for development mode. This will automatically reload the window when source code is modified.
 > 2. Use `Ctrl+R` to manually reload the application in development mode if needed.
 >
 > This approach bypasses unnecessary rebuilds and optimizes the developer workflow. However, for CI or release builds, a full rebuild may still be necessary.

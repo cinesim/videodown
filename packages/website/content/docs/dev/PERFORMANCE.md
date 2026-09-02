@@ -7,7 +7,7 @@
 ## 1. Testing `main` process
 
 ```
-pnpm run perf:inspect-brk
+bun run perf:inspect-brk
 ```
 
 - This launches a **production build** of Marktext that has a break-point **before** the first line of Javascript is ran
@@ -33,15 +33,15 @@ pnpm run perf:inspect-brk
 - If you do not need the breakpoint to test start-up performance, simply run:
 
 ```
-pnpm run perf:inspect
+bun run perf:inspect
 ```
 
 # 2. Testing `renderer`
 
 ```
-pnpm run start
+bun run start
 ```
 
-- This previews the most recent `pnpm run build` output via `electron-vite preview` with `PERF_TESTING=true` (so it behaves like a production launch). It does **not** rebuild — re-run `pnpm run build:unpack` first if your sources changed.
+- This previews the most recent `bun run build` output via `electron-vite preview` with `PERF_TESTING=true` (so it behaves like a production launch). It does **not** rebuild — re-run `bun run build:unpack` first if your sources changed.
 
 - Press `F12` to open Dev Tools and press `Reload and Record` to benchmark start-up render performance

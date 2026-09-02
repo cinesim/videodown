@@ -32,13 +32,11 @@ sudo dnf install -y xorg-x11-server-devel libxkbfile-devel
 
 ## Common Issues & Solutions
 
-### Issue: pnpm install fails with native-keymap error
+### Issue: Bun install fails while rebuilding native-keymap
 
 **Error message:**
 
 ```bash
- ERR_PNPM_OPTIONAL_DEPS_REQUIRER  optional dep native-keymap failed
- ...
  node-gyp ERR! build error
  node-gyp ERR! gyp ERR! rebuild
 ```
@@ -53,7 +51,7 @@ sudo apt install xorg-dev
 Then retry:
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### Issue: Electron fails to start with libglib error
@@ -78,12 +76,12 @@ If the issue persists, you may need the full X11 environment:
 sudo apt install xorg
 ```
 
-### Issue: Permission errors during pnpm install
+### Issue: Permission errors during Bun install
 
 **Solution:**
-Make sure you're not running `pnpm` commands with `sudo`. pnpm stores packages in a global content-addressable store (default: `~/.local/share/pnpm/store`). If you encounter permission errors, ensure the store directory is owned by your user:
+Make sure you're not running Bun commands with `sudo`. If Bun's package cache has incorrect ownership, restore it to your user:
 
 ```bash
 # Check and fix store ownership if needed
-sudo chown -R $(whoami) ~/.local/share/pnpm
+sudo chown -R $(whoami) ~/.bun/install/cache
 ```

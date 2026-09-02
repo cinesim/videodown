@@ -184,11 +184,11 @@ real types.
 ## Type-checking
 
 ```bash
-pnpm typecheck            # vue-tsc --noEmit -p tsconfig.json
-pnpm typecheck:watch      # incremental
-pnpm check                # lint + typecheck
+bun run typecheck            # vue-tsc --noEmit -p tsconfig.json
+bun run typecheck:watch      # incremental
+bun run check                # lint + typecheck
 ```
 
 `vue-tsc` is the TS compiler with Vue SFC awareness. Plain `tsc` won't
-type-check `.vue` files. CI runs `pnpm typecheck` as part of the lint
+type-check `.vue` files. CI runs `bun run typecheck` as part of the lint
 job (see `.github/workflows/lint.yml`).

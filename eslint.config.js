@@ -87,9 +87,12 @@ export default [
       // about leading-semi standard-style guards; the deprecated core rule
       // does not.
       'no-extra-semi': 'off',
-      '@stylistic/indent': ['error', 2, { SwitchCase: 1, ignoreComments: true }],
+      '@stylistic/indent': ['warn', 2, { SwitchCase: 1, ignoreComments: true }],
       '@stylistic/semi': ['error', 'never'],
-      '@stylistic/space-before-function-paren': ['error', 'never'],
+      '@stylistic/space-before-function-paren': [
+        'warn',
+        { anonymous: 'always', named: 'never', asyncArrow: 'always' }
+      ],
       '@stylistic/arrow-parens': 'off',
       '@stylistic/no-mixed-operators': 'off'
     }
@@ -118,6 +121,10 @@ export default [
       globals: { ...globals.browser }
     },
     rules: {
+      '@stylistic/space-before-function-paren': [
+        'warn',
+        { anonymous: 'always', named: 'never', asyncArrow: 'always' }
+      ],
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'off'
     }

@@ -32,7 +32,7 @@ Please make sure the following is done before submitting a PR:
 - Reference the related issue in the PR comment.
 - Utilize [JSDoc](https://github.com/jsdoc/jsdoc) for better code documentation.
 - Ensure all tests pass.
-- Please lint (`pnpm run lint`) your PR.
+- Please lint (`bun run lint`) your PR.
 - All PRs need to pass the **CI** before merged. If it fails, please try to solve the issue(s) and feel free to ask for any help.
 
 If you add new feature:
@@ -81,7 +81,7 @@ If there are conflicts or you want to update your local branch, please do the fo
 
 ### Style Guide
 
-You can run ESLint (`pnpm run lint`) to help you to follow the style guide.
+You can run ESLint (`bun run lint`) to help you to follow the style guide.
 
 - ES6 and "best practices"
 - 2 space indent

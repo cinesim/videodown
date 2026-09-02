@@ -10,7 +10,7 @@ on:
       - 'packages/muya/vite.config.ts'
       - 'packages/muya/vitest.spec.config.ts'
       - 'packages/muya/tsconfig.json'
-      - 'pnpm-lock.yaml'
+      - 'bun.lock'
       - '.github/workflows/muya-spec.yml'
 
 # Spec suite runs ~670 fixtures; give it a dedicated concurrency group so
@@ -28,4 +28,4 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Run CommonMark + GFM conformance suites
-        run: pnpm -C packages/muya test:spec
+        run: bun run --cwd packages/muya test:spec

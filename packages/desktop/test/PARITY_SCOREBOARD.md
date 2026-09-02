@@ -94,13 +94,13 @@ would mean a dedicated engine "record a state replacement as one op" API.
 ```bash
 # muya engine parity tests (all pass; PG2 cursor mapping is also covered by
 # src/__tests__/setCursorByOffset.spec.ts)
-pnpm -C packages/muya test
+bun run --cwd packages/muya test
 
 # a single gap's engine tests
-pnpm -C packages/muya exec vitest run src/state/__tests__/parityExportHtml.spec.ts
+bun run --cwd packages/muya vitest run src/state/__tests__/parityExportHtml.spec.ts
 
-# desktop parity e2e (needs `pnpm run build:unpack` first; PG14 stays xfail)
-pnpm -C packages/desktop exec playwright test \
+# desktop parity e2e (needs `bun run build:unpack` first; PG14 stays xfail)
+bun run --cwd packages/desktop playwright test \
   test/e2e/parity-pg1-menu-state.spec.ts \
   test/e2e/parity-source-undo-saved.spec.ts \
   --config test/e2e/playwright.config.ts

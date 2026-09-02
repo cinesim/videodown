@@ -2,7 +2,7 @@
 
 Baseline captured at PR-6a (2026-05-20).
 
-Re-run via: `pnpm --filter @muyajs/core test:spec`. The runner reads
+Re-run via: `bun run --cwd packages/muya test:spec`. The runner reads
 `expected-failures.json` to lock the baseline: any example currently
 listed that starts passing fails the suite (you must remove it), and any
 example NOT listed must continue to pass. Net result: compliance can only

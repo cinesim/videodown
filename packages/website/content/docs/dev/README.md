@@ -19,14 +19,14 @@
 
 - You will need [Build Tools for Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) (Scroll all the way to the bottom)
   - Additionally, you need **spectre-mitigated MSVC**, go to "Individual Components" and select "MSVC ... - VS2022 C++ Spectre-Mitigated Libs"
-  - Many native libraries do not support ClangCL well yet, hence we force it to use MSVC in our `.npmrc` (pnpm respects this file)
+  - Many native libraries do not support ClangCL well yet, hence we force it to use MSVC in our `.npmrc`
 
 ### 1.4 Clone and Install
 
 ```bash
 git clone https://github.com/marktext/marktext.git
 cd marktext
-pnpm install
+bun install
 ```
 
 ### 1.5 Create minified locale files
@@ -34,13 +34,13 @@ pnpm install
 - This is **automatically ran** when building for production, but not for dev for performance
 
 ```
-pnpm run minify-locales
+bun run minify-locales
 ```
 
 ### 1.6 Run in Development
 
 ```bash
-pnpm run dev
+bun run dev
 ```
 
 #### 1.6.1 Some Points to Note:
@@ -56,13 +56,13 @@ pnpm run dev
 
 ```bash
 # For windows
-$ pnpm run build:win
+$ bun run build:win
 
 # For macOS
-$ pnpm run build:mac
+$ bun run build:mac
 
 # For Linux
-$ pnpm run build:linux
+$ bun run build:linux
 ```
 
 ## 2. Sub-sections

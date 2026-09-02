@@ -34,7 +34,7 @@ function loadTranslations(language: string): Translations | null {
     // Used in both main and preload processes, so we can't lean on
     // `global.__static`, which is main-only.
     // In development, prefer the pre-minified file when present, but fall back
-    // to the raw .json so `pnpm run dev` works without running minify-locales.
+    // to the raw .json so `bun run dev` works without running minify-locales.
     let localePath: string
     if (process.env.NODE_ENV === 'development' || process.env.PERF_TESTING === 'true') {
       const minPath = path.join(process.cwd(), 'static', 'locales', `${language}.min.json`)

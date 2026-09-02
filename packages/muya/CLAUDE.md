@@ -8,7 +8,7 @@ This file provides guidance to Claude Code when working inside `packages/muya`.
 
 - `src/` — `@muyajs/core` TypeScript source. Public API entrypoint is `src/index.ts`.
 - `test/spec/` — CommonMark / GFM conformance suites (run via `test:spec`, separate vitest config).
-- `examples/` — `muya-examples`, a Vite vanilla-TS demo that consumes `@muyajs/core` via `workspace:*`. Listed as its own workspace in the repo-root `pnpm-workspace.yaml`.
+- `examples/` — `muya-examples`, a Vite vanilla-TS demo that consumes `@muyajs/core` via `workspace:*`. Listed as its own workspace in the repo-root `package.json`.
 - `e2e/` — `muya-e2e`, Playwright real-browser E2E suite. Self-contained host page under `e2e/host/`. See `e2e/README.md` and `e2e/BACKLOG.md`.
 - `eslint.config.mjs`, `.stylelintrc`, `.madgerc` — package-local tooling. The marktext-root ESLint explicitly ignores `packages/muya/**`, so muya self-lints with its own antfu-based config.
 
@@ -18,15 +18,15 @@ Stub packages (`packages/facade`, `packages/findReplace`) from the upstream muya
 
 Run from the marktext repo root.
 
-- `pnpm -C packages/muya/examples dev:demo` — start the examples Vite dev server. (Upstream `pnpm dev` / Turbo `dev:demo` is not wired here — run vite directly.)
-- `pnpm -C packages/muya build` — `tsc && vite build`, emits `lib/{es,umd,cjs}` and `lib/types`.
-- `pnpm -C packages/muya test` / `pnpm -C packages/muya coverage` — Vitest unit tests (co-located under `src/**/__tests__/`). Single file: `pnpm -C packages/muya exec vitest run path/to/file.test.ts`.
-- `pnpm -C packages/muya test:spec` — CommonMark 0.31 + GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. `test:spec:commonmark` / `test:spec:gfm` scope to one suite. Pass/fail counts are locked by `test/spec/expected-failures.json`: any listed example that starts passing fails the suite (remove it from the list); any unlisted example that starts failing fails the suite. Compliance can only go up. Baseline lives in `test/spec/conformance.md` (CommonMark 87.7% / GFM 86.3% at PR-6a).
-- `pnpm -C packages/muya lint` / `pnpm -C packages/muya lint:fix` — ESLint over `src test` (antfu config; rules below).
-- `pnpm -C packages/muya lint:types` — `tsc --noEmit`.
-- `pnpm -C packages/muya lint:css` — Stylelint over `src/**/*.css`.
-- `pnpm -C packages/muya check-circular` — `madge --circular src/index.ts`. CI enforces this.
-- `pnpm -C packages/muya/e2e e2e` — Playwright E2E (chromium/firefox/webkit). `e2e:install` is a one-time browser install. CI (`muya-e2e.yml`) runs Chromium only; Firefox + WebKit are configured in `playwright.config.ts` and runnable locally, but excluded from the CI matrix until the engine-independent rewrites in BACKLOG Phase 3 land (triple-click selection, search-replace mutation timing).
+- `bun run --cwd packages/muya/examples dev:demo` — start the examples Vite dev server.
+- `bun run --cwd packages/muya build` — `tsc && vite build`, emits `lib/{es,umd,cjs}` and `lib/types`.
+- `bun run --cwd packages/muya test` / `bun run --cwd packages/muya coverage` — Vitest unit tests (co-located under `src/**/__tests__/`). Single file: `bun run --cwd packages/muya vitest run path/to/file.test.ts`.
+- `bun run --cwd packages/muya test:spec` — CommonMark 0.31 + GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. `test:spec:commonmark` / `test:spec:gfm` scope to one suite. Pass/fail counts are locked by `test/spec/expected-failures.json`: any listed example that starts passing fails the suite (remove it from the list); any unlisted example that starts failing fails the suite. Compliance can only go up. Baseline lives in `test/spec/conformance.md` (CommonMark 87.7% / GFM 86.3% at PR-6a).
+- `bun run --cwd packages/muya lint` / `bun run --cwd packages/muya lint:fix` — ESLint over `src test` (antfu config; rules below).
+- `bun run --cwd packages/muya lint:types` — `tsc --noEmit`.
+- `bun run --cwd packages/muya lint:css` — Stylelint over `src/**/*.css`.
+- `bun run --cwd packages/muya check-circular` — `madge --circular src/index.ts`. CI enforces this.
+- `bun run --cwd packages/muya/e2e e2e` — Playwright E2E (chromium/firefox/webkit). `e2e:install` is a one-time browser install. CI (`muya-e2e.yml`) runs Chromium only; Firefox + WebKit are configured in `playwright.config.ts` and runnable locally, but excluded from the CI matrix until the engine-independent rewrites in BACKLOG Phase 3 land (triple-click selection, search-replace mutation timing).
 
 Engines: Node ≥20.19 (matches marktext root). Build target is `chrome70`.
 
@@ -103,7 +103,7 @@ through `muya.setOptions({...})`.
     - Private class members **must** be prefixed with `_` (e.g. `_uiPlugins`, `_activeContentBlock`).
     - Style: 4-space indent, semicolons required, React rules disabled, Markdown linting disabled.
     - Bans `value as unknown as X` double-casts outside audited boundary helpers — use type guards or named helpers instead.
-- **Madge** circular-dep check (`pnpm -C packages/muya check-circular`) runs in CI — adding a circular import will fail the build.
+- **Madge** circular-dep check (`bun run --cwd packages/muya check-circular`) runs in CI — adding a circular import will fail the build.
 - Test files (`*.test.ts`, `*.spec.ts`) and `vite.config.ts` are excluded from the strict TS lint rules above.
 
 Upstream muya had Conventional Commits + husky + lint-staged + release-it wired up. Those are **not** migrated into marktext — marktext does not use husky/commitlint, and `@muyajs/core` is not published from this repo. Commit style follows marktext's root contributing guide.

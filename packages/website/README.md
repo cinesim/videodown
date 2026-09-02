@@ -20,13 +20,13 @@ The official website for [MarkText](https://github.com/marktext/marktext) - A si
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js**: >= 16.0.0 (recommended: LTS version)
-- **pnpm**: >= 8.0.0 (recommended package manager)
+- **Node.js**: >= 20.19.0
+- **Bun**: >= 1.3
 
-To install pnpm globally:
+To install Bun:
 
 ```bash
-npm install -g pnpm
+curl -fsSL https://bun.com/install | bash
 ```
 
 ## 🚀 Getting Started
@@ -43,7 +43,7 @@ cd website
 2. Install dependencies:
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### Development
@@ -51,27 +51,27 @@ pnpm install
 Start the development server with hot-reload:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
-The application will be available at `http://localhost:5173` (or the next available port).
+The application will be available at `http://localhost:3000`.
 
 ### Building for Production
 
 Build the application for production:
 
 ```bash
-pnpm build
+bun run build
 ```
 
-The optimized files will be generated in the `build/` directory.
+The optimized files will be generated in the `.next/` directory.
 
 ### Preview Production Build
 
 Preview the production build locally:
 
 ```bash
-pnpm preview
+bun run start
 ```
 
 ### Code Quality
@@ -79,13 +79,13 @@ pnpm preview
 Run TypeScript type checking:
 
 ```bash
-pnpm type-check
+bun run type-check
 ```
 
 Run ESLint to check code quality:
 
 ```bash
-pnpm lint
+bun run lint
 ```
 
 ## 🚀 Deployment
@@ -115,8 +115,8 @@ You can also trigger the deployment manually:
 To preview the production build locally before deploying:
 
 ```bash
-pnpm build
-pnpm preview
+bun run build
+bun run start
 ```
 
 ## 📁 Project Structure

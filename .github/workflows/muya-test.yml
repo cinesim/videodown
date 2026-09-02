@@ -9,7 +9,7 @@ on:
       - 'packages/muya/package.json'
       - 'packages/muya/vite.config.ts'
       - 'packages/muya/tsconfig.json'
-      - 'pnpm-lock.yaml'
+      - 'bun.lock'
       - '.github/workflows/muya-test.yml'
 
 concurrency:
@@ -24,4 +24,4 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Run muya unit tests
-        run: pnpm -C packages/muya test
+        run: bun run --cwd packages/muya test

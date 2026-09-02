@@ -76,7 +76,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Setup pnpm + Node + dependencies
+      - name: Setup Bun + Node + dependencies
         uses: ./.github/actions/setup
         with:
           node-version: '24.14.1'
@@ -102,15 +102,14 @@ jobs:
       # Run the full postinstall: Electron binary download, patch-package,
       # electron-rebuild, and minify-locales.
       - name: Run postinstall
-        run: pnpm tsx scripts/postinstall.ts
+        run: bun run scripts/postinstall.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          npm_config_user_agent: 'pnpm'
           USE_ELECTRON_CLANG: ${{ matrix.platform == 'linux' && '0' || '' }}
 
       - name: build-linux
         if: matrix.platform == 'linux'
-        run: pnpm run build:linux
+        run: bun run build:linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -121,13 +120,13 @@ jobs:
       # actually restrict the build to a single arch.
       - name: build-mac
         if: matrix.platform == 'macos'
-        run: pnpm run build:mac:${{ matrix.arch }}
+        run: bun run build:mac:${{ matrix.arch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: build-win
         if: matrix.platform == 'windows'
-        run: pnpm run build:win:${{ matrix.arch }}
+        run: bun run build:win:${{ matrix.arch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -30,38 +30,38 @@ The host page is intentionally decoupled from `examples/` — that folder is und
 From the repo root:
 
 ```sh
-pnpm install                    # one-time, picks up @playwright/test
-pnpm e2e                        # full matrix — Chromium + Firefox + WebKit
-pnpm e2e:ui                     # Playwright UI mode (recommended for debugging)
-pnpm e2e:headed                 # headed Chrome with normal page UI
+bun install                                      # one-time
+bun run --cwd packages/muya/e2e e2e             # Chromium + Firefox + WebKit
+bun run --cwd packages/muya/e2e e2e:ui          # Playwright UI mode
+bun run --cwd packages/muya/e2e e2e:headed      # headed browser UI
 ```
 
 Targeted runs (Phase 2 added the cross-browser matrix):
 
 ```sh
-pnpm --filter muya-e2e e2e:chromium   # Chromium only (system Chrome locally)
-pnpm --filter muya-e2e e2e:firefox    # Firefox only (bundled binary)
-pnpm --filter muya-e2e e2e:webkit     # WebKit only (bundled binary)
+bun run --cwd packages/muya/e2e e2e:chromium   # Chromium only (system Chrome locally)
+bun run --cwd packages/muya/e2e e2e:firefox    # Firefox only (bundled binary)
+bun run --cwd packages/muya/e2e e2e:webkit     # WebKit only (bundled binary)
 ```
 
 On CI (`CI=1`), Playwright uses the bundled Chromium / Firefox / WebKit downloaded by the `playwright install --with-deps chromium firefox webkit` step in `ci-e2e.yml`. Locally, the Chromium project falls back to the OS-installed Chrome so you don't need the 170 MB Chromium-for-Testing download; Firefox and WebKit have no system equivalent, so you must download them once:
 
 ```sh
-pnpm --filter muya-e2e exec playwright install firefox webkit
+bun run --cwd packages/muya/e2e playwright install firefox webkit
 # or, to install all three at once:
-pnpm e2e:install
+bun run --cwd packages/muya/e2e e2e:install
 ```
 
 To force bundled Chromium locally:
 
 ```sh
-PLAYWRIGHT_USE_BUNDLED_CHROMIUM=1 pnpm e2e
+PLAYWRIGHT_USE_BUNDLED_CHROMIUM=1 bun run --cwd packages/muya/e2e e2e
 ```
 
 Inspect failures:
 
 ```sh
-pnpm --filter muya-e2e exec playwright show-report   # HTML report from the latest run
+bun run --cwd packages/muya/e2e playwright show-report   # HTML report from the latest run
 ```
 
 ## Conventions

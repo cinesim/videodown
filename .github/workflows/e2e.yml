@@ -31,14 +31,13 @@ jobs:
       # Run the full postinstall: Electron binary download, patch-package,
       # electron-rebuild, and minify-locales.
       - name: Run postinstall
-        run: pnpm tsx scripts/postinstall.ts
+        run: bun run scripts/postinstall.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          npm_config_user_agent: 'pnpm'
           USE_ELECTRON_CLANG: '0'
 
       - name: Build app
-        run: pnpm build
+        run: bun run build
 
       - name: Run E2E Tests
-        run: xvfb-run --auto-servernum pnpm test:e2e
+        run: xvfb-run --auto-servernum bun run test:e2e

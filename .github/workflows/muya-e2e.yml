@@ -16,7 +16,7 @@ on:
       - 'packages/muya/e2e/**'
       - 'packages/muya/examples/**'
       - 'packages/muya/package.json'
-      - 'pnpm-lock.yaml'
+      - 'bun.lock'
       - '.github/workflows/muya-e2e.yml'
 
 concurrency:
@@ -36,10 +36,10 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Install Playwright browser (${{ matrix.project }})
-        run: pnpm -C packages/muya/e2e exec playwright install --with-deps ${{ matrix.project }}
+        run: bun run --cwd packages/muya/e2e playwright install --with-deps ${{ matrix.project }}
 
       - name: Run Playwright (${{ matrix.project }})
-        run: pnpm -C packages/muya/e2e exec playwright test --project=${{ matrix.project }}
+        run: bun run --cwd packages/muya/e2e playwright test --project=${{ matrix.project }}
 
       - name: Upload report on failure
         if: failure()

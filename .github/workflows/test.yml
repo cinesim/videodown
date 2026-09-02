@@ -20,4 +20,4 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Run Unit Tests
-        run: pnpm test
+        run: bun run test

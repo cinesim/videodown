@@ -319,7 +319,7 @@ def fib(n):
 Fenced Bash:
 
 \`\`\`bash
-pnpm install && pnpm dev
+bun install && bun run dev
 \`\`\`
 
 Fenced JSON:

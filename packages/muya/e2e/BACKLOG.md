@@ -39,7 +39,7 @@ Unlocks Firefox + WebKit, and the input/drag flows that don't survive cross-engi
 ### Cross-browser
 
 - [x] Uncomment `firefox` + `webkit` projects in `playwright.config.ts`.
-- [x] Drop the `--project=chromium` filter from `pnpm e2e`; add `pnpm e2e:firefox` / `pnpm e2e:webkit` aliases for targeted runs.
+- [x] Drop the `--project=chromium` filter from `bun run e2e`; add `bun run e2e:firefox` / `bun run e2e:webkit` aliases for targeted runs.
 - [x] `ci-e2e.yml`: install all three browsers (`playwright install --with-deps`), bump runner concurrency.
 
 ### IME composition

@@ -7,7 +7,7 @@ on:
       - 'packages/muya/src/**'
       - 'packages/muya/.madgerc'
       - 'packages/muya/package.json'
-      - 'pnpm-lock.yaml'
+      - 'bun.lock'
       - '.github/workflows/muya-circular.yml'
 
 concurrency:
@@ -22,4 +22,4 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Madge circular-dep check
-        run: pnpm -C packages/muya check-circular
+        run: bun run --cwd packages/muya check-circular

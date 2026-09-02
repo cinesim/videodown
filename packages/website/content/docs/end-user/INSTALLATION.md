@@ -62,8 +62,8 @@ If you'd rather build from source — for example to track `develop`, to run on 
 ```sh
 git clone https://github.com/marktext/marktext.git
 cd marktext
-pnpm install
-pnpm run build
+bun install
+bun run build
 ```
 
 Output installers land in the repository's `dist/` folder.

@@ -8,9 +8,9 @@
 //   pass.
 //
 // Used by:
-//   pnpm --filter @muyajs/core test:spec               (runs both spec files)
-//   pnpm --filter @muyajs/core test:spec:commonmark    (runs only CommonMark)
-//   pnpm --filter @muyajs/core test:spec:gfm           (runs only GFM)
+//   bun run --cwd packages/muya test:spec               (runs both spec files)
+//   bun run --cwd packages/muya test:spec:commonmark    (runs only CommonMark)
+//   bun run --cwd packages/muya test:spec:gfm           (runs only GFM)
 
 import { defineConfig } from 'vitest/config';
 

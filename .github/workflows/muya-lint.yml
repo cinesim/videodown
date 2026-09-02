@@ -7,7 +7,7 @@ on:
       - 'packages/muya/**'
       - '!packages/muya/examples/**'
       - '!packages/muya/e2e/**'
-      - 'pnpm-lock.yaml'
+      - 'bun.lock'
       - '.github/workflows/muya-lint.yml'
 
 concurrency:
@@ -22,7 +22,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Run ESLint (muya)
-        run: pnpm -C packages/muya lint
+        run: bun run --cwd packages/muya lint
 
       - name: Run TypeScript typecheck (muya)
-        run: pnpm -C packages/muya lint:types
+        run: bun run --cwd packages/muya lint:types

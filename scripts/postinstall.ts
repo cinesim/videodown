@@ -5,20 +5,18 @@
  * Cross-platform postinstall: patch native-keymap for C++20, download Electron,
  * rebuild all native modules for Electron's ABI, generate locale files.
  *
- * native-keymap is listed as optionalDependency so pnpm ignores its auto-gyp
- * compile failure on Node v24+. This script restores the source, patches and
- * rebuilds it correctly via @electron/rebuild.
+ * native-keymap is listed as optionalDependency so its auto-gyp compile failure
+ * on Node v24+ does not abort installation. This script restores the source,
+ * patches and rebuilds it correctly via @electron/rebuild.
  *
  * Step order matters: native-keymap source must be restored before downloading
- * Electron, because the inner `pnpm add` can disturb devDependency state.
+ * Electron, because the inner package install can disturb devDependency state.
  *
  * Monorepo layout: the Electron desktop app lives in packages/desktop with
- * its own node_modules (workspace-local deps are not hoisted to the root —
- * `shamefully-hoist=true` only flattens transitive deps). All Electron-related
- * lookups (binary, install.js, native-keymap, electron-rebuild, patch-package)
- * therefore resolve under packages/desktop/node_modules. patch-package and
- * electron-rebuild also run with cwd=packages/desktop so that `patches/` and
- * the local package.json are picked up correctly.
+ * Bun may hoist workspace dependencies to the repository root. Package paths
+ * are therefore resolved from the desktop workspace instead of assuming a
+ * particular node_modules layout. patch-package and electron-rebuild run with
+ * cwd=packages/desktop so that `patches/` and the local package.json are used.
  */
 
 const { execSync } = require('child_process')
@@ -33,33 +31,33 @@ function run(cmd, opts = {}) {
   execSync(cmd, { stdio: 'inherit', cwd, env: { ...process.env, ...env } })
 }
 
-// Detect which package manager invoked this postinstall so commands work
-// regardless of whether the caller is pnpm (primary) or npm (fallback).
-const userAgent = process.env.npm_config_user_agent || ''
-const isPnpm = userAgent.startsWith('pnpm')
-// patch-package and electron-rebuild are locally installed; call their
-// node_modules/.bin entries directly (hoisted by shamefully-hoist=true).
-const ext = process.platform === 'win32' ? '.cmd' : ''
-const patchPackageBin = path.join(desktopRoot, 'node_modules', '.bin', `patch-package${ext}`)
-const electronRebuildBin = path.join(desktopRoot, 'node_modules', '.bin', `electron-rebuild${ext}`)
+function resolveFromDesktop(request) {
+  return require.resolve(request, { paths: [desktopRoot] })
+}
 
 // ── 1. Ensure native-keymap source is present (pm removes it on optional failure) ──
-const nativeKeymapDir = path.join(desktopRoot, 'node_modules', 'native-keymap')
-if (!fs.existsSync(nativeKeymapDir)) {
+let nativeKeymapDir = ''
+try {
+  nativeKeymapDir = path.dirname(resolveFromDesktop('native-keymap/package.json'))
+} catch {
+  // Restored below.
+}
+
+if (!nativeKeymapDir) {
   console.log('Installing native-keymap source (skipping compilation)...')
-  // native-keymap is already in marktext's optionalDependencies; the add
-  // re-installs without changing the version range.
-  if (isPnpm) {
-    run('pnpm --filter marktext add native-keymap --ignore-scripts')
-  } else {
-    run('npm install native-keymap --ignore-scripts --no-save', { cwd: desktopRoot })
-  }
+  run('bun install --frozen-lockfile --ignore-scripts --filter marktext')
+  nativeKeymapDir = path.dirname(resolveFromDesktop('native-keymap/package.json'))
 }
 
 // ── 2. Download + extract Electron binary ────────────────────────────────────
-const electronInstall = path.join(desktopRoot, 'node_modules', 'electron', 'install.js')
+let electronInstall = ''
+try {
+  electronInstall = resolveFromDesktop('electron/install.js')
+} catch {
+  // Reported below.
+}
 
-if (!fs.existsSync(electronInstall)) {
+if (!electronInstall || !fs.existsSync(electronInstall)) {
   console.error('electron/install.js not found — skipping Electron download')
 } else {
   const os = require('os')
@@ -72,15 +70,16 @@ if (!fs.existsSync(electronInstall)) {
         ? 'Electron.app/Contents/MacOS/Electron'
         : 'electron'
 
-  const pathTxt = path.join(desktopRoot, 'node_modules', 'electron', 'path.txt')
-  const distDir = path.join(desktopRoot, 'node_modules', 'electron', 'dist')
+  const electronRoot = path.dirname(electronInstall)
+  const pathTxt = path.join(electronRoot, 'path.txt')
+  const distDir = path.join(electronRoot, 'dist')
 
   // On macOS we also require Frameworks/ — yauzl v2.10.0 hangs on Node v26+ and
   // silently produces an incomplete dist/ without Frameworks.
   const isComplete = () => {
     if (!fs.existsSync(pathTxt)) return false
     const rel = fs.readFileSync(pathTxt, 'utf8').trim()
-    if (!fs.existsSync(path.join(desktopRoot, 'node_modules', 'electron', rel))) return false
+    if (!fs.existsSync(path.join(electronRoot, rel))) return false
     if (plat === 'darwin' || plat === 'mas') {
       return fs.existsSync(path.join(distDir, 'Electron.app', 'Contents', 'Frameworks'))
     }
@@ -108,7 +107,7 @@ if (!fs.existsSync(electronInstall)) {
       (plat === 'darwin' || plat === 'mas') &&
       !fs.existsSync(path.join(distDir, 'Electron.app', 'Contents', 'Frameworks'))
     ) {
-      const { version } = require(path.join(desktopRoot, 'node_modules', 'electron', 'package.json'))
+      const { version } = require(path.join(electronRoot, 'package.json'))
       const arch = process.env.npm_config_arch || os.arch()
       const zipName = `electron-v${version}-darwin-${arch === 'arm64' ? 'arm64' : 'x64'}.zip`
       const cacheRoot =
@@ -149,12 +148,12 @@ if (!fs.existsSync(electronInstall)) {
 
 // ── 3. Apply C++20 patch to native-keymap (patches/ lives in packages/desktop) ──
 console.log('Applying patches...')
-run(`"${patchPackageBin}"`, { cwd: desktopRoot })
+run('bun run patch-package', { cwd: desktopRoot })
 
 // ── 4. Rebuild native modules for Electron ABI ──────────────────────────────
 console.log('Rebuilding native modules for Electron...')
-run(`"${electronRebuildBin}" -f`, { cwd: desktopRoot })
+run('bun run electron-rebuild -f', { cwd: desktopRoot })
 
 // ── 5. Generate minified locale files ───────────────────────────────────────
 console.log('Minifying locales...')
-run('pnpm tsx scripts/minify-locales.ts')
+run('bun run scripts/minify-locales.ts')

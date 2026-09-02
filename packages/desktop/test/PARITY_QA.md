@@ -6,7 +6,7 @@ clipboard with bitmap data, a real drag-and-drop gesture, or the native
 screenshot tool. They are tracked here as precise manual checklists instead of
 automated tests.
 
-Run these on a packaged or `pnpm run dev` build. Each entry maps to a row in
+Run these on a packaged or `bun run dev` build. Each entry maps to a row in
 [`PARITY_SCOREBOARD.md`](./PARITY_SCOREBOARD.md). When a fix lands, perform the
 steps; the entry passes when the **Expected (after fix)** result is observed.
 

@@ -12,8 +12,9 @@ const buildLongDoc = (): string => {
   const parts: string[] = []
   for (let i = 1; i <= HEADING_COUNT; i++) {
     parts.push(`# Heading Number ${i}`)
-    for (let p = 0; p < 6; p++)
+    for (let p = 0; p < 6; p++) {
       parts.push(`Filler paragraph ${p} under heading ${i}. Lorem ipsum dolor.`)
+    }
   }
   return parts.join('\n\n') + '\n'
 }

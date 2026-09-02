@@ -9,7 +9,7 @@ and a few sibling globals (`window.fileUtils`, `window.path`,
 
 Channel names are typed by the contract in `src/shared/types/ipc.ts` —
 wrong channel, wrong arg arity, or wrong return shape all fail at
-`pnpm typecheck`. See [TYPESCRIPT.md](TYPESCRIPT.md#ipc-contract) for the
+`bun run typecheck`. See [TYPESCRIPT.md](TYPESCRIPT.md#ipc-contract) for the
 TypeScript-side details.
 
 ## Channel naming
@@ -95,5 +95,5 @@ window.webContents.send('mt::open-new-tab', tabPayload, options, selected)
    if it deserves a dedicated facade, expose a method on one of the
    typed bridges in `src/preload/index.ts`.
 
-After step 1, `pnpm typecheck` flags every existing call site that
+After step 1, `bun run typecheck` flags every existing call site that
 doesn't match the new shape — use that as your migration checklist.

@@ -33,7 +33,7 @@ export default defineConfig({
         // Phase 2: cross-browser matrix. Firefox + WebKit use the bundled
         // Playwright builds (no system-channel fallback — Firefox isn't
         // commonly preinstalled, and WebKit has no system equivalent on
-        // macOS). Install once via `pnpm --filter muya-e2e exec playwright
+        // macOS). Install once via `bun run --cwd packages/muya/e2e playwright
         // install firefox webkit` (CI does this automatically through the
         // `--with-deps` step in ci-e2e.yml).
         //
@@ -76,7 +76,7 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'pnpm exec vite --port 5174 --strictPort',
+        command: 'bunx --no-install vite --port 5174 --strictPort',
         url: 'http://localhost:5174',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

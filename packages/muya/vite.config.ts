@@ -36,7 +36,7 @@ export default defineConfig({
         // live under `test/spec/` and are run via the `test:spec` scripts,
         // which use a dedicated `--config vitest.spec.config.ts` whose
         // `test.include` glob targets `test/spec/**/*.{spec,test}.ts`.
-        // Keeping spec tests out of the default `pnpm test` keeps the
+        // Keeping spec tests out of the default `bun run test` keeps the
         // inner-loop fast and reports compliance pass-rate as its own
         // surface.
         include: ['src/**/__tests__/**/*.{spec,test}.ts'],
