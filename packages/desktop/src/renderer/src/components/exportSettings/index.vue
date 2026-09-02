@@ -148,7 +148,7 @@
           </div>
           <cur-select
             :description="t('exportSettings.theme.theme')"
-            more="https://marktext.me/docs/export-themes"
+            more="https://github.com/cinesim/videodown/blob/main/docs/end-user/EXPORT_THEMES.md"
             :value="theme"
             :options="themeList"
             :on-change="(value: unknown) => onSelectChange('theme', value)"
@@ -496,11 +496,11 @@ const onSelectChange = (key: string, value: unknown) => {
 }
 
 const loadThemesFromDisk = async () => {
-  // marktext.paths is attached to `window` at runtime by bootstrap.ts but
+  // videodown.paths is attached to `window` at runtime by bootstrap.ts but
   // isn't part of the typed contextBridge surface. Cast through `unknown`.
-  const marktext = (window as unknown as { marktext?: { paths?: { userDataPath?: string } } })
-    .marktext
-  const userDataPath = marktext?.paths?.userDataPath
+  const videodown = (window as unknown as { videodown?: { paths?: { userDataPath?: string } } })
+    .videodown
+  const userDataPath = videodown?.paths?.userDataPath
   if (!userDataPath) return
   const themeDir = window.path.join(userDataPath, 'themes/export')
 

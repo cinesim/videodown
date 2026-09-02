@@ -45,7 +45,7 @@ try {
 
 if (!nativeKeymapDir) {
   console.log('Installing native-keymap source (skipping compilation)...')
-  run('bun install --frozen-lockfile --ignore-scripts --filter marktext')
+  run('bun install --frozen-lockfile --ignore-scripts --filter videodown')
   nativeKeymapDir = path.dirname(resolveFromDesktop('native-keymap/package.json'))
 }
 

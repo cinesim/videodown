@@ -74,7 +74,7 @@ describe('parity PG8: exported headings carry slug ids (live TOC anchors)', () =
         expect(out).toMatch(/<h2[^>]*\sid="[^"]+"/);
     });
 
-    it('PG8: the heading id matches the marktext slug of the heading text', async () => {
+    it('PG8: the heading id matches the videodown slug of the heading text', async () => {
         const out = await generateExport(SAMPLE);
 
         // The legacy export + getHtmlToc both slugged "Getting Started" to

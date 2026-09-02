@@ -90,7 +90,7 @@ export default function (keybindings: Keybindings): MenuItemConstructorOptions {
     submenu
   }
 
-  if (global.MARKTEXT_DEBUG) {
+  if (global.VIDEODOWN_DEBUG) {
     submenu.push({
       type: 'separator'
     })

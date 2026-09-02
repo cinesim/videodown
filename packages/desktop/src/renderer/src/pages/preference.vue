@@ -43,7 +43,7 @@ watch(theme, (newValue, oldValue) => {
 // Lifecycle
 onMounted(() => {
   nextTick(() => {
-    const state = window.marktext?.initialState ?? DEFAULT_STYLE
+    const state = window.videodown?.initialState ?? DEFAULT_STYLE
     addThemeStyle(state.theme ?? DEFAULT_STYLE.theme)
 
     preferencesStore.ASK_FOR_USER_PREFERENCE()

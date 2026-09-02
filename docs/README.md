@@ -1,8 +1,8 @@
 # User Documentation
 
-Welcome to the end-user documentation of MarkText.
+Welcome to the end-user documentation of videodown.
 
-![](assets/marktext-interface-2.png)
+![](assets/videodown-interface-2.png)
 
 **Quick start:**
 

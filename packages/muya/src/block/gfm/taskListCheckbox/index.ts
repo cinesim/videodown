@@ -180,7 +180,7 @@ class TaskListCheckbox extends TreeNode {
 
         this._applyChecked(checked, source);
 
-        // marktext `clickCtrl.js#listItemCheckBoxClick` cascaded a user toggle
+        // videodown `clickCtrl.js#listItemCheckBoxClick` cascaded a user toggle
         // through `muya.options.autoCheck`: checking/unchecking an item set the
         // same state on every descendant task item, then re-derived each
         // ancestor (checked iff all its siblings are checked). `source === 'api'`

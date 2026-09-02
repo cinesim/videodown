@@ -1,13 +1,13 @@
 # TypeScript
 
-MarkText is a TypeScript project. Every file under `src/` (except `src/muya/`),
+videodown is a TypeScript project. Every file under `src/` (except `src/muya/`),
 the build scripts under `scripts/`, the test specs under `test/`, the
 build config (`electron.vite.config.ts`), and the test configs
 (`vitest.config.ts`, `test/e2e/playwright.config.ts`) are TS.
 
 The only JavaScript that ships in the source tree is `src/muya/` — the
 legacy editor engine, which will be replaced by the upstream TS muya at
-https://github.com/marktext/muya. The migration's `src/types/muya.d.ts`
+https://github.com/cinesim/videodown. The migration's `src/types/muya.d.ts`
 ambient declaration is the bridge; consumers always go through that file,
 never the underlying `src/muya/lib/*.js`.
 

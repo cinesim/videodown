@@ -2,15 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# MarkText
+# videodown
 
 ## Project Overview
 
-MarkText is a WYSIWYG markdown editor built on Electron + Vue 3. It supports CommonMark, GitHub Flavored Markdown, math (KaTeX), Mermaid diagrams, PlantUML, and multiple editing modes (focus, typewriter, source-code).
+videodown is a WYSIWYG markdown editor built on Electron + Vue 3. It supports CommonMark, GitHub Flavored Markdown, math (KaTeX), Mermaid diagrams, PlantUML, and multiple editing modes (focus, typewriter, source-code).
 
 - **Version**: see `package.json`
 - **License**: MIT
-- **Repository**: https://github.com/marktext/marktext
+- **Repository**: https://github.com/cinesim/videodown
 
 ## Tech Stack
 
@@ -39,7 +39,7 @@ root holds only shared tooling and CI-facing scripts.
 <repo-root>/
   package.json              Workspace orchestrator — every CI-facing script
                             proxies to packages/desktop via `bun run --filter
-                            marktext ...`. CI invocations are unchanged.
+                            videodown ...`. CI invocations are unchanged.
   bun.lock                  Single lockfile, shared across all packages.
   .oxlintrc.json            Root Oxlint config. Package-local configs cover
                             muya and the website.
@@ -55,10 +55,10 @@ root holds only shared tooling and CI-facing scripts.
                             `directories.output: ../../dist` so CI artifact
                             globs `dist/*` still apply).
   packages/
-    desktop/                The Electron app (name: "marktext").
+    desktop/                The Electron app (name: "videodown").
       package.json          Holds all Electron / Vue / build-time deps and
                             the dev/build/test/typecheck scripts. Depends on
-                            @marktext/muyajs via workspace:*.
+                            @videodown/muyajs via workspace:*.
       electron.vite.config.ts
       electron-builder.yml  directories.output points at ../../dist.
       tsconfig.json / tsconfig.base.json
@@ -95,7 +95,7 @@ root holds only shared tooling and CI-facing scripts.
                             IPC contract (`shared/types/ipc.ts`).
         types/              Ambient .d.ts declarations.
     muyajs/                 Legacy markdown editor engine
-                            (name: "@marktext/muyajs"). Primarily JS + DOM,
+                            (name: "@videodown/muyajs"). Primarily JS + DOM,
                             avoids Electron APIs. Exception:
                             packages/muyajs/lib/parser/render/plantuml.js
                             imports Node's `zlib`. Being retired: the
@@ -113,7 +113,7 @@ root holds only shared tooling and CI-facing scripts.
       themes/               Editor themes (Prism + fonts).
     muya/                   TypeScript rewrite of muya
                             (name: "@muyajs/core"; upstream:
-                            https://github.com/marktext/muya). Built on
+                            https://github.com/cinesim/videodown). Built on
                             ot-json1 + ot-text-unicode + snabbdom + marked@16
                             + rxjs. Self-contained: own Oxlint/Oxfmt configs,
                             own stylelint, own madge, own vitest
@@ -137,7 +137,7 @@ The root has no `src/`, `test/`, `static/`, or `build/` of its own anymore — t
 ## Development Workflow
 
 All commands run from the repo root. The root `package.json` proxies every
-desktop-specific script to `packages/desktop` via `bun run --filter marktext`,
+desktop-specific script to `packages/desktop` via `bun run --filter videodown`,
 so the names and behavior are unchanged from the pre-monorepo layout.
 
 ```bash
@@ -219,7 +219,7 @@ Follow `.github/COMMENTING-GUIDELINES.md` for every comment you write. The core 
 
 All Electron processes live in `packages/desktop/`. Muya is a separate
 workspace package that the renderer (and tests) consume via the `muya`
-alias / `@marktext/muyajs` workspace dep.
+alias / `@videodown/muyajs` workspace dep.
 
 ```
 main process  (packages/desktop/src/main/)
@@ -240,12 +240,12 @@ renderer  (packages/desktop/src/renderer/)
   ├── Hosts both Muya (WYSIWYG) and CodeMirror (source-code mode)
   └── Compiled to ES Modules only
 
-Muya  (packages/muyajs/)            ← workspace package @marktext/muyajs
+Muya  (packages/muyajs/)            ← workspace package @videodown/muyajs
   ├── Self-contained editor backend
   ├── Primarily avoids Electron APIs; uses Node's zlib for PlantUML encoding
   ├── Handles markdown parsing, block data structure, document export, rendering
   └── packages/muya/ (@muyajs/core, the TS rewrite from
-      https://github.com/marktext/muya) has landed and is now the engine
+      https://github.com/cinesim/videodown) has landed and is now the engine
       the desktop renderer consumes; muyajs is being retired.
 ```
 
@@ -279,7 +279,7 @@ See `docs/dev/IPC.md` for conventions and examples.
   - `@` → `packages/desktop/src/renderer/src`
   - `common` → `packages/desktop/src/common`
   - `@shared` → `packages/desktop/src/shared`
-  - `muya` → `../muyajs` (i.e. `packages/muyajs`). Renderer-side imports therefore look like `muya/lib/...` (the alias) — the workspace dep `@marktext/muyajs` is declared in `packages/desktop/package.json` so module resolution stays inside the workspace.
+  - `muya` → `../muyajs` (i.e. `packages/muyajs`). Renderer-side imports therefore look like `muya/lib/...` (the alias) — the workspace dep `@videodown/muyajs` is declared in `packages/desktop/package.json` so module resolution stays inside the workspace.
 - **Workspace deps**: muya's own npm runtime deps (`github-markdown-css`, `katex`, `dompurify`, `snabbdom`, …) are declared in `packages/muyajs/package.json` so Node module resolution from `packages/muyajs/lib/*.js` finds them inside the workspace rather than walking out to a parent directory.
 - **Patches**: `patch-package` patches live at `packages/desktop/patches/`. The root `postinstall` calls patch-package with `cwd=packages/desktop` so the path resolves correctly.
 

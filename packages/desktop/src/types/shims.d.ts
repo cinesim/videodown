@@ -35,7 +35,7 @@ declare module 'minimatch' {
   export function minimatch(target: string, pattern: string, options?: unknown): boolean
 }
 
-declare module '@marktext/file-icons' {
+declare module '@videodown/file-icons' {
   interface FileIcon {
     getClass(colourMode?: number, asObject?: boolean): string
   }
@@ -55,9 +55,9 @@ declare namespace NodeJS {
   }
   interface Global {
     __static: string
-    MARKTEXT_DEBUG: boolean
-    MARKTEXT_DEBUG_VERBOSE: number
-    MARKTEXT_SAFE_MODE: boolean
+    VIDEODOWN_DEBUG: boolean
+    VIDEODOWN_DEBUG_VERBOSE: number
+    VIDEODOWN_SAFE_MODE: boolean
   }
 }
 
@@ -66,8 +66,8 @@ declare namespace NodeJS {
 // eslint-disable-next-line no-var
 declare var __static: string
 // eslint-disable-next-line no-var
-declare var MARKTEXT_DEBUG: boolean
+declare var VIDEODOWN_DEBUG: boolean
 // eslint-disable-next-line no-var
-declare var MARKTEXT_DEBUG_VERBOSE: number
+declare var VIDEODOWN_DEBUG_VERBOSE: number
 // eslint-disable-next-line no-var
-declare var MARKTEXT_SAFE_MODE: boolean
+declare var VIDEODOWN_SAFE_MODE: boolean

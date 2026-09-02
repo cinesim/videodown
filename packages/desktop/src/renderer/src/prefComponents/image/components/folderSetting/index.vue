@@ -22,7 +22,7 @@
       <template #head>
         <bool
           :description="t('preferences.image.folderSetting.preferRelative')"
-          more="https://marktext.me/docs/images"
+          more="https://github.com/cinesim/videodown/blob/main/docs/end-user/IMAGES.md"
           :bool="imagePreferRelativeDirectory"
           :on-change="(value) => onSelectChange('imagePreferRelativeDirectory', value)"
         />

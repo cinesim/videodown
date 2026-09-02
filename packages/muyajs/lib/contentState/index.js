@@ -15,7 +15,7 @@ import tableBlockCtrl from './tableBlockCtrl'
 import tableDragBarCtrl from './tableDragBarCtrl'
 import tableSelectCellsCtrl from './tableSelectCellsCtrl'
 import coreApi from './core'
-import marktextApi from './marktext'
+import videodownApi from './videodown'
 import History from './history'
 import arrowCtrl from './arrowCtrl'
 import pasteCtrl from './pasteCtrl'
@@ -40,7 +40,7 @@ import escapeCharactersMap, { escapeCharacters } from '../parser/escapeCharacter
 
 const prototypes = [
   coreApi,
-  marktextApi,
+  videodownApi,
   tabCtrl,
   enterCtrl,
   updateCtrl,
@@ -313,7 +313,7 @@ class ContentState {
   }
 
   /**
-   * A block in MarkText present a paragraph(block syntax in GFM) or a line in paragraph.
+   * A block in videodown present a paragraph(block syntax in GFM) or a line in paragraph.
    * a `span` block must in a `p block` or `pre block` and `p block`'s children must be `span` blocks.
    */
   createBlock(type = 'span', extras = {}) {

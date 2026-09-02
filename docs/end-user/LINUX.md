@@ -2,11 +2,11 @@
 
 ## AppImage
 
-[Download the AppImage](https://github.com/marktext/marktext/releases/latest) and type the following:
+[Download the AppImage](https://github.com/cinesim/videodown/releases/latest) and type the following:
 
-1. `chmod +x marktext-%version%-x86_64.AppImage`
-2. `./marktext-%version%-x86_64.AppImage`
-3. Now you can execute MarkText.
+1. `chmod +x videodown-%version%-x86_64.AppImage`
+2. `./videodown-%version%-x86_64.AppImage`
+3. Now you can execute videodown.
 
 ### Installation
 
@@ -14,13 +14,13 @@ You cannot really install an AppImage. It's a file which can run directly after 
 
 #### Desktop file creation
 
-See [example desktop file](https://github.com/marktext/marktext/blob/develop/resources/linux/marktext.desktop).
+See [example desktop file](https://github.com/cinesim/videodown/blob/main/resources/linux/videodown.desktop).
 
 ```bash
-$ curl -L https://raw.githubusercontent.com/marktext/marktext/develop/resources/linux/marktext.desktop -o $HOME/.local/share/applications/marktext.desktop
+$ curl -L https://raw.githubusercontent.com/cinesim/videodown/develop/resources/linux/videodown.desktop -o $HOME/.local/share/applications/videodown.desktop
 
-# Update the Exec in desktop file to your real marktext command. Specify Path if necessary.
-$ vim $HOME/.local/share/applications/marktext.desktop
+# Update the Exec in desktop file to your real videodown command. Specify Path if necessary.
+$ vim $HOME/.local/share/applications/videodown.desktop
 
 $ update-desktop-database $HOME/.local/share/applications/
 ```
@@ -33,36 +33,36 @@ You can integrate the AppImage into the system via [AppImageLauncher](https://gi
 
 1. Delete AppImage file.
 2. Delete your desktop file if exists.
-3. Delete your user settings: `~/.config/marktext`
+3. Delete your user settings: `~/.config/videodown`
 
 ### Custom launch script
 
-1. Save AppImage somewhere. Let's say `~/bin/marktext.AppImage`
-2. `chmod +x ~/bin/marktext.AppImage`
+1. Save AppImage somewhere. Let's say `~/bin/videodown.AppImage`
+2. `chmod +x ~/bin/videodown.AppImage`
 3. Create a launch script:
 
    ```sh
    #!/bin/bash
-   DESKTOPINTEGRATION=0 ~/bin/marktext.AppImage
+   DESKTOPINTEGRATION=0 ~/bin/videodown.AppImage
    ```
 
 ### Known issues
 
-- MarkText is always integrated into desktop environment after updating
+- videodown is always integrated into desktop environment after updating
 
 ## Binary
 
-You can download the latest `marktext-%version%.tar.gz` package from the [release page](https://github.com/marktext/marktext/releases/latest). You may need to install electron dependencies.
+You can download the latest `videodown-%version%.tar.gz` package from the [release page](https://github.com/cinesim/videodown/releases/latest). You may need to install electron dependencies.
 
 ## Arch User Repository
 
-MarkText is available on the AUR as `marktext-bin` and will automatically install the dependencies: `glibc`, `gtk3`, `nss`, `alsa-lib`, `libxss`, `cups`, `libxkbcommon`, `libxkbfile`, `mesa`, and `hicolor-icon-theme`.
+videodown is available on the AUR as `videodown-bin` and will automatically install the dependencies: `glibc`, `gtk3`, `nss`, `alsa-lib`, `libxss`, `cups`, `libxkbcommon`, `libxkbfile`, `mesa`, and `hicolor-icon-theme`.
 
-Install it via an AUR helper like `yay -S marktext-bin` or with
+Install it via an AUR helper like `yay -S videodown-bin` or with
 
 ```bash
-git clone https://aur.archlinux.org/marktext.git
-cd marktext-bin
+git clone https://aur.archlinux.org/videodown.git
+cd videodown-bin
 makepkg -si
 ```
 

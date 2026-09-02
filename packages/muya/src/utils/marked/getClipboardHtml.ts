@@ -25,7 +25,7 @@ export function getClipBoardHtml(src: string, options: ILexOption = {}) {
         walkTokens: walkTokens({ math, isGitlabCompatibilityEnabled }),
     });
 
-    // CJK-as-punctuation emphasis flanking (marktext/marktext#4307); keeps the
+    // CJK-as-punctuation emphasis flanking (videodown/videodown#4307); keeps the
     // clipboard HTML consistent with the static / export render path.
     marked.use(cjkEmStrongExtension());
 

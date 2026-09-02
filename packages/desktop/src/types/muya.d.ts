@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any --
  * Bridge to the legacy JavaScript muya/ tree. Every member is intentionally
  * `any` because the underlying src/muya/ source is .js and won't be re-typed
- * before the upstream TS muya (https://github.com/marktext/muya) replaces it.
+ * before the upstream TS muya (https://github.com/cinesim/videodown) replaces it.
  * Delete this file the day upstream lands; see docs/dev/TYPESCRIPT.md.
  */
 
@@ -74,7 +74,7 @@ declare module 'muya/lib/config' {
   export const MUYA_DEFAULT_OPTION: any
 }
 
-declare module 'muya/lib/marktext/spellchecker.js' {
+declare module 'muya/lib/videodown/spellchecker.js' {
   export function extractWord(...args: any[]): any
 }
 

@@ -1,6 +1,6 @@
 # Performance Testing
 
-- We mainly rely on Chrome's `Performance` tab to analyse and record the performance of MarkText
+- We mainly rely on Chrome's `Performance` tab to analyse and record the performance of videodown
 
 - Electron is split into 3 processes: `main`, `preload` and `renderer`. We will be focusing on `main` and `renderer` since these are the heaviest
 
@@ -10,7 +10,7 @@
 bun run perf:inspect-brk
 ```
 
-- This launches a **production build** of Marktext that has a break-point **before** the first line of Javascript is ran
+- This launches a **production build** of videodown that has a break-point **before** the first line of Javascript is ran
 
 - A debugger at port `5858` is also attached
 
@@ -26,7 +26,7 @@ bun run perf:inspect-brk
 
 - When Developers Tools first launches, you will notice the breakpoint that is set
 
-- Simply go to `Performance`, press `Record`, and wait for MarkText to launch fully, then Stop the recording
+- Simply go to `Performance`, press `Record`, and wait for videodown to launch fully, then Stop the recording
 
 ## 1.3 Alternative: `inspect`
 

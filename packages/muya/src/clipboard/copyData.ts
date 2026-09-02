@@ -390,7 +390,7 @@ export function writeClipboardData(clipboard: Clipboard, event: ClipboardEvent):
 
     // Mirror native copy behavior: leave the system clipboard untouched
     // when the selection has nothing to contribute, so a previous copy
-    // from another app isn't silently clobbered (marktext #3130).
+    // from another app isn't silently clobbered (videodown #3130).
     switch (copyType) {
         case CopyType.NORMAL: {
             if (text.length === 0) return;

@@ -302,7 +302,7 @@ class Watcher {
       .on('addDir', (pathname: string) => addDir(win, pathname, type))
       .on('unlinkDir', (pathname: string) => unlinkDir(win, pathname, type))
       .on('raw', (event: string, subpath: string, details: unknown) => {
-        if (globalThis.MARKTEXT_DEBUG_VERBOSE >= 3) {
+        if (globalThis.VIDEODOWN_DEBUG_VERBOSE >= 3) {
           console.log('watcher: ', event, subpath, details)
         }
 
@@ -414,7 +414,7 @@ class Watcher {
 
   /**
    * Check whether we should ignore the current event because the file may be
-   * changed from MarkText itself.
+   * changed from videodown itself.
    */
   async _shouldIgnoreEvent(
     winId: number,
@@ -442,7 +442,7 @@ class Watcher {
             try {
               const fileInfo = await fsPromises.stat(pathname)
               if (fileInfo.mtime.getTime() - start.getTime() < duration) {
-                if (globalThis.MARKTEXT_DEBUG_VERBOSE >= 3) {
+                if (globalThis.VIDEODOWN_DEBUG_VERBOSE >= 3) {
                   console.log(
                     `Ignoring file event after "stat": current="${currentTime.toISOString()}", start="${start.toISOString()}", file="${fileInfo.mtime.toISOString()}".`
                   )

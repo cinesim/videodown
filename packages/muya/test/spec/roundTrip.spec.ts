@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { MarkdownToState } from '../../src/state/markdownToState';
 import StateToMarkdown from '../../src/state/stateToMarkdown';
 
-// Backported from marktext `test/unit/specs/markdown-basic.spec.js`. Each
+// Backported from videodown `test/unit/specs/markdown-basic.spec.js`. Each
 // fixture is parsed to the new muya state tree and re-serialised; the
 // expectation is that the round trip is the identity (modulo a trailing
 // newline — the source files were saved with no trailing newline, but the
@@ -24,7 +24,7 @@ import StateToMarkdown from '../../src/state/stateToMarkdown';
 const fixturesDir = path.join(
     path.dirname(fileURLToPath(import.meta.url)),
     'fixtures',
-    'marktext-round-trip',
+    'videodown-round-trip',
 );
 
 interface IFixture {
@@ -81,13 +81,13 @@ function isStableUnderRoundTrip(markdown: string): boolean {
     return normalise(once) === normalise(twice);
 }
 
-describe('marktext markdown-basic round-trip', () => {
+describe('videodown markdown-basic round-trip', () => {
     it.each(fixtures)(`$label is stable under md → state → md`, ({ file }) => {
         const original = readFixture(file);
         // The strict assertion is that the round trip converges: a
         // second pass returns the same string the first pass produced.
         // Strict byte-for-byte equality against the original is too
-        // strict (and was already non-deterministic in marktext for
+        // strict (and was already non-deterministic in videodown for
         // most of these fixtures — list indentation differs from
         // ExportMarkdown's canonical choice).
         expect(isStableUnderRoundTrip(original)).toBe(true);

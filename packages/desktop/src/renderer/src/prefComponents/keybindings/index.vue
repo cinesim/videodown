@@ -127,7 +127,7 @@ onMounted(() => {
 
   // Show keyboard debugging tools which has been moved from CLI because we
   // need an active window on Windows.
-  showDebugTools.value = Boolean(window.marktext?.env?.debug)
+  showDebugTools.value = Boolean(window.videodown?.env?.debug)
 })
 
 onUnmounted(() => {
@@ -136,7 +136,7 @@ onUnmounted(() => {
 })
 
 const openKeybindingDocs = (): void => {
-  window.electron.shell.openExternal('https://marktext.me/docs/key-bindings')
+  window.electron.shell.openExternal('https://github.com/cinesim/videodown/tree/main/docs/end-user')
 }
 
 const saveKeybindings = (): void => {

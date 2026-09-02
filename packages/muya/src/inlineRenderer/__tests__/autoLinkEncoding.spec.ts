@@ -38,7 +38,7 @@ function bootMuya(markdown: string): MuyaType {
 
 describe('#3548 — autolink hrefs are not double percent-encoded', () => {
     it('keeps an already-encoded `%20` intact instead of turning it into `%2520`', () => {
-        const muya = bootMuya('<https://www.google.com/search?q=marktext%20foo%20bar>\n');
+        const muya = bootMuya('<https://www.google.com/search?q=videodown%20foo%20bar>\n');
         const anchor = muya.domNode.querySelector<HTMLAnchorElement>('a.mu-auto-link')!;
         const href = anchor.getAttribute('href')!;
         expect(href).toContain('%20');

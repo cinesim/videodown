@@ -16,7 +16,7 @@ declare module '*.woff2?inline' {
 declare module 'joplin-turndown-plugin-gfm';
 declare module 'prismjs/plugins/keep-markup/prism-keep-markup';
 declare module 'prismjs/dependencies';
-declare module '@marktext/file-icons';
+declare module '@videodown/file-icons';
 declare module 'snapsvg-cjs';
 
 declare module 'flowchart.js' {

@@ -1,7 +1,8 @@
 {
-  "name": "marktext",
+  "name": "videodown",
   "version": "0.20.0-dev",
-  "description": "MarkText",
+  "description": "videodown",
+  "license": "MIT",
   "main": "./out/main/index.js",
   "author": {
     "name": "Jocs",
@@ -25,10 +26,10 @@
       "url": "https://github.com/Tkaixiang"
     }
   ],
-  "homepage": "https://github.com/marktext/marktext",
+  "homepage": "https://github.com/cinesim/videodown",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marktext/marktext.git"
+    "url": "git+https://github.com/cinesim/videodown.git"
   },
   "scripts": {
     "minify-locales": "tsx ../../scripts/minify-locales.ts",
@@ -58,8 +59,8 @@
     "@intlify/core-base": "^11.4.6",
     "@element-plus/icons-vue": "^2.3.2",
     "@hfelix/electron-localshortcut": "^4.0.1",
-    "@marktext/file-icons": "^1.0.6",
-    "@marktext/muyajs": "workspace:*",
+    "@videodown/file-icons": "npm:@marktext/file-icons@^1.0.6",
+    "@videodown/muyajs": "workspace:*",
     "@muyajs/core": "workspace:*",
     "@popperjs/core": "^2.11.8",
     "@vscode/ripgrep": "^1.18.0",

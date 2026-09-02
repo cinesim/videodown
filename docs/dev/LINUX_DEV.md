@@ -59,7 +59,7 @@ bun install
 **Error message:**
 
 ```bash
-~/marktext/node_modules/electron/dist/electron: error while loading shared libraries:
+~/videodown/node_modules/electron/dist/electron: error while loading shared libraries:
 libglib-2.0.so.0: cannot open shared object file: No such file or directory
 ```
 

@@ -28,8 +28,8 @@ export default defineConfig({
       }
     },
     define: {
-      MARKTEXT_VERSION: JSON.stringify(packageJson.version),
-      MARKTEXT_VERSION_STRING: JSON.stringify(`v${packageJson.version}`)
+      VIDEODOWN_VERSION: JSON.stringify(packageJson.version),
+      VIDEODOWN_VERSION_STRING: JSON.stringify(`v${packageJson.version}`)
     },
     resolve: {
       alias: {

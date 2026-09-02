@@ -1,20 +1,20 @@
 # Build Instructions
 
-**Please see [this issue](https://github.com/jacobwhall/marktext/issues/2) for updates on our efforts to modernize this process!**
+**Please see [this issue](https://github.com/jacobwhall/videodown/issues/2) for updates on our efforts to modernize this process!**
 
 Clone the repository:
 
 ```
-git clone https://github.com/marktext/marktext.git
+git clone https://github.com/cinesim/videodown.git
 ```
 
 ## Container Setup
 
-The easiest way to build Marktext on Linux is from inside a container.
+The easiest way to build videodown on Linux is from inside a container.
 Here are the steps for doing so:
 
 ```sh
-# cd to marktext repository
+# cd to videodown repository
 
 # run container (you can use docker instead of podman if you like)
 podman run -it -v ./:/mnt:Z node:22-bookworm /bin/bash
@@ -70,10 +70,10 @@ On Arch Linux: `sudo pacman -S libx11 libxkbfile libsecret fontconfig`
 
 ### Let's build
 
-1. Go to `marktext` folder
+1. Go to `videodown` folder
 2. Install dependencies: `bun install`
-3. Build MarkText binaries and packages: `bun run build`
-4. MarkText binary is located under `dist` folder (electron-builder output)
+3. Build videodown binaries and packages: `bun run build`
+4. videodown binary is located under `dist` folder (electron-builder output)
 
 Copy the build app to applications folder, or if on Windows run the executable installer.
 
@@ -83,12 +83,12 @@ Copy the build app to applications folder, or if on Windows run the executable i
 $ bun run <script>
 ```
 
-| Script  | Description                                      |
-| ------- | ------------------------------------------------ |
-| `build` | Build MarkText binaries and packages for your OS |
-| `dev`   | Build and run MarkText in developer mode         |
-| `lint`  | Lint code style                                  |
-| `test`  | Run unit tests                                   |
+| Script  | Description                                       |
+| ------- | ------------------------------------------------- |
+| `build` | Build videodown binaries and packages for your OS |
+| `dev`   | Build and run videodown in developer mode         |
+| `lint`  | Lint code style                                   |
+| `test`  | Run unit tests                                    |
 
 For more scripts please see `package.json`.
 

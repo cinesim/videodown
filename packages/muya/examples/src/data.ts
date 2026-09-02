@@ -175,21 +175,21 @@ Inline link with title: [Anthropic](https://www.anthropic.com "Hello Claude").
 
 Autolink: <https://commonmark.org>.
 
-Raw URL autolink (GFM extension): https://github.com/marktext/muya.
+Raw URL autolink (GFM extension): https://github.com/cinesim/videodown.
 
-HTML anchor: <a href="https://github.com/marktext/muya">marktext/muya on GitHub</a>.
+HTML anchor: <a href="https://github.com/cinesim/videodown">videodown/muya on GitHub</a>.
 
 Reference link: [Wikipedia][wiki] and shorthand [example].
 
-Reference image: ![marktext logo small][img].
+Reference image: ![videodown logo small][img].
 
 Inline image:
 
-![marktext logo](https://raw.githubusercontent.com/marktext/marktext/develop/static/icon.png "marktext icon")
+![videodown logo](https://raw.githubusercontent.com/cinesim/videodown/develop/static/icon.png "videodown icon")
 
 [wiki]: https://en.wikipedia.org "Wikipedia"
 [example]: https://example.com "Example"
-[img]: https://raw.githubusercontent.com/marktext/marktext/develop/static/logo-96px.png "marktext logo 96px"
+[img]: https://raw.githubusercontent.com/cinesim/videodown/develop/static/logo-96px.png "videodown logo 96px"
 
 # 5. Inline HTML
 

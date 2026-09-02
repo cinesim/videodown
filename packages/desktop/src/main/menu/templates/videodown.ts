@@ -1,6 +1,6 @@
 import { app, type BrowserWindow, type MenuItemConstructorOptions } from 'electron'
 import { showAboutDialog } from '../actions/help'
-import * as actions from '../actions/marktext'
+import * as actions from '../actions/videodown'
 import { t } from '../../i18n'
 import type Keybindings from '../../keyboard/shortcutHandler'
 
@@ -8,22 +8,22 @@ import type Keybindings from '../../keyboard/shortcutHandler'
 
 export default function (keybindings: Keybindings): MenuItemConstructorOptions {
   return {
-    label: t('menu.marktext.title'),
+    label: t('menu.videodown.title'),
     submenu: [
       {
-        label: t('menu.marktext.about'),
+        label: t('menu.videodown.about'),
         click(_menuItem, focusedWindow) {
           showAboutDialog(focusedWindow as BrowserWindow | undefined)
         }
       },
       {
-        label: t('menu.marktext.checkUpdates'),
+        label: t('menu.videodown.checkUpdates'),
         click(_menuItem, focusedWindow) {
           actions.checkUpdates((focusedWindow as BrowserWindow | undefined) ?? null)
         }
       },
       {
-        label: t('menu.marktext.preferences'),
+        label: t('menu.videodown.preferences'),
         accelerator: keybindings.getAccelerator('file.preferences') ?? undefined,
         click() {
           actions.userSetting()
@@ -33,7 +33,7 @@ export default function (keybindings: Keybindings): MenuItemConstructorOptions {
         type: 'separator'
       },
       {
-        label: t('menu.marktext.services'),
+        label: t('menu.videodown.services'),
         role: 'services',
         submenu: []
       },
@@ -41,21 +41,21 @@ export default function (keybindings: Keybindings): MenuItemConstructorOptions {
         type: 'separator'
       },
       {
-        label: t('menu.marktext.hide'),
+        label: t('menu.videodown.hide'),
         accelerator: keybindings.getAccelerator('mt.hide') ?? undefined,
         click() {
           actions.osxHide()
         }
       },
       {
-        label: t('menu.marktext.hideOthers'),
+        label: t('menu.videodown.hideOthers'),
         accelerator: keybindings.getAccelerator('mt.hide-others') ?? undefined,
         click() {
           actions.osxHideAll()
         }
       },
       {
-        label: t('menu.marktext.showAll'),
+        label: t('menu.videodown.showAll'),
         click() {
           actions.osxShowAll()
         }
@@ -64,7 +64,7 @@ export default function (keybindings: Keybindings): MenuItemConstructorOptions {
         type: 'separator'
       },
       {
-        label: t('menu.marktext.quit'),
+        label: t('menu.videodown.quit'),
         accelerator: keybindings.getAccelerator('file.quit') ?? undefined,
         click: app.quit
       }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import fileIcons from '@marktext/file-icons'
-import '@marktext/file-icons/build/index.css'
+import fileIcons from '@videodown/file-icons'
+import '@videodown/file-icons/build/index.css'
 
 const props = defineProps<{
   name: string
@@ -9,7 +9,7 @@ const props = defineProps<{
 
 // The legacy `muya/lib/ui/fileIcons` wrapper added a `getClassByName(name)`
 // helper around the raw package's `matchName(name)?.getClass(0, false)`.
-// Inline that here so we depend on `@marktext/file-icons` directly.
+// Inline that here so we depend on `@videodown/file-icons` directly.
 const getClassByName = (name: string): string | null => {
   const icon = fileIcons.matchName(name)
   return icon ? icon.getClass(0, false) : null

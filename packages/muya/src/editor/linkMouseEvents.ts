@@ -87,7 +87,7 @@ export function attachLinkMouseHandlers(muya: Muya): void {
     const { eventCenter, domNode } = muya;
 
     const overHandler = (event: Event) => {
-        // marktext `eventHandler/mouseEvent.js` gated the link-tools dispatch
+        // videodown `eventHandler/mouseEvent.js` gated the link-tools dispatch
         // on `!hideLinkPopup`: when the user sets `hideLinkPopup: true`, the
         // hover popover is suppressed entirely. Read it live so a runtime
         // `setOptions({ hideLinkPopup })` toggle takes effect immediately.
@@ -141,7 +141,7 @@ export function attachLinkMouseHandlers(muya: Muya): void {
             event.target.closest<HTMLElement>(`.${CLASS_NAMES.MU_HTML_PREVIEW} a[href]`);
         if (anchor) event.preventDefault();
 
-        // Cmd/Ctrl-click a link → ask the host to open it. marktext's
+        // Cmd/Ctrl-click a link → ask the host to open it. videodown's
         // `clickCtrl.js` dispatched `format-click` with `{ event, formatType:
         // 'link', data: { text, href } }`; the desktop renderer gates on the
         // modifier itself (`editor.vue` `format-click` handler) and calls

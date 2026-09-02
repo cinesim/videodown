@@ -13,9 +13,9 @@ class ClickEvent {
   contextClickBingding() {
     const { container, eventCenter, contentState } = this.muya
     const handler = (event) => {
-      // Allow native context menu in MarkText.
-      if (!global || !global.marktext) {
-        // __MARKTEXT_PATCH__
+      // Allow native context menu in videodown.
+      if (!global || !global.videodown) {
+        // __VIDEODOWN_PATCH__
         event.preventDefault()
         event.stopPropagation()
       }

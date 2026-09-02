@@ -7,7 +7,7 @@
       custom-class="ag-dialog-table"
       width="400px"
     >
-      <img class="logo" :src="MarkTextLogo" />
+      <img class="logo" :src="videodownLogo" />
       <el-row>
         <el-col :span="24">
           <h3 class="title">
@@ -38,12 +38,12 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useMainStore } from '@/store'
 import bus from '../../bus'
-import MarkTextLogo from '../../assets/images/logo.png'
+import videodownLogo from '../../assets/images/logo.png'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const name = 'MarkText'
+const name = 'videodown'
 const copyright = t('about.copyright', { year: new Date().getFullYear() })
 const copyrightContributors = t('about.copyrightContributors')
 const showAboutDialog = ref(false)

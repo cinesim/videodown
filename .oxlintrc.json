@@ -10,8 +10,8 @@
     "node": true
   },
   "globals": {
-    "MARKTEXT_VERSION_STRING": "readonly",
-    "MARKTEXT_VERSION": "readonly",
+    "VIDEODOWN_VERSION_STRING": "readonly",
+    "VIDEODOWN_VERSION": "readonly",
     "__static": "readonly"
   },
   "ignorePatterns": [

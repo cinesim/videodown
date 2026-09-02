@@ -2,8 +2,8 @@
 
 The per-user application data directory is located in the following directory:
 
-- `%APPDATA%\marktext` on Windows
-- `$XDG_CONFIG_HOME/marktext` or `~/.config/marktext` on Linux
-- `~/Library/Application Support/marktext` on macOS
+- `%APPDATA%\videodown` on Windows
+- `$XDG_CONFIG_HOME/videodown` or `~/.config/videodown` on Linux
+- `~/Library/Application Support/videodown` on macOS
 
-When [portable mode](PORTABLE.md) is enabled, the directory location is either the `--user-data-dir` parameter or `marktext-user-data` directory.
+When [portable mode](PORTABLE.md) is enabled, the directory location is either the `--user-data-dir` parameter or `videodown-user-data` directory.

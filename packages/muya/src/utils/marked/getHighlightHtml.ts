@@ -42,7 +42,7 @@ export function getHighlightHtml(src: string, options: ILexOption = {}) {
     });
 
     // Treat CJK characters as punctuation for emphasis/strong flanking so
-    // `中文**"加粗"**中文` bolds (marktext/marktext#4307). Additive override —
+    // `中文**"加粗"**中文` bolds (videodown/videodown#4307). Additive override —
     // never regresses spec-conformant Latin emphasis.
     marked.use(cjkEmStrongExtension());
 

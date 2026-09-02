@@ -16,7 +16,7 @@ import {
   isDangerousExecutableFile,
   isMarkdownFile
 } from 'common/filesystem/paths'
-import { checkUpdates, userSetting } from './marktext'
+import { checkUpdates, userSetting } from './videodown'
 import { showTabBar } from './view'
 import { COMMANDS } from '../../commands'
 import type { CommandManager } from '../../commands'
@@ -178,7 +178,7 @@ const handleResponseForSave = async (
 
   // If the file doesn't exist on disk add it to the recently used documents later
   // and execute file from filesystem watcher for a short time. The file may exists
-  // on disk nevertheless but is already tracked by MarkText.
+  // on disk nevertheless but is already tracked by videodown.
   const alreadyExistOnDisk = !!pathname
 
   let filePath = pathname
@@ -362,7 +362,7 @@ ipcMain.on(
 
     // If the file doesn't exist on disk add it to the recently used documents later
     // and execute file from filesystem watcher for a short time. The file may exists
-    // on disk nevertheless but is already tracked by MarkText.
+    // on disk nevertheless but is already tracked by videodown.
     const alreadyExistOnDisk = !!pathname
 
     let { filePath, canceled } = await dialog.showSaveDialog(win, {
@@ -625,7 +625,7 @@ ipcMain.on('mt::format-link-click', async (e, { data, dirname }: FormatLinkPaylo
   }
 
   if (pathname) {
-    // decodeURIComponent() CommonMark #503, allow percent encoded path names to open files. https://github.com/marktext/marktext/issues/57
+    // decodeURIComponent() CommonMark #503, allow percent encoded path names to open files. https://github.com/cinesim/videodown/issues/57
     pathname = path.normalize(decodeURIComponent(pathname))
     if (isMarkdownFile(pathname)) {
       const innerWin = BrowserWindow.fromWebContents(e.sender)

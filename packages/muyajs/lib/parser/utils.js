@@ -60,7 +60,7 @@ const UNICODE_WHITESPACE_REG = /^\s/
 // or right boundary — so all spec-conformant English inputs continue to
 // parse identically.
 //
-// Tracking: marktext/marktext#4307.
+// Tracking: videodown/videodown#4307.
 const CJK_REG = /[぀-ヿ㐀-䶿一-鿿豈-﫿가-힯ｦ-ﾝ]|[\uD840-\uD87F][\uDC00-\uDFFF]/
 
 const validWidthAndHeight = value => {

@@ -1,26 +1,26 @@
-## MarkText Preferences
+## videodown Preferences
 
 Preferences can be controlled and modified in the settings window or via the `preferences.json` file in the [application data directory](APPLICATION_DATA_DIRECTORY.md). The authoritative list of keys, defaults, and accepted values lives in `src/main/preferences/schema.json` — the tables below mirror that schema.
 
 #### General
 
-| Key                    | Type    | Default      | Description                                                                                            |
-| ---------------------- | ------- | ------------ | ------------------------------------------------------------------------------------------------------ |
-| autoSave               | Boolean | `false`      | Automatically save the content being edited.                                                           |
-| autoSaveDelay          | Number  | `5000`       | The delay in milliseconds after a change before a file is saved automatically. Minimum `1000`.         |
-| titleBarStyle          | String  | `custom`     | The title bar style on Linux and Windows: `custom` or `native`.                                        |
-| openFilesInNewWindow   | Boolean | `false`      | Open files in a new window.                                                                            |
-| openFolderInNewWindow  | Boolean | `false`      | Open folder via menu in a new window.                                                                  |
-| zoom                   | Number  | `1.0`        | The zoom level. Between `0.5` and `2.0` inclusive.                                                     |
-| hideScrollbar          | Boolean | `false`      | Whether to hide scrollbars.                                                                            |
-| wordWrapInToc          | Boolean | `false`      | Whether to enable word wrap in the table of contents.                                                  |
-| fileSortBy             | String  | `modified`   | Sort files in the opened folder. Optional values: `created`, `modified`, `title`.                      |
-| fileSortOrder          | String  | `asc`        | Sort order for files in opened folders: `asc` (ascending) or `desc` (descending).                      |
-| startUpAction          | String  | `restoreAll` | The action when MarkText launches. Optional values: `folder`, `openLastFolder`, `blank`, `restoreAll`. |
-| defaultDirectoryToOpen | String  | `""`         | The path that should be opened when `startUpAction=folder`.                                            |
-| language               | String  | `en`         | The display language MarkText uses.                                                                    |
-| restoreLayoutState     | Boolean | `true`       | Restore the previous editor state (open tabs, layout) on startup.                                      |
-| openedFilesInSidebar   | Boolean | `true`       | Whether to show the _Opened Files_ subsection inside the sidebar file tree.                            |
+| Key                    | Type    | Default      | Description                                                                                             |
+| ---------------------- | ------- | ------------ | ------------------------------------------------------------------------------------------------------- |
+| autoSave               | Boolean | `false`      | Automatically save the content being edited.                                                            |
+| autoSaveDelay          | Number  | `5000`       | The delay in milliseconds after a change before a file is saved automatically. Minimum `1000`.          |
+| titleBarStyle          | String  | `custom`     | The title bar style on Linux and Windows: `custom` or `native`.                                         |
+| openFilesInNewWindow   | Boolean | `false`      | Open files in a new window.                                                                             |
+| openFolderInNewWindow  | Boolean | `false`      | Open folder via menu in a new window.                                                                   |
+| zoom                   | Number  | `1.0`        | The zoom level. Between `0.5` and `2.0` inclusive.                                                      |
+| hideScrollbar          | Boolean | `false`      | Whether to hide scrollbars.                                                                             |
+| wordWrapInToc          | Boolean | `false`      | Whether to enable word wrap in the table of contents.                                                   |
+| fileSortBy             | String  | `modified`   | Sort files in the opened folder. Optional values: `created`, `modified`, `title`.                       |
+| fileSortOrder          | String  | `asc`        | Sort order for files in opened folders: `asc` (ascending) or `desc` (descending).                       |
+| startUpAction          | String  | `restoreAll` | The action when videodown launches. Optional values: `folder`, `openLastFolder`, `blank`, `restoreAll`. |
+| defaultDirectoryToOpen | String  | `""`         | The path that should be opened when `startUpAction=folder`.                                             |
+| language               | String  | `en`         | The display language videodown uses.                                                                    |
+| restoreLayoutState     | Boolean | `true`       | Restore the previous editor state (open tabs, layout) on startup.                                       |
+| openedFilesInSidebar   | Boolean | `true`       | Whether to show the _Opened Files_ subsection inside the sidebar file tree.                             |
 
 #### Editor
 
@@ -105,9 +105,9 @@ These entries are marked `--internal` in the schema. They have no UI control and
 
 ##### General (internal)
 
-| Key              | Type   | Default | Description                                                    |
-| ---------------- | ------ | ------- | -------------------------------------------------------------- |
-| lastOpenedFolder | String | `""`    | The last folder opened in MarkText (used for session restore). |
+| Key              | Type   | Default | Description                                                     |
+| ---------------- | ------ | ------- | --------------------------------------------------------------- |
+| lastOpenedFolder | String | `""`    | The last folder opened in videodown (used for session restore). |
 
 ##### Custom CSS
 
