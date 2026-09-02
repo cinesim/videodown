@@ -16,9 +16,6 @@ rm -rf -- "/tmp/videodown-conductor-${CONDUCTOR_WORKSPACE_ID}"
 
 [scripts.run.dev]
 available_in = ["local"]
-command = 'bun run dev -- -- --user-data-dir="/tmp/videodown-conductor-${CONDUCTOR_WORKSPACE_ID}"'
+command = 'cd packages/desktop && bun run dev -- -- --user-data-dir="/tmp/videodown-conductor-${CONDUCTOR_WORKSPACE_ID}"'
 default = true
 icon = "monitor"
-
-[scripts.run.dev.options]
-cwd = "packages/desktop"
