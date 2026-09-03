@@ -830,7 +830,8 @@
       "zoomOut": "Réduire",
       "toggleFullScreen": "Basculer le plein écran",
       "changeTheme": "Changer de thème",
-      "close": "Fermer"
+      "close": "Fermer",
+      "toggleColorScheme": "Basculer entre mode clair/sombre"
     },
     "view": {
       "commandPalette": "Palette de commandes",
@@ -964,5 +965,9 @@
       "switchError": "Erreur de changement du correcteur pour {languageCode}, {error}",
       "title": "Vérification orthographique"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Passer au mode sombre",
+    "switchToLightMode": "Passer au mode clair"
   }
 }

@@ -223,6 +223,10 @@
     "searchResultInfo": "{matchCount} matches in {fileCount} files",
     "searchLimited": "Searched limited to first {count} results"
   },
+  "titleBar": {
+    "switchToDarkMode": "Switch to dark mode",
+    "switchToLightMode": "Switch to light mode"
+  },
   "sideBar": {
     "search": {
       "searchInFolder": "Search in folder...",
@@ -830,7 +834,8 @@
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out",
       "toggleFullScreen": "Toggle Full Screen",
-      "changeTheme": "Change Theme"
+      "changeTheme": "Change Theme",
+      "toggleColorScheme": "Toggle Light/Dark Mode"
     },
     "view": {
       "commandPalette": "Command Palette",

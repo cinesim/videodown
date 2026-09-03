@@ -830,7 +830,8 @@
       "zoomOut": "Alejar",
       "toggleFullScreen": "Alternar Pantalla Completa",
       "changeTheme": "Cambiar Tema",
-      "close": "Cerrar"
+      "close": "Cerrar",
+      "toggleColorScheme": "Alternar modo claro/oscuro"
     },
     "view": {
       "commandPalette": "Paleta de Comandos",
@@ -964,5 +965,9 @@
       "switchError": "Error del corrector ortográfico para {languageCode}, {error}",
       "title": "Corrector ortográfico"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Cambiar al modo oscuro",
+    "switchToLightMode": "Cambiar al modo claro"
   }
 }
