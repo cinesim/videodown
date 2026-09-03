@@ -14,9 +14,10 @@
       />
 
       <div v-if="!init" class="editor-placeholder" />
-      <recent v-if="!hasCurrentFile && init" />
+      <projects-home v-if="isHome && init" />
+      <recent v-else-if="!hasCurrentFile && init" />
       <editor-with-tabs
-        v-if="hasCurrentFile && init"
+        v-else-if="hasCurrentFile && init"
         :markdown="markdown"
         :cursor="cursor"
         :muya-index-cursor="muyaIndexCursor"
@@ -35,11 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, nextTick, onMounted, ref } from 'vue'
+import { computed, watch, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useMainStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import { addStyles, addThemeStyle, addCustomStyle, type AddStylesOptions } from '@/util/theme'
 import Recent from '@/components/recent/index.vue'
+import ProjectsHome from '@/components/projects/index.vue'
 import EditorWithTabs from '@/components/editorWithTabs/index.vue'
 import TitleBar from '@/components/titleBar/index.vue'
 import SideBar from '@/components/sideBar/index.vue'
@@ -74,8 +77,9 @@ const timer = ref<ReturnType<typeof setTimeout> | null>(null)
 const { windowActive, platform, init } = storeToRefs(mainStore)
 const { showTabBar } = storeToRefs(layoutStore)
 const { sourceCode, theme, customCss, textDirection, zoom } = storeToRefs(preferencesStore)
-const { projectTree } = storeToRefs(projectStore)
+const { projectTree, isHome } = storeToRefs(projectStore)
 const { currentFile } = storeToRefs(editorStore)
+const router = useRouter()
 
 const pathname = computed(() => currentFile.value?.pathname)
 const filename = computed(() => currentFile.value?.filename)
@@ -96,6 +100,13 @@ const muyaIndexCursor = computed<Record<string, unknown> | undefined>(
 const hasCurrentFile = computed<boolean>(() => {
   return currentFile.value?.markdown !== undefined
 })
+
+const onRouterPush = (path: unknown): void => {
+  if (typeof path === 'string' && router.currentRoute.value.path !== path) {
+    router.push(path)
+  }
+}
+bus.on('router:push', onRouterPush)
 
 // Watchers
 watch(theme, (value, oldValue) => {
@@ -166,6 +177,7 @@ onMounted(async () => {
   listenForMainStore.LISTEN_FOR_PARAGRAPH_INLINE_STYLE()
   projectStore.LISTEN_FOR_UPDATE_PROJECT()
   projectStore.LISTEN_FOR_LOAD_PROJECT()
+  projectStore.LISTEN_FOR_HOME()
   projectStore.LISTEN_FOR_SIDEBAR_CONTEXT_MENU()
   autoUpdateStore.LISTEN_FOR_UPDATE()
   preferencesStore.ASK_FOR_USER_PREFERENCE()
@@ -212,6 +224,10 @@ onMounted(async () => {
     }
     addStyles(style)
   })
+})
+
+onBeforeUnmount(() => {
+  bus.off('router:push', onRouterPush)
 })
 </script>
 

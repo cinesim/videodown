@@ -91,6 +91,7 @@ export const useProjectStore = defineStore('project', () => {
   const clipboard = ref<ClipboardEntry | null>(null)
   const projectTree = ref<ProjectTree | null>(null)
   const pendingTreeEvents = ref<PendingEvent[]>([])
+  const isHome = ref(false)
 
   const preferencesStore = usePreferencesStore()
 
@@ -111,6 +112,7 @@ export const useProjectStore = defineStore('project', () => {
     const tree = createProjectRoot(pathname)
     if (!tree) return
 
+    LEAVE_HOME()
     projectTree.value = tree
 
     const layout = {
@@ -223,6 +225,34 @@ export const useProjectStore = defineStore('project', () => {
 
   function ASK_FOR_OPEN_PROJECT(): void {
     window.electron.ipcRenderer.send('mt::ask-for-open-project-in-sidebar')
+  }
+
+  function CLOSE_PROJECT(): void {
+    if (projectTree.value) {
+      projectTree.value = null
+      pendingTreeEvents.value = []
+    }
+    window.electron.ipcRenderer.send('mt::close-directory')
+  }
+
+  function SHOW_HOME({ closeProject = true }: { closeProject?: boolean } = {}): void {
+    isHome.value = true
+    window.electron.ipcRenderer.send('mt::set-home-view', true)
+    if (closeProject) {
+      CLOSE_PROJECT()
+    }
+  }
+
+  function LEAVE_HOME(): void {
+    if (!isHome.value) return
+    isHome.value = false
+    window.electron.ipcRenderer.send('mt::set-home-view', false)
+  }
+
+  function LISTEN_FOR_HOME(): void {
+    window.electron.ipcRenderer.on('mt::show-home', () => {
+      SHOW_HOME({ closeProject: true })
+    })
   }
 
   function LISTEN_FOR_SIDEBAR_CONTEXT_MENU(): void {
@@ -369,6 +399,7 @@ export const useProjectStore = defineStore('project', () => {
     clipboard,
     projectTree,
     pendingTreeEvents,
+    isHome,
     OPEN_PROJECT,
     CREATE_BUFFERED_STATE,
     RESTORE_BUFFERED_STATE,
@@ -377,6 +408,10 @@ export const useProjectStore = defineStore('project', () => {
     CHANGE_ACTIVE_ITEM,
     CHANGE_CLIPBOARD,
     ASK_FOR_OPEN_PROJECT,
+    CLOSE_PROJECT,
+    SHOW_HOME,
+    LEAVE_HOME,
+    LISTEN_FOR_HOME,
     LISTEN_FOR_SIDEBAR_CONTEXT_MENU,
     CREATE_FILE_DIRECTORY,
     RENAME_IN_SIDEBAR,

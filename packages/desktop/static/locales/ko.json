@@ -249,7 +249,8 @@
       "files": "파일",
       "search": "검색",
       "toc": "목차",
-      "settings": "설정"
+      "settings": "설정",
+      "home": "홈"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "맞춤법 검사 언어 누락 {languageCode}",
       "switchError": "{languageCode} 맞춤법 검사 전환 오류, {error}",
       "title": "맞춤법 검사"
+    }
+  },
+  "projects": {
+    "title": "프로젝트",
+    "home": "홈",
+    "empty": "표시할 프로젝트가 없습니다",
+    "new": "새로 만들기",
+    "lastModified": "마지막 수정 {time}",
+    "deleteTitle": "프로젝트 삭제",
+    "deleteMessage": "\"{name}\"을(를) 휴지통으로 이동할까요? videodown에서 되돌릴 수 없습니다.",
+    "deleteConfirm": "삭제",
+    "deleteCancel": "취소",
+    "newDialogTitle": "새 프로젝트",
+    "untitledName": "제목 없음",
+    "create": "만들기",
+    "relative": {
+      "second": "{n}초 전",
+      "minute": "{n}분 전",
+      "minutes": "{n}분 전",
+      "hour": "{n}시간 전",
+      "hours": "{n}시간 전",
+      "day": "{n}일 전",
+      "days": "{n}일 전",
+      "month": "{n}개월 전",
+      "months": "{n}개월 전",
+      "year": "{n}년 전",
+      "years": "{n}년 전"
     }
   }
 }

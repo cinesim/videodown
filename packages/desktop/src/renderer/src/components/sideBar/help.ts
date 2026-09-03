@@ -1,4 +1,5 @@
 import {
+  House as HomeIcon,
   Folder as FilesIcon,
   Search as SearchIcon,
   Memo as TocIcon,
@@ -13,6 +14,11 @@ export interface SideBarIconEntry {
 }
 
 export const sideBarIcons: SideBarIconEntry[] = [
+  {
+    id: 'home',
+    name: () => t('sideBar.icons.home'),
+    icon: HomeIcon
+  },
   {
     id: 'files',
     name: () => t('sideBar.icons.files'),

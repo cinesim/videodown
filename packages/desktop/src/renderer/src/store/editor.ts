@@ -889,6 +889,7 @@ export const useEditorStore = defineStore('editor', {
       window.electron.ipcRenderer.on('mt::bootstrap-editor', (_, config) => {
         const {
           addBlankTab,
+          showHome,
           markdownList,
           lineEnding,
           sideBarVisibility,
@@ -910,7 +911,9 @@ export const useEditorStore = defineStore('editor', {
           checked: !!sourceCodeModeEnabled
         })
 
-        if (addBlankTab) {
+        if (showHome) {
+          projectStore.SHOW_HOME({ closeProject: false })
+        } else if (addBlankTab) {
           this.NEW_UNTITLED_TAB({ selected: true })
         } else if (markdownList.length) {
           let isFirst = true
@@ -1248,6 +1251,7 @@ export const useEditorStore = defineStore('editor', {
         selected = true
       }
 
+      useProjectStore().LEAVE_HOME()
       this.SHOW_TAB_VIEW(false)
 
       const preferencesStore = usePreferencesStore()
@@ -1291,6 +1295,8 @@ export const useEditorStore = defineStore('editor', {
       if (typeof selected === 'undefined') {
         selected = true
       }
+
+      useProjectStore().LEAVE_HOME()
 
       const { currentFile, tabs } = this
       const { pathname } = markdownDocument

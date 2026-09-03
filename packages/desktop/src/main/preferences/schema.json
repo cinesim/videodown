@@ -57,6 +57,19 @@
     "description": "General--The last folder that was opened in videodown.--internal",
     "type": "string"
   },
+  "projects": {
+    "description": "General--Remembered project folders shown on the home page.--internal",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "pathname": { "type": "string" },
+        "lastOpenedAt": { "type": "number" }
+      },
+      "required": ["pathname", "lastOpenedAt"]
+    },
+    "default": []
+  },
   "startUpAction": {
     "description": "General--The action after videodown startup, open the last opened folder, open the specified folder or blank page",
     "enum": ["folder", "openLastFolder", "blank", "restoreAll"],

@@ -65,6 +65,7 @@ export interface IUserPreferences {
   lightModeTheme?: string
   darkModeTheme?: string
   lastOpenedFolder?: string
+  projects?: Array<{ pathname: string; lastOpenedAt: number }>
   autoNormalizeLineEndings?: boolean
   watcherUsePolling?: boolean
   treePathExcludePatterns?: string[]

@@ -1,4 +1,4 @@
-import { rename as fsRename } from 'fs-extra'
+import { rename as fsRename, ensureDir } from 'fs-extra'
 import path from 'path'
 import {
   BrowserWindow,
@@ -26,6 +26,7 @@ import { writeMarkdownFile } from '../../filesystem/markdown'
 import { getPath, getRecommendTitleFromMarkdownString } from '../../utils'
 import pandoc from '../../utils/pandoc'
 import { t } from '../../i18n'
+import { isShowingHome } from '../../homeViewState'
 import type { UnsavedFile } from '@shared/types/files'
 
 type Win = BrowserWindow | null | undefined
@@ -662,8 +663,14 @@ ipcMain.on('mt::cmd-open-file', (e) => {
   openFile(win)
 })
 
-ipcMain.on('mt::cmd-new-editor-window', () => {
-  newEditorWindow()
+ipcMain.on('mt::cmd-new-editor-window', (e) => {
+  const win = BrowserWindow.fromWebContents(e.sender)
+  newEditorWindow(win)
+})
+
+ipcMain.on('mt::cmd-new-project', (e) => {
+  const win = BrowserWindow.fromWebContents(e.sender)
+  createNewProject(win)
 })
 
 ipcMain.on('mt::cmd-open-folder', (e) => {
@@ -757,6 +764,31 @@ export const openFolder = async (win: BrowserWindow | null): Promise<void> => {
   }
 }
 
+export const createNewProject = async (win: BrowserWindow | null): Promise<void> => {
+  if (!win) {
+    return
+  }
+  const { filePath, canceled } = await dialog.showSaveDialog(win, {
+    title: t('projects.newDialogTitle'),
+    defaultPath: path.join(app.getPath('documents'), t('projects.untitledName')),
+    buttonLabel: t('projects.create')
+  })
+  if (canceled || !filePath) {
+    return
+  }
+  try {
+    await ensureDir(filePath)
+  } catch (err) {
+    log.error('Failed to create project folder:', err)
+    dialog.showErrorBox(
+      t('projects.newDialogTitle'),
+      err instanceof Error ? err.message : String(err)
+    )
+    return
+  }
+  openFileOrFolder(win, filePath)
+}
+
 export const openFileOrFolder = (win: BrowserWindow, pathname: string): void => {
   const resolvedPath = normalizeAndResolvePath(pathname)
   if (isFile(resolvedPath)) {
@@ -775,7 +807,14 @@ export const newBlankTab = (win: Win): void => {
   }
 }
 
-export const newEditorWindow = (): void => {
+export const newEditorWindow = (win?: BrowserWindow | null): void => {
+  const target = win && !win.isDestroyed() ? win : BrowserWindow.getFocusedWindow()
+  // Cmd/Ctrl+N is New Window in the editor. On the projects home page the same
+  // accelerator creates a project in the current window instead.
+  if (target && isShowingHome(target.id)) {
+    createNewProject(target)
+    return
+  }
   ipcMain.emit('app-create-editor-window')
 }
 
@@ -839,7 +878,7 @@ export const loadFileCommands = (commandManager: CommandManager): void => {
   commandManager.add(COMMANDS.FILE_EXPORT_FILE, exportFile)
   commandManager.add(COMMANDS.FILE_IMPORT_FILE, importFile)
   commandManager.add(COMMANDS.FILE_MOVE_FILE, moveTo)
-  commandManager.add(COMMANDS.FILE_NEW_FILE, newEditorWindow)
+  commandManager.add(COMMANDS.FILE_NEW_FILE, (win?: BrowserWindow | null) => newEditorWindow(win))
   commandManager.add(COMMANDS.FILE_NEW_TAB, newBlankTab)
   commandManager.add(COMMANDS.FILE_OPEN_FILE, openFile)
   commandManager.add(COMMANDS.FILE_OPEN_FOLDER, openFolder)

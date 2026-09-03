@@ -249,7 +249,8 @@
       "files": "Bestanden",
       "search": "Zoeken",
       "toc": "Inhoudsopgave",
-      "settings": "Instellingen"
+      "settings": "Instellingen",
+      "home": "Start"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Spellingcontroletaal ontbreekt {languageCode}",
       "switchError": "Spellingcontrole wisselfout voor {languageCode}, {error}",
       "title": "Spellingcontrole"
+    }
+  },
+  "projects": {
+    "title": "Projecten",
+    "home": "Start",
+    "empty": "Geen projecten om te tonen",
+    "new": "Nieuw",
+    "lastModified": "Laatst gewijzigd {time}",
+    "deleteTitle": "Project verwijderen",
+    "deleteMessage": "\"{name}\" naar de prullenbak verplaatsen? Dit kan niet ongedaan worden gemaakt in videodown.",
+    "deleteConfirm": "Verwijderen",
+    "deleteCancel": "Annuleren",
+    "newDialogTitle": "Nieuw project",
+    "untitledName": "Naamloos",
+    "create": "Aanmaken",
+    "relative": {
+      "second": "{n} sec geleden",
+      "minute": "{n} minuut geleden",
+      "minutes": "{n} minuten geleden",
+      "hour": "{n} uur geleden",
+      "hours": "{n} uur geleden",
+      "day": "{n} dag geleden",
+      "days": "{n} dagen geleden",
+      "month": "{n} maand geleden",
+      "months": "{n} maanden geleden",
+      "year": "{n} jaar geleden",
+      "years": "{n} jaar geleden"
     }
   }
 }

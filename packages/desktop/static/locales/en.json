@@ -249,7 +249,8 @@
       "files": "Files",
       "search": "Search",
       "toc": "Table of Contents",
-      "settings": "Settings"
+      "settings": "Settings",
+      "home": "Home"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Spellcheck language missing {languageCode}",
       "switchError": "Spellcheck switch error for {languageCode}, {error}",
       "title": "Spellcheck"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "home": "Home",
+    "empty": "No projects to show",
+    "new": "New",
+    "lastModified": "Last modified {time}",
+    "deleteTitle": "Delete project",
+    "deleteMessage": "Move \"{name}\" to the Trash? This cannot be undone from videodown.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel",
+    "newDialogTitle": "New Project",
+    "untitledName": "Untitled",
+    "create": "Create",
+    "relative": {
+      "second": "{n} sec ago",
+      "minute": "{n} minute ago",
+      "minutes": "{n} minutes ago",
+      "hour": "{n} hour ago",
+      "hours": "{n} hours ago",
+      "day": "{n} day ago",
+      "days": "{n} days ago",
+      "month": "{n} month ago",
+      "months": "{n} months ago",
+      "year": "{n} year ago",
+      "years": "{n} years ago"
     }
   }
 }
