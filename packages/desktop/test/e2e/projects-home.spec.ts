@@ -98,12 +98,6 @@ test.describe('Projects home page', () => {
       test.skip()
       return
     }
-    await app.evaluate(async ({ shell }) => {
-      const { rmSync } = await import('node:fs')
-      shell.trashItem = async (fullPath: string) => {
-        rmSync(fullPath, { recursive: true, force: true })
-      }
-    })
     await page.locator('.side-bar li[data-id="home"]').click()
     const card = page.locator('.project-card', { hasText: path.basename(projectPath) })
     await expect(card).toBeVisible()
