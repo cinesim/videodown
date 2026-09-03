@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { ElectronApplication, Page } from 'playwright'
-import { launchWithMarkdown } from './helpers'
+import { clickMenuById, launchWithMarkdown } from './helpers'
 
 // #2421 — toggling the sidebar via its left-column icons must not lose state.
 // Two bugs: (1) collapsing to the icon strip persisted the clamped 220px width
@@ -9,14 +9,30 @@ import { launchWithMarkdown } from './helpers'
 // so collapsing the sidebar destroyed the tree and reset them on re-expand.
 // These drive the real built app.
 
-const filesIcon = (page: Page) =>
-  page.locator('.side-bar .left-column > ul').first().locator('li').nth(0)
+const filesIcon = (page: Page) => page.locator('.side-bar li[data-id="files"]')
 
 const sideBarWidth = (page: Page) =>
   page.evaluate(() => {
     const el = document.querySelector('.side-bar') as HTMLElement | null
     return el ? Math.round(el.getBoundingClientRect().width) : 0
   })
+
+const ensureFilesSidebarWide = async (app: ElectronApplication, page: Page): Promise<void> => {
+  const wide = await page.evaluate(() => {
+    const el = document.querySelector('.side-bar') as HTMLElement | null
+    return !!(el && el.offsetParent !== null && el.getBoundingClientRect().width > 220)
+  })
+  if (wide) return
+  await clickMenuById(app, 'sideBarMenuItem')
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('.side-bar') as HTMLElement | null
+      return !!(el && el.offsetParent !== null && el.getBoundingClientRect().width > 220)
+    },
+    null,
+    { timeout: 5000 }
+  )
+}
 
 test.describe('#2421 sidebar state survives icon toggle', () => {
   let app: ElectronApplication
@@ -26,15 +42,9 @@ test.describe('#2421 sidebar state survives icon toggle', () => {
     const launched = await launchWithMarkdown('# Doc\n\n## A\n\n## B\n')
     app = launched.app
     page = launched.page
-    // The files panel is the default right column; make sure it is open + wide.
-    await page.waitForFunction(
-      () => {
-        const el = document.querySelector('.side-bar') as HTMLElement | null
-        return !!(el && el.offsetParent !== null && el.getBoundingClientRect().width > 220)
-      },
-      null,
-      { timeout: 5000 }
-    )
+    // launchWithMarkdown only opens a file; the sidebar stays closed unless a
+    // folder was opened. Toggle it explicitly, then drive the Files icon.
+    await ensureFilesSidebarWide(app, page)
   })
 
   test.afterAll(async () => {
