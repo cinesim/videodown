@@ -249,7 +249,8 @@
       "files": "檔案",
       "search": "搜尋",
       "toc": "目錄",
-      "settings": "設定"
+      "settings": "設定",
+      "home": "首頁"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "拼字檢查語言缺失 {languageCode}",
       "switchError": "{languageCode} 拼字檢查切換錯誤，{error}",
       "title": "拼字檢查"
+    }
+  },
+  "projects": {
+    "title": "專案",
+    "home": "首頁",
+    "empty": "沒有可顯示的專案",
+    "new": "新增",
+    "lastModified": "上次修改 {time}",
+    "deleteTitle": "刪除專案",
+    "deleteMessage": "將「{name}」移到垃圾桶？無法在 videodown 中復原。",
+    "deleteConfirm": "刪除",
+    "deleteCancel": "取消",
+    "newDialogTitle": "新增專案",
+    "untitledName": "未命名",
+    "create": "建立",
+    "relative": {
+      "second": "{n} 秒前",
+      "minute": "{n} 分鐘前",
+      "minutes": "{n} 分鐘前",
+      "hour": "{n} 小時前",
+      "hours": "{n} 小時前",
+      "day": "{n} 天前",
+      "days": "{n} 天前",
+      "month": "{n} 個月前",
+      "months": "{n} 個月前",
+      "year": "{n} 年前",
+      "years": "{n} 年前"
     }
   }
 }

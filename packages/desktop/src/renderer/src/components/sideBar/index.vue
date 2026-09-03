@@ -1,16 +1,20 @@
 <template>
   <div
-    v-show="showSideBar"
+    v-show="showSideBar || isHome"
     ref="sideBar"
     class="side-bar"
-    :style="[!rightColumn ? { 'min-width': '45px' } : {}, { width: `${finalSideBarWidth}px` }]"
+    :style="[
+      !rightColumn || isHome ? { 'min-width': '45px' } : {},
+      { width: `${finalSideBarWidth}px` }
+    ]"
   >
     <div class="left-column">
       <ul>
         <li
           v-for="(c, index) of sideBarIcons"
           :key="index"
-          :class="{ active: c.id === rightColumn }"
+          :data-id="c.id"
+          :class="{ active: isIconActive(c.id) }"
           @click="handleLeftIconClick(c.id)"
         >
           <component :is="c.icon" />
@@ -65,10 +69,13 @@ const sideBarViewWidth = ref(280)
 
 const { rightColumn, showSideBar, sideBarWidth } = storeToRefs(layoutStore)
 
-const { projectTree } = storeToRefs(projectStore)
+const { projectTree, isHome } = storeToRefs(projectStore)
 const { tabs } = storeToRefs(editorStore)
 
 const finalSideBarWidth = computed<number>(() => {
+  // Home has no folder tree; keep the icon strip so the Home button stays
+  // reachable without persisting sideBarVisibility.
+  if (isHome.value) return 45
   if (!showSideBar.value) return 0
   if (rightColumn.value === '') return 45
   return sideBarViewWidth.value < 220 ? 220 : sideBarViewWidth.value
@@ -108,6 +115,10 @@ onMounted(() => {
 })
 
 const handleLeftIconClick = (name: string): void => {
+  if (name === 'home') {
+    projectStore.SHOW_HOME()
+    return
+  }
   if (rightColumn.value === name) {
     // Capture the expanded width BEFORE collapsing: once rightColumn is '',
     // finalSideBarWidth evaluates to the 45px icon strip and would overwrite
@@ -123,6 +134,11 @@ const handleLeftIconClick = (name: string): void => {
       layoutStore.CHANGE_SIDE_BAR_WIDTH(finalSideBarWidth.value)
     }
   }
+}
+
+const isIconActive = (id: string): boolean => {
+  if (id === 'home') return isHome.value
+  return !isHome.value && id === rightColumn.value
 }
 
 const handleLeftBottomClick = (name: string): void => {

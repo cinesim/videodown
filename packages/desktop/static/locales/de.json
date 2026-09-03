@@ -249,7 +249,8 @@
       "files": "Dateien",
       "search": "Suchen",
       "toc": "Inhaltsverzeichnis",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "home": "Startseite"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Rechtschreibprüfungssprache fehlt {languageCode}",
       "switchError": "Rechtschreibprüfung-Wechselfehler für {languageCode}, {error}",
       "title": "Rechtschreibprüfung"
+    }
+  },
+  "projects": {
+    "title": "Projekte",
+    "home": "Startseite",
+    "empty": "Keine Projekte vorhanden",
+    "new": "Neu",
+    "lastModified": "Zuletzt geändert {time}",
+    "deleteTitle": "Projekt löschen",
+    "deleteMessage": "„{name}“ in den Papierkorb legen? Das lässt sich in videodown nicht rückgängig machen.",
+    "deleteConfirm": "Löschen",
+    "deleteCancel": "Abbrechen",
+    "newDialogTitle": "Neues Projekt",
+    "untitledName": "Unbenannt",
+    "create": "Erstellen",
+    "relative": {
+      "second": "vor {n} Sek.",
+      "minute": "vor {n} Minute",
+      "minutes": "vor {n} Minuten",
+      "hour": "vor {n} Stunde",
+      "hours": "vor {n} Stunden",
+      "day": "vor {n} Tag",
+      "days": "vor {n} Tagen",
+      "month": "vor {n} Monat",
+      "months": "vor {n} Monaten",
+      "year": "vor {n} Jahr",
+      "years": "vor {n} Jahren"
     }
   }
 }

@@ -249,7 +249,8 @@
       "files": "文件",
       "search": "搜索",
       "toc": "目录",
-      "settings": "设置"
+      "settings": "设置",
+      "home": "主页"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "errorSwitchingLanguage": "切换拼写检查语言时出错 {languageCode}",
       "languageMissing": "拼写检查语言缺失 {languageCode}",
       "switchError": "{languageCode} 拼写检查切换错误，{error}"
+    }
+  },
+  "projects": {
+    "title": "项目",
+    "home": "主页",
+    "empty": "暂无项目",
+    "new": "新建",
+    "lastModified": "上次修改 {time}",
+    "deleteTitle": "删除项目",
+    "deleteMessage": "将“{name}”移到废纸篓？无法在 videodown 中撤销。",
+    "deleteConfirm": "删除",
+    "deleteCancel": "取消",
+    "newDialogTitle": "新建项目",
+    "untitledName": "未命名",
+    "create": "创建",
+    "relative": {
+      "second": "{n} 秒前",
+      "minute": "{n} 分钟前",
+      "minutes": "{n} 分钟前",
+      "hour": "{n} 小时前",
+      "hours": "{n} 小时前",
+      "day": "{n} 天前",
+      "days": "{n} 天前",
+      "month": "{n} 个月前",
+      "months": "{n} 个月前",
+      "year": "{n} 年前",
+      "years": "{n} 年前"
     }
   }
 }

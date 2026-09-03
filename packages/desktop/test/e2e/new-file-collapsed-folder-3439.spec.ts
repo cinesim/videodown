@@ -1,3 +1,6 @@
+import * as fs from 'node:fs'
+import * as os from 'node:os'
+import * as path from 'node:path'
 import { expect, test } from '@playwright/test'
 import type { ElectronApplication, Page } from 'playwright'
 import { launchElectron } from './helpers'
@@ -20,11 +23,12 @@ const visibleNewInput = (page: Page): Promise<number> =>
 test.describe('New File on a collapsed folder (#3439)', () => {
   let app: ElectronApplication
   let page: Page
+  let fixtureDir: string | null = null
 
   test.beforeAll(async () => {
-    // launchElectron opens the desktop package folder in the sidebar (its
-    // sub-folders render as collapsed tree-folders).
-    const launched = await launchElectron()
+    fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vd-3439-'))
+    fs.mkdirSync(path.join(fixtureDir, 'collapsed-folder'))
+    const launched = await launchElectron([fixtureDir])
     app = launched.app
     page = launched.page
     await page.waitForSelector('.side-bar-folder .folder-name', { timeout: 10000 })
@@ -63,6 +67,13 @@ test.describe('New File on a collapsed folder (#3439)', () => {
 
   test.afterAll(async () => {
     if (app) await app.close()
+    if (fixtureDir) {
+      try {
+        fs.rmSync(fixtureDir, { recursive: true, force: true })
+      } catch {
+        /* ignore */
+      }
+    }
   })
 
   test('the create input appears when New File targets a collapsed folder', async () => {

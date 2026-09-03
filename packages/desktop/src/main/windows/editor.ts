@@ -4,6 +4,7 @@ import type { BrowserWindowConstructorOptions } from 'electron'
 import log from 'electron-log'
 import windowStateKeeper from 'electron-window-state'
 import { isChildOfDirectory, isSamePathSync } from 'common/filesystem/paths'
+import { isDirectory } from 'common/filesystem'
 import BaseWindow, { WindowLifecycle, WindowType } from './base'
 import type Accessor from '../app/accessor'
 import { ensureWindowPosition, zoomIn, zoomOut } from './utils'
@@ -11,6 +12,8 @@ import { TITLE_BAR_HEIGHT, editorWinOptions, isLinux, isOsx } from '../config'
 import { showEditorContextMenu } from '../contextMenu/editor'
 import { loadMarkdownFile } from '../filesystem/markdown'
 import { switchLanguage } from '../spellchecker'
+import { recordOpenedProject } from '../projectList'
+import { setShowingHome } from '../homeViewState'
 import fs from 'fs'
 
 type RawMarkdownDocument = Awaited<ReturnType<typeof loadMarkdownFile>>
@@ -58,6 +61,7 @@ class EditorWindow extends BaseWindow {
   private _openedFiles: string[] | null
 
   public bufferStoreInfo: BufferStoreInfo | null
+  public showingHome: boolean
 
   /**
    * @param accessor The application accessor for application instances.
@@ -77,6 +81,7 @@ class EditorWindow extends BaseWindow {
     this._openedFiles = []
 
     this.bufferStoreInfo = null
+    this.showingHome = false
   }
 
   /**
@@ -90,7 +95,7 @@ class EditorWindow extends BaseWindow {
     bufferStoreInfo: BufferStoreInfo | null = null
   ): BrowserWindow {
     const { menu: appMenu, env, preferences, editorBufferStore } = this._accessor
-    const addBlankTab =
+    const isEmptyWindow =
       !bufferStoreInfo && !rootDirectory && fileList.length === 0 && markdownList.length === 0
 
     const mainWindowState = windowStateKeeper({
@@ -145,6 +150,10 @@ class EditorWindow extends BaseWindow {
     ;(win as unknown as { restoreBufferId: string }).restoreBufferId = this.bufferStoreInfo.id
 
     this.id = win.id
+    this.showingHome = isEmptyWindow
+    if (isEmptyWindow) {
+      setShowingHome(win.id, true)
+    }
 
     if (spellcheckerEnabled && !isOsx) {
       try {
@@ -172,7 +181,8 @@ class EditorWindow extends BaseWindow {
       appMenu.updateLineEndingMenu(this.id!, lineEnding)
 
       win!.webContents.send('mt::bootstrap-editor', {
-        addBlankTab,
+        addBlankTab: false,
+        showHome: isEmptyWindow,
         markdownList: this.bufferStoreInfo!.filePath ? [] : this._markdownToOpen,
         lineEnding,
         sideBarVisibility: resolvedSideBarVisibility,
@@ -390,20 +400,32 @@ class EditorWindow extends BaseWindow {
 
     if (this.lifecycle === WindowLifecycle.READY) {
       const { browserWindow } = this
-      const { menu: appMenu, preferences } = this._accessor
+      const { menu: appMenu } = this._accessor
 
       if (this._openedRootDirectory) {
         ipcMain.emit('watcher-unwatch-directory', browserWindow, this._openedRootDirectory)
       }
 
-      preferences.setItems({ lastOpenedFolder: pathname })
+      recordOpenedProject(this._accessor.preferences, pathname)
       appMenu.addRecentlyUsedDocument(pathname)
       this._openedRootDirectory = pathname
       ipcMain.emit('watcher-watch-directory', browserWindow, pathname)
+      this.showingHome = false
+      if (this.id != null) setShowingHome(this.id, false)
       browserWindow!.webContents.send('mt::open-directory', pathname)
     } else {
       this._directoryToOpen = pathname
     }
+  }
+
+  /**
+   * Stop watching the current folder without opening another one.
+   */
+  closeFolder(): void {
+    if (this.lifecycle === WindowLifecycle.QUITTED) return
+    if (!this._openedRootDirectory) return
+    ipcMain.emit('watcher-unwatch-directory', this.browserWindow, this._openedRootDirectory)
+    this._openedRootDirectory = ''
   }
 
   /**
@@ -488,8 +510,11 @@ class EditorWindow extends BaseWindow {
         preferences.getAll()
       const resolvedSideBarVisibility = restoreLayoutState ? !!sideBarVisibility : false
       const lineEnding = preferences.getPreferredEol()
+      this.showingHome = true
+      if (id != null) setShowingHome(id, true)
       browserWindow!.webContents.send('mt::bootstrap-editor', {
-        addBlankTab: true,
+        addBlankTab: false,
+        showHome: true,
         markdownList: [],
         lineEnding,
         sideBarVisibility: resolvedSideBarVisibility,
@@ -503,6 +528,8 @@ class EditorWindow extends BaseWindow {
   }
 
   override destroy(): void {
+    if (this.id != null) setShowingHome(this.id, false)
+    this.showingHome = false
     super.destroy()
 
     // Watchers are freed from WindowManager.
@@ -574,8 +601,11 @@ class EditorWindow extends BaseWindow {
         bufferState.restoreWarnings = []
       }
       const rootDirectory = bufferState.project?.rootDirectory
-      if (rootDirectory) {
+      const hasTabs = Array.isArray(bufferState.tabs) && bufferState.tabs.length > 0
+      if (rootDirectory && isDirectory(rootDirectory)) {
         this.openFolder(rootDirectory)
+      } else if (!hasTabs) {
+        browserWindow!.webContents.send('mt::show-home')
       }
 
       // We still need to load the files of all opened tabs and check for errors/changed files

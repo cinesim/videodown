@@ -23,8 +23,8 @@ export default function (
     {
       label: t('menu.file.newWindow'),
       accelerator: keybindings.getAccelerator('file.new-window') ?? undefined,
-      click() {
-        actions.newEditorWindow()
+      click(_menuItem, browserWindow) {
+        actions.newEditorWindow((browserWindow as BrowserWindow | undefined) ?? null)
       }
     },
     {

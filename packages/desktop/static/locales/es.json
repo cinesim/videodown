@@ -249,7 +249,8 @@
       "files": "Archivos",
       "search": "Buscar",
       "toc": "Tabla de Contenidos",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "home": "Inicio"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Idioma del corrector ortográfico faltante {languageCode}",
       "switchError": "Error del corrector ortográfico para {languageCode}, {error}",
       "title": "Corrector ortográfico"
+    }
+  },
+  "projects": {
+    "title": "Proyectos",
+    "home": "Inicio",
+    "empty": "No hay proyectos que mostrar",
+    "new": "Nuevo",
+    "lastModified": "Modificado {time}",
+    "deleteTitle": "Eliminar proyecto",
+    "deleteMessage": "¿Mover \"{name}\" a la Papelera? Esto no se puede deshacer desde videodown.",
+    "deleteConfirm": "Eliminar",
+    "deleteCancel": "Cancelar",
+    "newDialogTitle": "Nuevo proyecto",
+    "untitledName": "Sin título",
+    "create": "Crear",
+    "relative": {
+      "second": "hace {n} s",
+      "minute": "hace {n} minuto",
+      "minutes": "hace {n} minutos",
+      "hour": "hace {n} hora",
+      "hours": "hace {n} horas",
+      "day": "hace {n} día",
+      "days": "hace {n} días",
+      "month": "hace {n} mes",
+      "months": "hace {n} meses",
+      "year": "hace {n} año",
+      "years": "hace {n} años"
     }
   }
 }

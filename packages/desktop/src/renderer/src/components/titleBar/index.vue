@@ -12,7 +12,8 @@
       ]"
     >
       <div class="title" @dblclick.stop="toggleMaxmizeOnMacOS">
-        <span v-if="!filename">videodown</span>
+        <span v-if="isHome">{{ t('projects.home') }}</span>
+        <span v-else-if="!filename">videodown</span>
         <span v-else>
           <span v-for="(path, index) of paths" :key="index">
             {{ path }}
@@ -35,7 +36,7 @@
           <span class="text-center-vertical">&#9776;</span>
         </div>
         <el-tooltip
-          v-if="wordCount"
+          v-if="wordCount && !isHome"
           class="item"
           :content="`${wordCount[show]} ${HASH[show].full + (wordCount[show] > 1 ? 's' : '')}`"
           placement="bottom-end"
@@ -110,6 +111,7 @@ import { PATH_SEPARATOR } from '../../config'
 import { isOsx as isOsxPlatform } from '@/util'
 import { shouldShowInAppTitleBar } from './visibility'
 import { useEditorStore } from '@/store/editor'
+import { useProjectStore } from '@/store/project'
 import { useI18n } from 'vue-i18n'
 import { ArrowRight } from '@element-plus/icons-vue'
 import type { FileWordCount } from '@shared/types/files'
@@ -132,6 +134,7 @@ const props = defineProps<{
 const preferencesStore = usePreferencesStore()
 const layoutStore = useLayoutStore()
 const editorStore = useEditorStore()
+const projectStore = useProjectStore()
 const { t } = useI18n()
 
 const isOsx = isOsxPlatform
@@ -175,6 +178,7 @@ onMounted(async () => {
 
 const { titleBarStyle } = storeToRefs(preferencesStore)
 const { showTabBar } = storeToRefs(layoutStore)
+const { isHome } = storeToRefs(projectStore)
 
 const paths = computed(() => {
   if (!props.pathname) return []
@@ -191,11 +195,16 @@ const showTitleBar = computed(() => {
 })
 
 watch(
-  () => props.filename,
-  (value) => {
+  [() => props.filename, isHome],
+  () => {
     // Set filename when hover on dock
+    if (isHome.value) {
+      document.title = t('projects.home')
+      return
+    }
     const hasOpenFolder = !!(props.project && props.project.name)
     const projectName = props.project?.name ?? ''
+    const value = props.filename
     let title = ''
     if (value) {
       title = hasOpenFolder ? `${value} - ${projectName}` : `${value}`
@@ -204,7 +213,8 @@ watch(
     }
 
     document.title = title
-  }
+  },
+  { immediate: true }
 )
 
 const handleWordClick = () => {

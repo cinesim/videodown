@@ -249,7 +249,8 @@
       "files": "Dosyalar",
       "search": "Ara",
       "toc": "İçindekiler",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "home": "Ana sayfa"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Yazım denetimi dili eksik {languageCode}",
       "switchError": "{languageCode} için yazım denetimi değiştirme hatası, {error}",
       "title": "Yazım Denetimi"
+    }
+  },
+  "projects": {
+    "title": "Projeler",
+    "home": "Ana sayfa",
+    "empty": "Gösterilecek proje yok",
+    "new": "Yeni",
+    "lastModified": "Son değişiklik {time}",
+    "deleteTitle": "Projeyi sil",
+    "deleteMessage": "\"{name}\" Çöp Kutusuna taşınsın mı? Bu işlem videodown içinden geri alınamaz.",
+    "deleteConfirm": "Sil",
+    "deleteCancel": "İptal",
+    "newDialogTitle": "Yeni proje",
+    "untitledName": "Adsız",
+    "create": "Oluştur",
+    "relative": {
+      "second": "{n} sn önce",
+      "minute": "{n} dakika önce",
+      "minutes": "{n} dakika önce",
+      "hour": "{n} saat önce",
+      "hours": "{n} saat önce",
+      "day": "{n} gün önce",
+      "days": "{n} gün önce",
+      "month": "{n} ay önce",
+      "months": "{n} ay önce",
+      "year": "{n} yıl önce",
+      "years": "{n} yıl önce"
     }
   }
 }

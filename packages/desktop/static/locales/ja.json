@@ -249,7 +249,8 @@
       "files": "ファイル",
       "search": "検索",
       "toc": "目次",
-      "settings": "設定"
+      "settings": "設定",
+      "home": "ホーム"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "スペルチェック言語が見つかりません {languageCode}",
       "switchError": "{languageCode} のスペルチェック切り替えエラー、{error}",
       "title": "スペルチェック"
+    }
+  },
+  "projects": {
+    "title": "プロジェクト",
+    "home": "ホーム",
+    "empty": "表示するプロジェクトはありません",
+    "new": "新規",
+    "lastModified": "最終更新 {time}",
+    "deleteTitle": "プロジェクトを削除",
+    "deleteMessage": "「{name}」をごみ箱に移動しますか？videodown から元に戻すことはできません。",
+    "deleteConfirm": "削除",
+    "deleteCancel": "キャンセル",
+    "newDialogTitle": "新規プロジェクト",
+    "untitledName": "無題",
+    "create": "作成",
+    "relative": {
+      "second": "{n} 秒前",
+      "minute": "{n} 分前",
+      "minutes": "{n} 分前",
+      "hour": "{n} 時間前",
+      "hours": "{n} 時間前",
+      "day": "{n} 日前",
+      "days": "{n} 日前",
+      "month": "{n} か月前",
+      "months": "{n} か月前",
+      "year": "{n} 年前",
+      "years": "{n} 年前"
     }
   }
 }

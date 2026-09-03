@@ -6,6 +6,7 @@ import log from 'electron-log'
 import { app, BrowserWindow, clipboard, dialog, nativeTheme, shell, ipcMain } from 'electron'
 import type { BrowserWindowConstructorOptions } from 'electron'
 import { isChildOfDirectory } from 'common/filesystem/paths'
+import { isDirectory } from 'common/filesystem'
 import type { IUserPreferences } from '@shared/types/preferences'
 import { isLinux, isOsx, isWindows } from '../config'
 import parseArgs from '../cli/parser'
@@ -22,6 +23,8 @@ import EditorWindow from '../windows/editor'
 import SettingWindow from '../windows/setting'
 import { setLanguage } from '../i18n'
 import { getNativeThemeSource, isDarkApplicationTheme } from './nativeTheme'
+import { forgetProject } from '../projectList'
+import { setShowingHome } from '../homeViewState'
 import type Accessor from './accessor'
 import type WindowManager from './windowManager'
 
@@ -33,6 +36,17 @@ interface CliArgs {
 interface PathInfo {
   isDir: boolean
   path: string
+}
+
+// Electron leaves the loaded app directory in argv. Opening that path as a
+// project would steal the empty-window home page on a bare launch (including
+// e2e, which passes packages/desktop as the app path).
+const isElectronAppDirectory = (pathname: string): boolean => {
+  try {
+    return path.resolve(pathname) === path.resolve(app.getAppPath())
+  } catch {
+    return false
+  }
 }
 
 class App {
@@ -80,6 +94,9 @@ class App {
       for (const pathname of args._) {
         // Ignore all unknown flags
         if (pathname.startsWith('--')) {
+          continue
+        }
+        if (isElectronAppDirectory(pathname)) {
           continue
         }
 
@@ -248,6 +265,9 @@ class App {
         if (pathname.startsWith('--')) {
           continue
         }
+        if (isElectronAppDirectory(pathname)) {
+          continue
+        }
 
         const info = normalizeMarkdownPath(pathname)
         if (info) {
@@ -394,6 +414,11 @@ class App {
           filePath: string | null
         }>
         if (bufferStoreList.length === 0) {
+          const lastFolder = lastOpenedFolder
+          if (lastFolder && isDirectory(lastFolder)) {
+            this._createEditorWindow(lastFolder)
+            return
+          }
           this._createEditorWindow()
           return
         }
@@ -768,6 +793,31 @@ class App {
         this._createEditorWindow(pathname)
       }
     )
+
+    ipcMain.on('mt::close-directory', (e) => {
+      const win = BrowserWindow.fromWebContents(e.sender)
+      if (!win) return
+      const editor = this._windowManager.get(win.id) as EditorWindow | undefined
+      editor?.closeFolder()
+    })
+
+    ipcMain.on('mt::set-home-view', (e, showing: boolean) => {
+      const win = BrowserWindow.fromWebContents(e.sender)
+      if (!win) return
+      const editor = this._windowManager.get(win.id) as EditorWindow | undefined
+      if (editor) editor.showingHome = !!showing
+      setShowingHome(win.id, !!showing)
+    })
+
+    ipcMain.on('mt::forget-project', (_e, pathname: string) => {
+      forgetProject(this._accessor.preferences, String(pathname))
+    })
+
+    ipcMain.on('mt::open-project', (e, pathname: string) => {
+      const win = BrowserWindow.fromWebContents(e.sender)
+      if (!win || !pathname) return
+      ipcMain.emit('app-open-directory-by-id', win.id, String(pathname), true)
+    })
 
     // --- renderer -------------------
 

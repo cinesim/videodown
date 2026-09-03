@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import bus from '../bus'
 import { setLanguage } from '../i18n'
+import type { ProjectEntry } from 'common/projects'
 
 // Finite-value unions where the runtime currently constrains the field.
 // We keep these as plain strings everywhere else to avoid forcing prematurely
@@ -35,6 +36,7 @@ export interface PreferencesState {
   restoreLayoutState: boolean
   defaultDirectoryToOpen: string
   lastOpenedFolder: string
+  projects: ProjectEntry[]
   treePathExcludePatterns: string[]
   language: string
 
@@ -153,6 +155,7 @@ export const usePreferencesStore = defineStore('preferences', {
     restoreLayoutState: true,
     defaultDirectoryToOpen: '',
     lastOpenedFolder: '',
+    projects: [],
     treePathExcludePatterns: [],
     language: 'en',
 

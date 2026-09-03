@@ -249,7 +249,8 @@
       "files": "Arquivos",
       "search": "Pesquisar",
       "toc": "Índice",
-      "settings": "Configurações"
+      "settings": "Configurações",
+      "home": "Início"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Idioma do corretor não encontrado {languageCode}",
       "switchError": "Erro ao alternar corretor para {languageCode}, {error}",
       "title": "Verificação Ortográfica"
+    }
+  },
+  "projects": {
+    "title": "Projetos",
+    "home": "Início",
+    "empty": "Nenhum projeto para mostrar",
+    "new": "Novo",
+    "lastModified": "Modificado {time}",
+    "deleteTitle": "Excluir projeto",
+    "deleteMessage": "Mover \"{name}\" para o Lixo? Isso não pode ser desfeito no videodown.",
+    "deleteConfirm": "Excluir",
+    "deleteCancel": "Cancelar",
+    "newDialogTitle": "Novo projeto",
+    "untitledName": "Sem título",
+    "create": "Criar",
+    "relative": {
+      "second": "{n} s atrás",
+      "minute": "há {n} minuto",
+      "minutes": "há {n} minutos",
+      "hour": "há {n} hora",
+      "hours": "há {n} horas",
+      "day": "há {n} dia",
+      "days": "há {n} dias",
+      "month": "há {n} mês",
+      "months": "há {n} meses",
+      "year": "há {n} ano",
+      "years": "há {n} anos"
     }
   }
 }

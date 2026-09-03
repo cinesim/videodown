@@ -17,7 +17,7 @@ test.describe('Check Launch videodown', () => {
   })
 
   test('Empty videodown', async () => {
-    const title = await page.title()
-    expect(/^videodown|Untitled-1 - videodown$/.test(title)).toBeTruthy()
+    await expect(page.locator('.projects-home')).toBeVisible({ timeout: 15000 })
+    await expect(page).toHaveTitle('Home')
   })
 })

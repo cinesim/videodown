@@ -249,7 +249,8 @@
       "files": "Fichiers",
       "search": "Rechercher",
       "toc": "Table des matières",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "home": "Accueil"
     }
   },
   "commandPalette": {
@@ -963,6 +964,33 @@
       "languageMissing": "Langue du correcteur manquante {languageCode}",
       "switchError": "Erreur de changement du correcteur pour {languageCode}, {error}",
       "title": "Vérification orthographique"
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "home": "Accueil",
+    "empty": "Aucun projet à afficher",
+    "new": "Nouveau",
+    "lastModified": "Modifié {time}",
+    "deleteTitle": "Supprimer le projet",
+    "deleteMessage": "Déplacer « {name} » vers la corbeille ? Cette action ne peut pas être annulée depuis videodown.",
+    "deleteConfirm": "Supprimer",
+    "deleteCancel": "Annuler",
+    "newDialogTitle": "Nouveau projet",
+    "untitledName": "Sans titre",
+    "create": "Créer",
+    "relative": {
+      "second": "il y a {n} s",
+      "minute": "il y a {n} minute",
+      "minutes": "il y a {n} minutes",
+      "hour": "il y a {n} heure",
+      "hours": "il y a {n} heures",
+      "day": "il y a {n} jour",
+      "days": "il y a {n} jours",
+      "month": "il y a {n} mois",
+      "months": "il y a {n} mois",
+      "year": "il y a {n} an",
+      "years": "il y a {n} ans"
     }
   }
 }
