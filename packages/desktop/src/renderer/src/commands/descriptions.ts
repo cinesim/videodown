@@ -155,6 +155,7 @@ const COMMAND_KEY_MAP: Record<string, string> = {
 
   // Theme settings
   'window.change-theme': 'commands.window.changeTheme',
+  'window.toggle-color-scheme': 'commands.window.toggleColorScheme',
 
   // ============================================
   // # View Controls

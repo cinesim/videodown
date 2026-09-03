@@ -34,6 +34,14 @@
         >
           <span class="text-center-vertical">&#9776;</span>
         </div>
+        <el-tooltip class="item" :content="colorSchemeTooltip" placement="bottom-end">
+          <div class="color-scheme-toggle" @click.stop="handleColorSchemeToggle">
+            <el-icon :size="16">
+              <Sunny v-if="isDarkColorSchemeActive" />
+              <Moon v-else />
+            </el-icon>
+          </div>
+        </el-tooltip>
         <el-tooltip
           v-if="wordCount"
           class="item"
@@ -111,7 +119,8 @@ import { isOsx as isOsxPlatform } from '@/util'
 import { shouldShowInAppTitleBar } from './visibility'
 import { useEditorStore } from '@/store/editor'
 import { useI18n } from 'vue-i18n'
-import { ArrowRight } from '@element-plus/icons-vue'
+import { ArrowRight, Moon, Sunny } from '@element-plus/icons-vue'
+import { isDarkColorScheme } from '@/util/colorScheme'
 import type { FileWordCount } from '@shared/types/files'
 
 interface ProjectInfo {
@@ -173,8 +182,13 @@ onMounted(async () => {
   } catch {}
 })
 
-const { titleBarStyle } = storeToRefs(preferencesStore)
+const { titleBarStyle, theme } = storeToRefs(preferencesStore)
 const { showTabBar } = storeToRefs(layoutStore)
+
+const isDarkColorSchemeActive = computed(() => isDarkColorScheme(theme.value))
+const colorSchemeTooltip = computed(() =>
+  isDarkColorSchemeActive.value ? t('titleBar.switchToLightMode') : t('titleBar.switchToDarkMode')
+)
 
 const paths = computed(() => {
   if (!props.pathname) return []
@@ -214,6 +228,10 @@ const handleWordClick = () => {
   index += 1
   if (index >= len) index = 0
   show.value = ITEMS[index]!
+}
+
+const handleColorSchemeToggle = () => {
+  preferencesStore.TOGGLE_COLOR_SCHEME()
 }
 
 const handleCloseClick = () => {
@@ -402,6 +420,24 @@ div.title > span {
     border-radius: 3px;
   }
   &:hover > span {
+    background: var(--sideBarBgColor);
+    color: var(--sideBarTitleColor);
+  }
+}
+
+.color-scheme-toggle {
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  margin-right: 6px;
+  color: var(--editorColor30);
+  border-radius: 3px;
+  transition: all 0.25s ease-in-out;
+  &:hover {
     background: var(--sideBarBgColor);
     color: var(--sideBarTitleColor);
   }

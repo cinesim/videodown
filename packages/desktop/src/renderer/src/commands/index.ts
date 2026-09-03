@@ -4,6 +4,7 @@ import { delay, isOsx } from '@/util'
 import { isUpdatable } from './utils'
 import getCommandDescriptionById from './descriptions'
 import { t } from '../i18n'
+import { usePreferencesStore } from '@/store/preferences'
 
 export { default as FileEncodingCommand } from './fileEncoding'
 export { default as LineEndingCommand } from './lineEnding'
@@ -539,6 +540,12 @@ const commands: CommandDescriptor[] = [
   // --------------------------------------------------------------------------
   // Window
 
+  {
+    id: 'window.toggle-color-scheme',
+    execute: async () => {
+      usePreferencesStore().TOGGLE_COLOR_SCHEME()
+    }
+  },
   {
     id: 'window.change-theme',
     subcommands: [

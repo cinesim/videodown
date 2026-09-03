@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import bus from '../bus'
 import { setLanguage } from '../i18n'
+import { getColorSchemeToggleUpdates } from '@/util/colorScheme'
 
 // Finite-value unions where the runtime currently constrains the field.
 // We keep these as plain strings everywhere else to avoid forcing prematurely
@@ -291,6 +292,17 @@ export const usePreferencesStore = defineStore('preferences', {
 
       // save to electron-store
       window.electron.ipcRenderer.send('mt::set-user-preference', { [type as string]: value })
+    },
+
+    TOGGLE_COLOR_SCHEME(): void {
+      const updates = getColorSchemeToggleUpdates({
+        theme: this.theme,
+        followSystemTheme: this.followSystemTheme,
+        lightModeTheme: this.lightModeTheme,
+        darkModeTheme: this.darkModeTheme
+      })
+      this.SET_USER_PREFERENCE(updates)
+      window.electron.ipcRenderer.send('mt::set-user-preference', updates)
     },
 
     SET_USER_DATA({ type, value }: SetUserDataPayload): void {
