@@ -830,7 +830,8 @@
       "zoomOut": "縮小",
       "toggleFullScreen": "フルスクリーンの切り替え",
       "changeTheme": "テーマの変更",
-      "close": "閉じる"
+      "close": "閉じる",
+      "toggleColorScheme": "ライト/ダークモードを切り替え"
     },
     "view": {
       "commandPalette": "コマンドパレット",
@@ -964,5 +965,9 @@
       "switchError": "{languageCode} のスペルチェック切り替えエラー、{error}",
       "title": "スペルチェック"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "ダークモードに切り替え",
+    "switchToLightMode": "ライトモードに切り替え"
   }
 }

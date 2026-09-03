@@ -830,7 +830,8 @@
       "zoomOut": "縮小",
       "toggleFullScreen": "切換全螢幕",
       "changeTheme": "變更主題",
-      "close": "關閉"
+      "close": "關閉",
+      "toggleColorScheme": "切換淺色/深色模式"
     },
     "view": {
       "commandPalette": "命令面板",
@@ -964,5 +965,9 @@
       "switchError": "{languageCode} 拼字檢查切換錯誤，{error}",
       "title": "拼字檢查"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "切換到深色模式",
+    "switchToLightMode": "切換到淺色模式"
   }
 }

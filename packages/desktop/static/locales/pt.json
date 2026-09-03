@@ -830,7 +830,8 @@
       "zoomOut": "Diminuir Zoom",
       "toggleFullScreen": "Alternar Tela Cheia",
       "changeTheme": "Alterar Tema",
-      "close": "Fechar"
+      "close": "Fechar",
+      "toggleColorScheme": "Alternar modo claro/escuro"
     },
     "view": {
       "commandPalette": "Paleta de Comandos",
@@ -964,5 +965,9 @@
       "switchError": "Erro ao alternar corretor para {languageCode}, {error}",
       "title": "Verificação Ortográfica"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Mudar para o modo escuro",
+    "switchToLightMode": "Mudar para o modo claro"
   }
 }

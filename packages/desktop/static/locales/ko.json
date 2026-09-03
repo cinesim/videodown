@@ -830,7 +830,8 @@
       "zoomOut": "축소",
       "toggleFullScreen": "전체 화면 토글",
       "changeTheme": "테마 변경",
-      "close": "닫기"
+      "close": "닫기",
+      "toggleColorScheme": "라이트/다크 모드 전환"
     },
     "view": {
       "commandPalette": "명령 팔레트",
@@ -964,5 +965,9 @@
       "switchError": "{languageCode} 맞춤법 검사 전환 오류, {error}",
       "title": "맞춤법 검사"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "다크 모드로 전환",
+    "switchToLightMode": "라이트 모드로 전환"
   }
 }

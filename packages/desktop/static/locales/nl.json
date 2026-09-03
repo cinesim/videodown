@@ -830,7 +830,8 @@
       "zoomIn": "Inzoomen",
       "zoomOut": "Uitzoomen",
       "toggleFullScreen": "Volledig scherm in-/uitschakelen",
-      "changeTheme": "Thema wijzigen"
+      "changeTheme": "Thema wijzigen",
+      "toggleColorScheme": "Lichte/donkere modus wisselen"
     },
     "view": {
       "commandPalette": "Opdrachtpalet",
@@ -964,5 +965,9 @@
       "switchError": "Spellingcontrole wisselfout voor {languageCode}, {error}",
       "title": "Spellingcontrole"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Overschakelen naar donkere modus",
+    "switchToLightMode": "Overschakelen naar lichte modus"
   }
 }

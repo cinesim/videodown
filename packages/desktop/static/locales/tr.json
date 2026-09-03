@@ -830,7 +830,8 @@
       "zoomIn": "Yakınlaştır",
       "zoomOut": "Uzaklaştır",
       "toggleFullScreen": "Tam Ekranı Aç/Kapat",
-      "changeTheme": "Temayı Değiştir"
+      "changeTheme": "Temayı Değiştir",
+      "toggleColorScheme": "Aydınlık/Karanlık modu değiştir"
     },
     "view": {
       "commandPalette": "Komut Paleti",
@@ -964,5 +965,9 @@
       "switchError": "{languageCode} için yazım denetimi değiştirme hatası, {error}",
       "title": "Yazım Denetimi"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Karanlık moda geç",
+    "switchToLightMode": "Aydınlık moda geç"
   }
 }

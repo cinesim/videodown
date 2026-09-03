@@ -830,7 +830,8 @@
       "zoomOut": "Verkleinern",
       "toggleFullScreen": "Vollbild umschalten",
       "changeTheme": "Design ändern",
-      "close": "Schließen"
+      "close": "Schließen",
+      "toggleColorScheme": "Hell/Dunkel-Modus umschalten"
     },
     "view": {
       "commandPalette": "Befehlspalette",
@@ -964,5 +965,9 @@
       "switchError": "Rechtschreibprüfung-Wechselfehler für {languageCode}, {error}",
       "title": "Rechtschreibprüfung"
     }
+  },
+  "titleBar": {
+    "switchToDarkMode": "Zum Dunkelmodus wechseln",
+    "switchToLightMode": "Zum Hellmodus wechseln"
   }
 }
