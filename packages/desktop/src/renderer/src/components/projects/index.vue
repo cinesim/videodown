@@ -18,27 +18,31 @@
         :key="card.pathname"
         class="project-card"
         :data-pathname="card.pathname"
-        role="button"
-        tabindex="0"
-        @click="openProject(card.pathname)"
-        @keydown.enter.prevent="openProject(card.pathname)"
-        @keydown.space.prevent="openProject(card.pathname)"
       >
-        <div class="project-card-preview">
+        <div
+          class="project-card-preview"
+          role="button"
+          tabindex="0"
+          @click="openProject(card.pathname)"
+          @keydown.enter.prevent="openProject(card.pathname)"
+          @keydown.space.prevent="openProject(card.pathname)"
+        >
           <el-icon :size="32">
             <Folder />
           </el-icon>
         </div>
         <div class="project-card-footer">
-          <div class="project-card-name">{{ card.name }}</div>
-          <div class="project-card-meta">
-            {{ t('projects.lastModified', { time: formatModified(card.mtimeMs) }) }}
-          </div>
+          <button type="button" class="project-card-open" @click="openProject(card.pathname)">
+            <div class="project-card-name">{{ card.name }}</div>
+            <div class="project-card-meta">
+              {{ t('projects.lastModified', { time: formatModified(card.mtimeMs) }) }}
+            </div>
+          </button>
           <button
             type="button"
             class="project-card-delete"
             :title="t('projects.deleteTitle')"
-            @click.stop="askDelete(card)"
+            @click="askDelete(card)"
           >
             <el-icon :size="16">
               <Delete />
@@ -258,14 +262,13 @@ onMounted(() => {
   background: var(--itemBgColor);
   color: inherit;
   text-align: left;
-  cursor: pointer;
   transition:
     border-color 0.15s ease,
     transform 0.15s ease;
 }
 
 .project-card:hover,
-.project-card:focus-visible {
+.project-card:focus-within {
   border-color: var(--editorColor30);
   transform: translateY(-1px);
 }
@@ -277,6 +280,7 @@ onMounted(() => {
   justify-content: center;
   background: var(--sideBarBgColor);
   color: var(--iconColor);
+  cursor: pointer;
 }
 
 .project-card-footer {
@@ -288,10 +292,21 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
+.project-card-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  padding-right: 24px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .project-card-name {
   font-size: 13px;
   font-weight: 600;
-  padding-right: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -319,6 +334,7 @@ onMounted(() => {
 }
 
 .project-card:hover .project-card-delete,
+.project-card:focus-within .project-card-delete,
 .project-card-delete:focus {
   opacity: 1;
 }
